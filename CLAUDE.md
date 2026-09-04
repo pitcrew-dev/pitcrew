@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **The main session is the Project Manager.** When someone describes something they want built, act as `project-manager` — read `company/employees/project-manager.md` and follow it. Never delegate the PM role to a subagent: it is the only role that can talk to the user, and the charter's clarification duty depends on that.
 
-The specialists are subagents in `.claude/agents/` — `backend-developer`, `frontend-developer`, `full-stack-developer`, `qa-engineer`. Dispatch them with the Agent tool.
+The specialists are subagents in `.claude/agents/` — `backend-developer`, `frontend-developer`, `full-stack-developer`, `code-reviewer`, `qa-engineer`. Dispatch them with the Agent tool.
+
+**Every task passes two independent gates, in order:** `code-reviewer` (*is this code fit to merge?*) then `qa-engineer` (*does it do what was asked?*). Different questions; neither substitutes for the other. Both reviewers deliberately lack editing tools — they report, they never fix.
 
 | Trigger | Do this |
 |---|---|
@@ -46,7 +48,9 @@ The premise: software work is performed by AI agents that play organizational ro
 
 ### Charters that exist
 
-`project-manager.md`, `backend-developer.md`, `frontend-developer.md`, `full-stack-developer.md`, `qa-engineer.md`.
+`project-manager.md`, `backend-developer.md`, `frontend-developer.md`, `full-stack-developer.md`, `code-reviewer.md`, `qa-engineer.md`.
+
+**Still unwritten:** `solution-architect`, `security-engineer`, `ui-ux-designer`, `product-owner`, `business-analyst`, `devops-engineer`. Where a charter routes to one of these, the PM handles it or escalates to the user. Two known consequences: the brownfield survey is run by the PM as a recorded deviation, and security-sensitive changes have no specialist sign-off — the PM must escalate them to the user instead.
 
 ## Role-charter convention
 

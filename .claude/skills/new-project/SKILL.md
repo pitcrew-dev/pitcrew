@@ -18,7 +18,11 @@ Write down their request **verbatim** before interpreting it. Then determine:
 
 ## Step 2 — Survey, if there is existing code
 
-**In brownfield you may not plan, estimate, or assign anything until this is done.** Run the survey checklist in `company/standards/engagement-modes.md` §3 yourself: versions, structure, autoloading, conventions actually in use, frontend tooling, **the test baseline (run the suite and record what already fails)**, version control style, and danger zones.
+**In brownfield you may not plan, estimate, or assign anything until this is done.**
+
+> **Recorded deviation.** The PM charter assigns the survey to `solution-architect`. That role does not exist yet, so the PM runs it directly. This is a temporary deviation from the charter, not the intended design — note it in `decisions.md` for the project, and hand the survey back to `solution-architect` once that agent exists.
+
+Run the survey checklist in `company/standards/engagement-modes.md` §3: versions, structure, autoloading, conventions actually in use, frontend tooling, **the test baseline (run the suite and record what already fails)**, version control style, and danger zones.
 
 Write `projects/<name>/conventions.md`. From then on it outranks the company standards for this project.
 
