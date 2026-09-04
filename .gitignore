@@ -1,0 +1,62 @@
+# Dependencies — never committed, always reinstallable
+/vendor/
+/node_modules/
+**/vendor/
+**/node_modules/
+
+# Build output — generated, never hand-edited
+/public/build/
+/public/hot
+/public/storage
+**/public/build/
+*.css.map
+*.js.map
+
+# Environment and secrets — .env is NEVER committed
+.env
+.env.*
+!.env.example
+auth.json
+
+# Laravel runtime
+/storage/*.key
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+!**/.gitkeep
+
+# WordPress — uploads and config carry secrets and user data
+wp-config.php
+/wp-content/uploads/
+/wp-content/upgrade/
+/wp-content/cache/
+
+# Logs and temporary files
+*.log
+*.cache
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# Tests
+/.phpunit.result.cache
+/.pest
+/tests/Browser/screenshots/
+/tests/Browser/console/
+
+# IDE and editor state
+/.idea/workspace.xml
+/.idea/shelf/
+/.idea/httpRequests/
+/.idea/dataSources/
+/.idea/dataSources.local.xml
+/.vscode/
+*.swp
+*.swo
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
