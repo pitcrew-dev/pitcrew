@@ -97,14 +97,41 @@ public function store(StoreUserRequest $request, CreateUser $createUser): Redire
 
 ## 7. Security baseline
 
-Non-negotiable, and checked at review regardless of what the task asked for:
+Non-negotiable, and checked at review regardless of what the task asked for.
 
-- No secrets in code, config, or commits — `.env` only, and `.env` is never committed.
+**Why this section is stricter than it looks.** Independent 2026 testing found roughly **45% of AI-generated code samples introduce an OWASP Top 10 vulnerability**, with 86% failing to defend against XSS and 88% vulnerable to log injection — while syntax correctness exceeds 95%. Generated code looks right far more reliably than it *is* right, so the defence has to sit downstream of generation, in this list and at the review gate.
+
+- No secrets in code, config, or commits — `.env` only, and `.env` is never committed. A `PostToolUse` hook scans every written file; treat a flag as real until you have proved otherwise.
 - Every write route authorizes; never trust a hidden form field or a client-supplied ID to establish permission.
 - Mass assignment is guarded: `$fillable` declared explicitly, never `$guarded = []` on a model reachable from user input.
 - Uploads validate MIME type and size, are stored outside the webroot, and are served through a route that authorizes.
 - Redirects to user-supplied URLs are validated against an allowlist.
-- Any change touching authentication, authorization, payment, PII, or file upload is routed to `security-engineer` before merge.
+- Any change touching authentication, authorization, payment, PII, or file upload is routed to `security-engineer` before merge. **Until that role exists, it escalates to the user instead — it is never simply skipped.**
+
+### 7.1 Dependencies — verify existence before installing
+
+Language models invent packages that do not exist, and attackers register those invented names to serve malware ("slopsquatting"). Before adding **any** dependency:
+
+- [ ] **Confirm the package actually exists** on Packagist or npm. Never install a name you recalled rather than read.
+- [ ] Check its age, download count, and last release. A package matching your need exactly but published last week is a red flag, not a lucky find.
+- [ ] Confirm the maintainer and repository are the ones you expect — typosquats differ by a character.
+- [ ] Justify it: what in the project cannot do this already?
+- [ ] Get architect approval and security sign-off (`engagement-modes.md` §4). In brownfield, a new dependency may be impossible for deployment reasons that are not visible in the code.
+
+Never install a package to resolve an import you wrote from memory. Fix the import.
+
+### 7.2 Logging
+
+- **Never log secrets, tokens, passwords, full card numbers, or personal data.** Log identifiers, not payloads.
+- **Sanitize newlines out of user-controlled values before logging them.** Untreated, a user submitting `\n` forges log entries — this is log injection, and generated code fails it about 88% of the time.
+- Log exceptions with context, never raw request bodies.
+- Error responses shown to users must not leak stack traces, SQL, file paths, or internal identifiers.
+
+### 7.3 What the hooks enforce, and what they do not
+
+`.claude/hooks/` blocks writes to `vendor/`, `node_modules/`, build output, `.env`, and WordPress core, blocks irreversible shell commands, and scans written files for credentials. Those checks are deterministic and cannot be forgotten.
+
+**Everything else in this section is still on you.** Hooks cannot see an authorization branch you failed to write, an unescaped variable, or a missing CSRF token. They are a floor, not a gate.
 
 ## 8. Naming
 

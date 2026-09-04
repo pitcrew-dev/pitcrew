@@ -2,6 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Commands
+
+This repository is documentation and configuration — it has no build. These are the commands for **projects** it produces, by profile (`company/standards/stack-profiles.md`). The project's own `conventions.md` overrides them.
+
+```bash
+# Profile A — Modern Laravel (company default)
+./vendor/bin/pint                      # format; run before every commit
+./vendor/bin/pest                      # full suite
+./vendor/bin/pest --filter='<name>'    # one test by name
+./vendor/bin/pest tests/Feature/X.php  # one file
+php artisan test                       # alternative runner
+php artisan dusk                       # browser suite
+npm run dev / npm run build            # assets
+php artisan migrate                    # NEVER migrate:fresh on real data
+
+# Profile B — Legacy Laravel
+./vendor/bin/phpunit
+npm run watch / npm run production      # Laravel Mix
+
+# Profile C / D — plain PHP, WordPress
+./vendor/bin/phpunit                    # only if the project has it
+# often no suite at all — see testing-standards.md §7.2
+```
+
+Before any handoff: **format → full suite → build**. All three clean, or the task is not done.
+
+## Hook enforcement (deterministic, cannot be skipped)
+
+`.claude/hooks/` runs on every tool call and does not depend on an agent remembering anything:
+
+| Hook | Enforces |
+|---|---|
+| `guard_paths.py` (PreToolUse) | Blocks writes to `vendor/`, `node_modules/`, build output, `.env`, WordPress core, lock files, minified assets |
+| `guard_bash.py` (PreToolUse) | Blocks `rm -rf` on root paths, force-push, `migrate:fresh`, `DROP DATABASE`, `reset --hard`, piping curl into a shell, `--no-verify` |
+| `scan_secrets.py` (PostToolUse) | Scans every written file for credentials and flags them back to the agent |
+
+All three **fail open** — a bug in a guard can never block legitimate work. They are a floor, not a gate: they cannot see a missing authorization check or an unescaped variable. That is what `code-reviewer` is for.
+
 ## How this actually runs
 
 **The main session is the Project Manager.** When someone describes something they want built, act as `project-manager` — read `company/employees/project-manager.md` and follow it. Never delegate the PM role to a subagent: it is the only role that can talk to the user, and the charter's clarification duty depends on that.

@@ -67,7 +67,11 @@ Cheapest rejections first. Do not read for elegance before you have checked whet
 - Writes authorized; CSRF protected; no permission established from a client-supplied value.
 - No secrets in code or config.
 - Mass assignment guarded; uploads validated; redirects allowlisted.
+- **Every new dependency exists and is what it claims to be.** Models invent package names and attackers register them. Verify on Packagist or npm: real package, plausible age and download count, expected maintainer. An unverified new dependency is blocking (`coding-standards.md` §7.1).
+- **No secret, token, or personal data written to a log**, and user-controlled values have newlines stripped before logging — generated code fails log injection roughly 88% of the time.
 - **Pre-existing violations are noted for the PM, not demanded of this author.** New violations are blocking.
+
+Assume the code you are reviewing was generated, and review accordingly. Roughly 45% of AI-generated samples carry an OWASP Top 10 flaw while exceeding 95% syntax correctness — **it will look right more reliably than it is right**, so read for the missing check rather than the malformed line.
 
 **3. Correctness** — where real defects live.
 - Unhandled failure branches: invalid input, not found, unauthorized, conflict, timeout, partial write.

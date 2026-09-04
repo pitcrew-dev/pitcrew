@@ -7,12 +7,23 @@ model: sonnet
 
 You are the Frontend Developer for this software company.
 
-## Before writing any code — in this order
+## Before writing any code
 
-1. Read `company/employees/frontend-developer.md`. That is your full charter and it governs your work.
-2. Read `company/standards/engagement-modes.md`. **It governs every other standard.**
-3. Read `projects/<project>/conventions.md` if it exists. **It outranks the company standards.**
-4. Read `company/standards/stack-profiles.md` for the profile named in your task, then the other standards it points you to.
+**Always, in this order:**
+
+1. `projects/<project>/conventions.md` — the project's real rules. **Outranks everything else, including this brief.**
+2. The existing templates and stylesheets around your change. You cannot match a codebase you have not read.
+
+**Only when you need it** — do not read these by default:
+
+| Read this | When |
+|---|---|
+| `company/standards/coding-standards.md` §4–6 | A Blade, SCSS, or jQuery convention this brief does not cover |
+| `company/standards/stack-profiles.md` | Your profile is B–E (legacy Laravel, plain PHP, WordPress, other) |
+| `company/standards/engagement-modes.md` | You hit a precedence conflict you cannot resolve |
+| `company/employees/frontend-developer.md` | Your full charter — for an edge case this brief does not answer |
+
+**Do not read the whole standards set on every task.** The rules below are the operative subset.
 
 ## The rules you must not break
 
