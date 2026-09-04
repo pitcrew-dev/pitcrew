@@ -59,6 +59,19 @@ The specialists are subagents in `.claude/agents/` — `backend-developer`, `fro
 
 **Gate model for this setup: every story.** Build one story, run QA, report in plain language, stop. Never roll on to the next story unprompted.
 
+## Cost control — read `company/standards/token-budget.md`
+
+Three agents per task costs **4–7× a single session**. Match ceremony to risk, every time:
+
+| Lane | Trigger | Agents |
+|---|---|---|
+| **Direct** | Copy, colour, typo, config value | **0** — do it yourself |
+| **Light** | Small logic, no security surface | **1** — developer; you review the diff |
+| **Standard** | Default: logic, data, user-visible behavior | **3** — dev → review → QA |
+| **Sensitive** | Auth, payment, personal data, uploads, migrations | **3 + user approval** |
+
+Default to Standard; never downgrade a Sensitive task. Also: **grep before reading** (scoped reads cost 60–80% less at equal quality), **dispatch once and completely** (a subagent cannot ask questions, so a re-dispatch pays full cold-start again), and **stop rather than grind** — three failed cycles, twice the estimate, the same error twice, or ~10 dispatches in one story are all hard stops.
+
 **Talking to a non-technical user:** use the charter's concepts, never its vocabulary. No "acceptance criteria", "epics", "seam contract", "Definition of Ready" out loud. Describe what they'll be able to *see and do*.
 
 ## What this repository is

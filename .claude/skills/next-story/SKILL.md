@@ -17,9 +17,24 @@ Read `projects/<name>/backlog.md` and `board.md`. Take the highest-priority stor
 
 Confirm no other in-flight task owns the same paths (`company/standards/code-ownership.md`).
 
+## Step 1a — Assign a lane to every task before dispatching anything
+
+Per `company/standards/token-budget.md` §1. Three agents per task costs 4–7× a single session, so ceremony is matched to risk. Record the lane and the reason in the task record.
+
+| Lane | When | What runs |
+|---|---|---|
+| **Direct** | Copy, colour, typo, config value. No logic, no data, no permissions. | **You do it.** No subagent. Verify it yourself. |
+| **Light** | Small, low-risk, real logic but no security surface. | **Developer only.** You review the diff and run the suite yourself. |
+| **Standard** | Default — anything with logic, data, or user-visible behavior. | Developer → `code-reviewer` → `qa-engineer` |
+| **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, anything irreversible. | Standard, **plus** stop and get the user's approval before merge |
+
+**Default to Standard.** A cheaper lane is a recorded decision, never a quiet shortcut. **Never downgrade a Sensitive task** — the lane comes from what the code touches, not from how small the diff looks. Rework re-runs the same lane.
+
+If most tasks in a story are Direct or Light, say so in your report — that is useful feedback that the story was sliced well.
+
 ## Step 2 — Work the tasks in dependency order
 
-For each task in the story, in order:
+For each task in the story, in order. **Skip to Step 4 for Direct and Light lanes.**
 
 **Route it** by discipline, per the PM charter's routing table:
 
@@ -43,9 +58,11 @@ For each task in the story, in order:
 
 **When a backend task returns a seam contract, record it in the task record** before dispatching the paired frontend task.
 
-## Step 3 — Run both gates on every task
+## Step 3 — Run both gates (Standard and Sensitive lanes only)
 
 Each completed task passes **two independent gates, in this order**. They ask different questions and neither substitutes for the other.
+
+For **Light** tasks, you review the diff and run the suite yourself instead — no subagents. For **Direct**, just verify your own change.
 
 ### 3a — Code review
 
@@ -99,6 +116,16 @@ In **plain language**, no jargon:
 - **What's next**, and roughly how much is left
 
 Then **stop and wait.** Do not start the next story. End with something like: *"Say go when you'd like the next piece."*
+
+## Stop conditions — do not grind
+
+Grinding is where budgets die. Stop and report rather than retry:
+
+- **Three failed gate cycles on one task** — hard stop. Never a fourth.
+- **A task past roughly twice its estimate** — stop, report, re-slice.
+- **The same error twice** — stop. A third attempt at the same approach will not work.
+- **More than ~10 agent dispatches in one story** — stop. The decomposition is wrong.
+- **Any loop producing no new information** — stop immediately.
 
 ## Escalate to the user instead of deciding, when
 
