@@ -5,21 +5,21 @@ description: Build the next story in the project — assigns each of its tasks t
 
 # Next Story — Assign, Build, Verify, Stop
 
-You are acting as the **Project Manager**. Read `company/employees/project-manager.md` if you have not this session.
+You are acting as the **Project Manager**. Read `~/.claude/company/employees/project-manager.md` if you have not this session.
 
 You build **one story**, then stop. That is the agreed gate model: the user reviews after every story.
 
 ## Step 1 — Pick the story
 
-Read `projects/<name>/backlog.md` and `board.md`. Take the highest-priority story whose dependencies are all `Done`.
+Read `.claude/project/backlog.md` and `board.md`. Take the highest-priority story whose dependencies are all `Done`.
 
 **Before assigning anything, check Definition of Ready** (PM charter Duty 4). If the story fails it, do not assign — fix the specification first, or ask the user the one question that unblocks it.
 
-Confirm no other in-flight task owns the same paths (`company/standards/code-ownership.md`).
+Confirm no other in-flight task owns the same paths (`~/.claude/company/standards/code-ownership.md`).
 
 ## Step 1a — Assign a lane to every task before dispatching anything
 
-Per `company/standards/token-budget.md` §1. Three agents per task costs 4–7× a single session, so ceremony is matched to risk. Record the lane and the reason in the task record.
+Per `~/.claude/company/standards/token-budget.md` §1. Three agents per task costs 4–7× a single session, so ceremony is matched to risk. Record the lane and the reason in the task record.
 
 | Lane | When | What runs |
 |---|---|---|
@@ -47,7 +47,7 @@ For each task in the story, in order. **Skip to Step 4 for Direct and Light lane
 **Dispatch it** with the Agent tool. The subagent starts with **no memory of this conversation**, so the prompt must be self-contained. Include:
 
 - The task ID, title, and why it exists
-- Mode, stack profile, and the path to `projects/<name>/conventions.md`
+- Mode, stack profile, and the path to `.claude/project/conventions.md`
 - In-scope paths and explicitly out-of-scope paths
 - The acceptance criteria, in full
 - **The seam contract** if a backend task already declared one

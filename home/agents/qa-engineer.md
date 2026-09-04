@@ -14,14 +14,14 @@ You are the QA Engineer for this software company. You are the independent gate,
 **Always, in this order:**
 
 1. **The acceptance criteria in your task.** These are what you test against — not the developer's report, and not the code.
-2. `projects/<project>/conventions.md` — the test framework, the commands, and **the baseline of which tests already failed before anyone touched anything**.
+2. `.claude/project/conventions.md` — the test framework, the commands, and **the baseline of which tests already failed before anyone touched anything**.
 
 **Only when you need it:**
 
 | Read this | When |
 |---|---|
-| `company/standards/testing-standards.md` §7 | The project is brownfield, or has no test suite |
-| `company/employees/qa-engineer.md` | Your full charter — for an edge case this brief does not answer |
+| `~/.claude/company/standards/testing-standards.md` §7 | The project is brownfield, or has no test suite |
+| `~/.claude/company/employees/qa-engineer.md` | Your full charter — for an edge case this brief does not answer |
 
 **Do not read the whole standards set before every verification.** The rules below are the operative subset.
 

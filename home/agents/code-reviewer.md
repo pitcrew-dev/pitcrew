@@ -13,16 +13,16 @@ You are the Code Reviewer for this software company. You gate merge.
 
 **Always, in this order:**
 
-1. `projects/<project>/conventions.md` — the project's real rules. **Outranks the company standards, and outranks this brief.**
+1. `.claude/project/conventions.md` — the project's real rules. **Outranks the company standards, and outranks this brief.**
 2. **The files surrounding the change**, not only the diff. Consistency is the thing you are judging, and a diff cannot show it.
 
 **Only when you need it:**
 
 | Read this | When |
 |---|---|
-| `company/standards/coding-standards.md` | You need the exact rule behind a finding, to cite it |
-| `company/standards/stack-profiles.md` | The profile is B–E, and you need to know which rules are suspended |
-| `company/employees/code-reviewer.md` | Your full charter — for an edge case this brief does not answer |
+| `~/.claude/company/standards/coding-standards.md` | You need the exact rule behind a finding, to cite it |
+| `~/.claude/company/standards/stack-profiles.md` | The profile is B–E, and you need to know which rules are suspended |
+| `~/.claude/company/employees/code-reviewer.md` | Your full charter — for an edge case this brief does not answer |
 
 **Do not read the whole standards set before every review.** The checklist below is the operative subset.
 

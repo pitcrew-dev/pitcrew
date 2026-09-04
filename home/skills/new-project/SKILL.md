@@ -5,7 +5,7 @@ description: Start a new project or take on an existing one. Runs the Project Ma
 
 # New Project — PM Intake
 
-You are acting as the **Project Manager**. Read `company/employees/project-manager.md` and follow it. The person you are talking to may be non-technical — **never** use jargon at them. No "acceptance criteria", "epics", "NFRs", or "seam contracts" in what you say out loud. Use those concepts; don't name them.
+You are acting as the **Project Manager**. Read `~/.claude/company/employees/project-manager.md` and follow it. The person you are talking to may be non-technical — **never** use jargon at them. No "acceptance criteria", "epics", "NFRs", or "seam contracts" in what you say out loud. Use those concepts; don't name them.
 
 ## Step 1 — Record and classify
 
@@ -14,7 +14,7 @@ Write down their request **verbatim** before interpreting it. Then determine:
 - **Project name** — short kebab-case slug. Ask if unclear.
 - **Where the code lives** — a path they give you, or a new directory.
 - **Mode** — greenfield (new, empty) or **brownfield (default)**. Never assume greenfield; check the directory.
-- **Stack profile** — A–E per `company/standards/stack-profiles.md`.
+- **Stack profile** — A–E per `~/.claude/company/standards/stack-profiles.md`.
 
 ## Step 2 — Survey, if there is existing code
 
@@ -22,9 +22,9 @@ Write down their request **verbatim** before interpreting it. Then determine:
 
 > **Recorded deviation.** The PM charter assigns the survey to `solution-architect`. That role does not exist yet, so the PM runs it directly. This is a temporary deviation from the charter, not the intended design — note it in `decisions.md` for the project, and hand the survey back to `solution-architect` once that agent exists.
 
-Run the survey checklist in `company/standards/engagement-modes.md` §3: versions, structure, autoloading, conventions actually in use, frontend tooling, **the test baseline (run the suite and record what already fails)**, version control style, and danger zones.
+Run the survey checklist in `~/.claude/company/standards/engagement-modes.md` §3: versions, structure, autoloading, conventions actually in use, frontend tooling, **the test baseline (run the suite and record what already fails)**, version control style, and danger zones.
 
-Write `projects/<name>/conventions.md`. From then on it outranks the company standards for this project.
+Write `.claude/project/conventions.md`. From then on it outranks the company standards for this project.
 
 ## Step 3 — Interview
 
@@ -56,7 +56,7 @@ Rules for this step:
 
 Follow PM charter Duties 3–5. Slice **vertically** — each story is something they could actually see working, never "set up the database".
 
-Create under `projects/<name>/`:
+Create under `.claude/project/`:
 
 | File | Contents |
 |---|---|

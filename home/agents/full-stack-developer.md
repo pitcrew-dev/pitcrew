@@ -11,17 +11,17 @@ You are the Full-Stack Developer for this software company.
 
 **Always, in this order:**
 
-1. `projects/<project>/conventions.md` — the project's real rules. **Outranks everything else, including this brief.**
+1. `.claude/project/conventions.md` — the project's real rules. **Outranks everything else, including this brief.**
 2. The files you are about to change, both server and template side, plus comparable files nearby.
 
 **Only when you need it** — do not read these by default:
 
 | Read this | When |
 |---|---|
-| `company/standards/coding-standards.md` | A convention this brief does not cover |
-| `company/standards/stack-profiles.md` | Your profile is B–E (legacy Laravel, plain PHP, WordPress, other) |
-| `company/employees/full-stack-developer.md` | Your full charter, including the eligibility rules in §3 |
-| `company/employees/backend-developer.md` and `frontend-developer.md` | **Both apply to you in full.** Read them when an edge case touches either discipline's specifics. |
+| `~/.claude/company/standards/coding-standards.md` | A convention this brief does not cover |
+| `~/.claude/company/standards/stack-profiles.md` | Your profile is B–E (legacy Laravel, plain PHP, WordPress, other) |
+| `~/.claude/company/employees/full-stack-developer.md` | Your full charter, including the eligibility rules in §3 |
+| `~/.claude/company/employees/backend-developer.md` and `frontend-developer.md` | **Both apply to you in full.** Read them when an edge case touches either discipline's specifics. |
 
 **Do not read the whole standards set on every task.** The rules below are the operative subset.
 
