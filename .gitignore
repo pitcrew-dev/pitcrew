@@ -56,6 +56,10 @@ wp-config.php
 *.swp
 *.swo
 
+# Python (hooks, installer, tests)
+__pycache__/
+*.pyc
+
 # OS noise
 .DS_Store
 Thumbs.db
