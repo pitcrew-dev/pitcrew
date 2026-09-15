@@ -67,6 +67,7 @@ Read on demand, not by default — `~/.claude/company/`:
 | Laravel / plain PHP / WordPress / other specifics | `standards/stack-profiles.md` |
 | PHP, Blade, SCSS, jQuery conventions; security | `standards/coding-standards.md` |
 | Do we need this code? Which shape? | `standards/design-approach.md` |
+| Going live: server, headers, scans, backups | `standards/launch-security.md` |
 | Who owns which paths; the backend/frontend seam | `standards/code-ownership.md` |
 | Test pyramid, coverage, brownfield baselines | `standards/testing-standards.md` |
 | Branching, commits, PRs | `standards/git-workflow.md` |

@@ -108,6 +108,8 @@ Every task record carries mode, profile, the path to `conventions.md`, scope in 
 - it parses XML (XXE)
 - it handles logins, payments, uploads or personal data (Sensitive lane)
 
+**The deploy or launch story** always carries the checklist in `~/.claude/company/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch.
+
 ## Step 5 — Present the plan and STOP
 
 Show them, in plain language:

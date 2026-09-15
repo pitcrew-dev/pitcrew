@@ -39,7 +39,7 @@ ID and parent · benefit ("so that…") · Given/When/Then criteria that are obs
 | **Standard** | Default: logic, data, visible behavior | Developer → `code-reviewer` → `qa-engineer` |
 | **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, anything irreversible | Standard + `/security-review` + **the user's approval** |
 
-Default to Standard. A cheaper lane is a recorded decision. Never downgrade Sensitive. Rework re-runs the same lane. Sensitive tasks carry the five-question threat check (`coding-standards.md` §7.6) in their record.
+Default to Standard. A cheaper lane is a recorded decision. Never downgrade Sensitive. Rework re-runs the same lane. Sensitive tasks carry the five-question threat check (`coding-standards.md` §7.6) in their record. **A story that deploys or takes a site live is always Sensitive**, and its acceptance includes the launch checklist (`standards/launch-security.md`).
 
 ## Dispatching — what every prompt contains
 

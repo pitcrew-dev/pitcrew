@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 — 2026-09-15
+
+### Added
+- **`standards/launch-security.md`:** a "before going live" checklist covering production settings, security headers, private files that must not be reachable, accounts, backups with a tested restore, and monitoring. Also a free attack-style scan of staging (OWASP ZAP baseline, header and HTTPS graders) and after-launch rules (Dependabot, patching within a week, an incident plan). Every deploy or launch story is now Sensitive and carries this checklist.
+
 ## 0.2.0 — 2026-09-15
 
 Shaped by the first real pilot (a Laravel news site), a review of the most-starred AI coding frameworks, and the official Claude Code docs. Details are in `report/`.
