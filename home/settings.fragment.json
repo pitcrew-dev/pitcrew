@@ -1,0 +1,56 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.production)",
+      "Read(**/.env.staging)",
+      "Edit(**/.env)",
+      "Edit(**/.env.local)",
+      "Edit(**/.env.production)",
+      "Edit(**/.env.staging)",
+      "Bash(php artisan migrate:fresh *)",
+      "Bash(php artisan migrate:reset *)",
+      "Bash(php artisan db:wipe *)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "PowerShell(php artisan migrate:fresh *)",
+      "PowerShell(php artisan db:wipe *)",
+      "PowerShell(git push --force *)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Bash(git branch -D *)",
+      "Bash(php artisan migrate --force *)",
+      "PowerShell(git push *)",
+      "PowerShell(git reset --hard *)",
+      "PowerShell(Remove-Item *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          { "type": "command", "command": "__PYTHON__ \"__HOOKS__/guard_paths.py\"", "timeout": 10 }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          { "type": "command", "command": "__PYTHON__ \"__HOOKS__/guard_bash.py\"", "timeout": 10 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "__PYTHON__ \"__HOOKS__/scan_secrets.py\"", "timeout": 10 },
+          { "type": "command", "command": "__PYTHON__ \"__HOOKS__/format_php.py\"", "timeout": 120 }
+        ]
+      }
+    ]
+  }
+}
