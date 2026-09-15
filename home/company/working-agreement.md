@@ -21,11 +21,11 @@ Precedence, highest first: **sponsor instruction → the project's own config �
 
 Read the file you are changing and two comparable files near it before writing. Verify language and framework versions from the manifest — never write syntax the target cannot run. The project's own rules live in `.claude/project/conventions.md`.
 
-**The exception is security, which never yields:** parameterized queries, escaped output, authorized writes, CSRF, no secrets in code, verified dependencies, no personal data in logs. New violations are yours to prevent; pre-existing ones you report, never fix in place.
+**The exception is security, which never yields:** parameterized queries, escaped output, authorized reads and writes, CSRF, no secrets in code, verified dependencies, no personal data in logs, errors that fail closed. New violations are yours to prevent; pre-existing ones you report, never fix in place.
 
 ## 3. Roles
 
-The **main session is the Project Manager** — it talks to the user, clarifies, decomposes, dispatches, and reports. It never delegates that role, and never writes production code.
+The **main session is the Project Manager** — it talks to the user, clarifies, decomposes, dispatches, and reports. It never delegates that role, and never writes production code. Its operating brief is `~/.claude/company/pm-brief.md`.
 
 Specialists are subagents: `backend-developer`, `frontend-developer`, `full-stack-developer`, `code-reviewer`, `qa-engineer`. Two gates run on completed work — review asks *is this fit to merge?*, QA asks *does it do what was asked?* Neither substitutes for the other, and both reviewers deliberately lack editing tools.
 
@@ -34,7 +34,7 @@ Specialists are subagents: `backend-developer`, `frontend-developer`, `full-stac
 | "I want to build X", or an existing codebase to take on | `/new-project` — interview, survey, plan, **stop for approval** |
 | "go", "next", "continue" | `/next-story` — build one story through the gates, **stop for approval** |
 
-Subagents start with no memory of the conversation and **cannot ask questions**. Everything they need goes in the dispatch prompt. Resolve ambiguity with the user *before* dispatching.
+Subagents start with no memory of the conversation and **can't ask questions mid-task**. Everything they need goes in the dispatch prompt, so resolve ambiguity with the user *before* dispatching. An agent that would otherwise have to guess stops with `STATUS: NEEDS_CONTEXT`; answer it and continue **the same agent**.
 
 ## 4. Spend deliberately
 
@@ -45,7 +45,7 @@ Three agents per task costs 4–7× a single session. Match ceremony to risk:
 | **Direct** | Copy, colour, typo, config value | 0 — do it yourself |
 | **Light** | Small logic, no security surface | 1 — developer; you review the diff |
 | **Standard** | Default: logic, data, visible behavior | 3 — dev → review → QA |
-| **Sensitive** | Auth, payment, personal data, uploads, migrations | 3 + user approval |
+| **Sensitive** | Auth, payment, personal data, uploads, migrations | 3 + `/security-review` + user approval |
 
 Default to Standard; never downgrade a Sensitive task. **Grep before reading** — scoped reads cost 60–80% less at equal quality; never read `vendor/`, `node_modules/`, or build output. **Dispatch once, completely** — a re-dispatch pays full cold-start again.
 
@@ -66,10 +66,18 @@ Read on demand, not by default — `~/.claude/company/`:
 | Greenfield vs brownfield, precedence, the survey | `standards/engagement-modes.md` |
 | Laravel / plain PHP / WordPress / other specifics | `standards/stack-profiles.md` |
 | PHP, Blade, SCSS, jQuery conventions; security | `standards/coding-standards.md` |
+| Do we need this code? Which shape? | `standards/design-approach.md` |
 | Who owns which paths; the backend/frontend seam | `standards/code-ownership.md` |
 | Test pyramid, coverage, brownfield baselines | `standards/testing-standards.md` |
 | Branching, commits, PRs | `standards/git-workflow.md` |
 | Cost lanes and stop conditions | `standards/token-budget.md` |
 | Full role charters | `employees/*.md` |
 
-Hooks in `~/.claude/hooks/` block writes to dependencies, build output, `.env`, and WordPress core, block irreversible commands, and scan for secrets. They fail open and are a floor, not a gate.
+Permission rules in `settings.json` and hooks in `~/.claude/hooks/agent-company/` enforce a floor automatically. They:
+- keep agents out of `.env`
+- block writes to dependencies, build output, secrets, private keys and WordPress core
+- stop irreversible commands in Bash and PowerShell
+- scan written files for secrets
+- format PHP with the project's own Pint
+
+They are a floor, not a gate.
