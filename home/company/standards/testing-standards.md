@@ -33,6 +33,7 @@ A task is not complete unless tests exist for:
 - **Every failure mode named in the task** — not found, conflict, external service down, empty state.
 - **Boundaries** — zero, one, many; empty string; maximum length; the first and last valid value.
 - **Every defect fixed.** A bug fix ships with a regression test that fails before the fix and passes after. No test, no fix.
+- **Tests that were seen to fail.** For new behavior and every defect fix, the developer runs the new test before the implementation or fix and puts the failing output (≤10 lines) in the report. A test nobody saw fail may be testing nothing.
 
 Coverage percentage is not a target and is not reported as an achievement. Coverage of the criteria above is the bar.
 
@@ -81,7 +82,25 @@ php artisan dusk                           # browser suite
 php artisan dusk --filter=OrderCheckoutTest
 ```
 
-Before pushing: `./vendor/bin/pint` → `./vendor/bin/pest` → `npm run build`. All three clean, or the branch is not ready.
+### The check command
+
+Every project records its **check command** in `conventions.md`: the exact sequence that answers "is it OK?", made only of tools the project already has. For a Profile A greenfield project:
+
+```bash
+./vendor/bin/pint --test && ./vendor/bin/phpstan && ./vendor/bin/pest && composer audit && npm run build
+```
+
+Agents run exactly that before handing off. All clean, or the task isn't done.
+
+### Machine checks — greenfield default
+
+A new Profile A project gets these in its scaffold task. They catch whole classes of defects for almost no tokens, before a reviewer ever reads the code:
+
+- **Larastan** (PHPStan for Laravel). Start at level 5 and raise it as the code allows.
+- **Pest architecture tests:** `arch()->preset()->laravel()` and `arch()->preset()->security()`, plus the project's own rules (no `dd`/`dump`, controllers don't use `DB`).
+- **`composer audit`** for known-vulnerable packages.
+
+**In brownfield** these arrive only with the sponsor's approval, as their own task, with a PHPStan **baseline** so only new errors fail. Never as a side effect of a feature.
 
 ## 6. Rules
 
@@ -90,6 +109,7 @@ Before pushing: `./vendor/bin/pint` → `./vendor/bin/pest` → `npm run build`.
 3. **Flaky tests are defects with owners**, not background noise. Quarantine costs a ticket and a date.
 4. **Tests are production code** — the standards in `coding-standards.md` apply to them: named clearly, no duplication, no dead code.
 5. **The developer runs the full suite before handing off**, not just their own new tests. Breaking someone else's test is your task's defect.
+6. **Throwaway probe tests** (QA's quick experiments) are named `QaProbe*`, deleted before the report, and ignored in `.gitignore`, so a missed delete can never be committed.
 
 ---
 

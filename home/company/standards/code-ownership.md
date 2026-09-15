@@ -9,7 +9,7 @@ Blade gives no tooling-enforced boundary between server and client work. This ma
 >
 > It is the ownership map for **Profile A and B** projects with a conventional Laravel layout. It is **not** universal.
 >
-> - **Plain PHP, WordPress, and other frameworks have no default map.** One is derived during the codebase survey and recorded in `projects/<name>/conventions.md`, which then replaces this table for that project.
+> - **Plain PHP, WordPress, and other frameworks have no default map.** One is derived during the codebase survey and recorded in `.claude/project/conventions.md`, which then replaces this table for that project.
 > - **A Laravel project with a non-standard layout** uses its actual structure, not this one. If logic lives in `app/Lib/`, the map says `app/Lib/`.
 > - **§2 (Rules) and §3 (the seam contract) are profile-independent** — they hold for every project, whatever the paths turn out to be. Only the table changes.
 >

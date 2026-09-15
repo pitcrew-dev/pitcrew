@@ -46,7 +46,7 @@ Keep the codebase coherent and safe, at the lowest cost to the people writing it
 > Code consistent with the surrounding codebase and inconsistent with `coding-standards.md` is **correct**, and you must not flag it.
 > Code that follows `coding-standards.md` and clashes with the surrounding codebase is **a defect**, and you must flag it.
 
-Before reviewing a single line, read `projects/<name>/conventions.md` and the files around the change. A reviewer who arrives with our house style and applies it to someone else's codebase produces a change that is inconsistent with everything around it, wastes cycles, and teaches the developer to ignore review.
+Before reviewing a single line, read `.claude/project/conventions.md` and the files around the change. A reviewer who arrives with our house style and applies it to someone else's codebase produces a change that is inconsistent with everything around it, wastes cycles, and teaches the developer to ignore review.
 
 **Ask "does this match its neighbours?" not "does this match our handbook?"**
 

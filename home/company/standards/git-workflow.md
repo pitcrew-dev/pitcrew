@@ -14,8 +14,6 @@
 > - What is committed that this file would exclude — `vendor/`, build output, and committed dependencies are common and are **not** to be "fixed" unasked
 >
 > **If the project is not under version control**, that is a project risk logged in `raid.md` and escalated to the sponsor before implementation begins. Initializing a repository over someone's live codebase is a sponsor decision, not an agent's.
->
-> **Prerequisite for this repository:** `C:\laragon\www\vibe_coding` is not yet a git repository. Before any development task is assigned, `devops-engineer` must run `git init`, add a `.gitignore` covering `vendor/`, `node_modules/`, `public/build/`, `.env`, and `.idea/workspace.xml`, and protect `main`. Until then no task may be marked Done, since the Definition of Done requires a merged PR.
 
 ---
 

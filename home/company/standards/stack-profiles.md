@@ -1,7 +1,7 @@
 # Standard — Stack Profiles
 
 **Applies to:** every implementation role.
-**Read with:** [`engagement-modes.md`](engagement-modes.md) — the precedence ladder governs everything here. In a brownfield project, `projects/<name>/conventions.md` outranks this file.
+**Read with:** [`engagement-modes.md`](engagement-modes.md) — the precedence ladder governs everything here. In a brownfield project, `.claude/project/conventions.md` outranks this file.
 
 A profile says which rules apply, which are suspended, and where the code lives. The PM names the profile in every assignment record. When the profile is unclear, that is a blocker, not a guess.
 
@@ -41,6 +41,15 @@ The full company standard applies as written:
 - [`code-ownership.md`](code-ownership.md) path map as written
 - [`testing-standards.md`](testing-standards.md) — Pest, the full mandatory coverage set
 - [`git-workflow.md`](git-workflow.md) — trunk-based, Conventional Commits
+
+**Greenfield toolchain (the scaffold task):**
+- Pint
+- Pest with architecture tests (`arch()->preset()->laravel()` and `->security()`)
+- Larastan, starting at level 5
+- `composer audit`
+- the check command recorded in `conventions.md` (`testing-standards.md` §5)
+
+Use Pest 5 when the platform allows it (it needs PHP 8.4+). **Laravel Boost**, the Laravel team's guidelines matched to your installed versions, is recommended; ask the sponsor first, since it adds a dev dependency.
 
 Frontend default is Blade + SCSS + jQuery via Vite. Where an existing Modern Laravel project uses Livewire, Inertia, or Mix instead, that is what you use — rung 3 beats rung 4.
 

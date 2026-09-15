@@ -1,67 +1,91 @@
-# Agent Company
+# agent-company
 
-A project-manager-led AI development company for Claude Code. Installs globally
-so any project on this machine can use it.
+A Claude Code framework that runs your project like a small, disciplined software company.
+
+You talk to a **Project Manager** in plain language. It plans the work, hands each piece to a specialist agent, and puts every result through **two independent checks** (code review, then QA) before showing it to you. Built for PHP work: modern and legacy Laravel, plain PHP, and WordPress.
+
+## Why use it
+
+- **Your existing code wins.** On an existing codebase it surveys first, then matches the project's own conventions, versions and structure. No "modernizing" your code as a side effect.
+- **Two gates on every change.** A reviewer asks *is this fit to merge?*; QA asks *does it do what was asked?* Neither can edit code, so neither can quietly paper over a problem.
+- **Ceremony matched to risk.** A typo costs nothing extra. Logins, payments, personal data and migrations get a security review and **your approval**.
+- **Safety that doesn't depend on the AI remembering.** Permission rules and hooks keep agents out of `.env`, stop destructive commands, and scan every written file for secrets.
+- **Built to spend tokens carefully.** Short agent briefs, standards read only when needed, reviews of the diff instead of the whole story, and fix rounds that continue the same agent instead of starting over.
+
+## Requirements
+
+- [Claude Code](https://code.claude.com)
+- Python 3.8+ (for the installer and the hooks; nothing else to install)
+- git
 
 ## Install
 
 ```bash
-bash install.sh --dry   # preview; touches nothing
-bash install.sh         # install or update
+git clone <repository-url> agent-company
+cd agent-company
+python install.py --dry-run   # shows exactly what would change
+python install.py
 ```
 
-Copies `home/` into `~/.claude/`, merging `agents/` and `skills/` per item so
-anything you already have is kept, and merging hooks into `settings.json` so
-your existing settings survive. Everything replaced is backed up under
-`~/.claude/.backup/<timestamp>/`.
+Then restart Claude Code. To update: `git pull && python install.py`. To remove: `python install.py --uninstall`.
 
-Restart Claude Code afterwards.
+### What the installer changes
 
-## Use, from any project directory
+| Where | What | Your own things |
+|---|---|---|
+| `~/.claude/CLAUDE.md` | Adds **one import line** for the working agreement | Kept |
+| `~/.claude/company/` | Working agreement, PM brief, role charters, standards | — |
+| `~/.claude/agents/` | 5 agents (`backend-developer`, `frontend-developer`, `full-stack-developer`, `code-reviewer`, `qa-engineer`) | Kept. Same-named ones are replaced and backed up |
+| `~/.claude/skills/` | `new-project`, `next-story` | Kept |
+| `~/.claude/hooks/agent-company/` | 4 hooks | — |
+| `~/.claude/settings.json` | Adds the hooks and permission rules below | Everything else kept |
 
-| Say | What happens |
+Everything replaced is backed up to `~/.claude/.backup/<time>/`. A manifest records what was added, so updates and uninstall touch only that. If your `settings.json` isn't valid JSON, the installer changes nothing.
+
+### Safety rules it adds (they apply in every project)
+
+| Kind | Rules |
 |---|---|
-| "I want to build a website for my business" | Interview in plain language, survey any existing code, produce a plan, **stop for approval** |
-| "go" / "next" | Build one story through developer -> code review -> QA, **stop for approval** |
+| **Denied** | Reading or writing `.env`, `.env.local`, `.env.production`, `.env.staging`; `migrate:fresh`, `migrate:reset`, `db:wipe`; force-push |
+| **Asks you first** | `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, PowerShell `Remove-Item` |
+| **Hooks** | Block writes to `vendor/`, `node_modules/`, build output, lock files, WordPress core, `wp-config.php` and private keys; stop irreversible Bash and PowerShell commands; flag secrets in written files; format PHP with the project's own Pint when that can't reformat old code |
 
-## Structure
+You can change any rule in your `settings.json`. Uninstall removes only the rules the installer added.
 
-`home/` mirrors `~/.claude/` exactly — edit here, run `install.sh`, done.
+## Use
 
+From any project directory, in Claude Code:
+
+| You say | What happens |
+|---|---|
+| "I want to build a booking site for my salon" or "take over this codebase" | `/new-project`: a short plain-language interview, a survey of any existing code, then a plan in pieces you can see working. **It stops for your approval.** |
+| "go" / "next" | `/next-story`: builds one piece through developer → review → QA, then shows you the result and **stops**. |
+
+Its working files go in `<your-project>/.claude/project/`: conventions, backlog, board, decisions, risks and status. Commit them. They are the team's shared memory between sessions.
+
+## How a piece of work flows
+
+1. The PM checks the task is fully specified, picks the lane, and records the starting commit.
+2. One developer agent builds it, with tests it has **seen fail first**. It can stop and ask the PM for missing context instead of guessing.
+3. The code reviewer reviews the diff against the project's conventions and the security floor.
+4. QA verifies every acceptance criterion and tries to break it.
+5. Sensitive work gets `/security-review` and your approval.
+6. The PM commits, updates the project files, reports in plain language, and stops.
+
+A failed check goes back to the **same** developer, with its context intact. Three failures on one task is a hard stop, and the PM brings it to you with a recommendation.
+
+## Develop
+
+```bash
+python -m unittest discover -s tests -v
 ```
-home/
-├── CLAUDE.md              # working agreement, loaded in every session (73 lines)
-├── agents/                # 5 dispatchable subagents
-├── skills/                # /new-project, /next-story
-├── hooks/                 # deterministic guards (paths, commands, secrets)
-├── company/
-│   ├── employees/         # 6 role charters
-│   └── standards/         # 8 standards; engagement-modes.md governs the rest
-└── settings.hooks.json    # hook config, merged into your settings.json
-```
 
-Project artifacts are written into the target project at `.claude/project/`.
+See `CLAUDE.md` for the layout and the rules for changing the framework, and `CHANGELOG.md` for what changed.
 
-## How it is meant to work
+## Status and limits
 
-The **main session is the Project Manager** — it talks to you, clarifies, plans,
-dispatches, and reports. It never writes production code. Specialists run as
-subagents; every completed task passes two independent gates (code review, then
-QA), both of which deliberately lack editing tools.
-
-Ceremony is matched to risk so a typo does not cost what a payment flow does:
-Direct (0 agents), Light (1), Standard (3), Sensitive (3 + your approval).
-
-In an existing codebase, **the project's conventions outrank these standards.**
-Security is the one thing that never yields.
-
-## Status
-
-Six of eleven roles are written: project-manager, backend/frontend/full-stack
-developer, code-reviewer, qa-engineer. Still unwritten: solution-architect,
-security-engineer, ui-ux-designer, product-owner, business-analyst,
-devops-engineer — where a charter routes to one of those, the PM handles it or
-escalates to you.
-
-**This has not yet been run on a real project.** Everything here is reasoned,
-none of it is validated by use.
+- **Version 0.2.0.** Piloted on one real Laravel project; the findings are in `report/`.
+- Six of eleven roles are written. There is no dedicated security, architecture or devops agent yet: the PM covers them, or asks you.
+- Permission rules and hooks are a **floor, not a gate**. A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.
+- Tested on Windows (Git Bash and PowerShell). The hooks and installer are plain Python and are written to run on macOS and Linux too.
+- **License:** not chosen yet.

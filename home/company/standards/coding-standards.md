@@ -8,7 +8,7 @@
 >
 > [`engagement-modes.md`](engagement-modes.md) governs. This file applies **in full only to greenfield projects on Profile A**.
 >
-> In an existing project, the project's own config and observed conventions (`projects/<name>/conventions.md`) outrank everything below, and `stack-profiles.md` says which of these sections are suspended entirely — §2, §3, and §4 do not apply outside Laravel at all.
+> In an existing project, the project's own config and observed conventions (`.claude/project/conventions.md`) outrank everything below, and `stack-profiles.md` says which of these sections are suspended entirely — §2, §3, and §4 do not apply outside Laravel at all.
 >
 > **Code consistent with the surrounding codebase and inconsistent with this file is correct.** The reverse is a defect.
 >
@@ -106,7 +106,7 @@ Non-negotiable, and checked at review regardless of what the task asked for.
 - Mass assignment is guarded: `$fillable` declared explicitly, never `$guarded = []` on a model reachable from user input.
 - Uploads validate MIME type and size, are stored outside the webroot, and are served through a route that authorizes.
 - Redirects to user-supplied URLs are validated against an allowlist.
-- Any change touching authentication, authorization, payment, PII, or file upload is routed to `security-engineer` before merge. **Until that role exists, it escalates to the user instead — it is never simply skipped.**
+- Any change touching authentication, authorization, payment, PII, file upload or migrations is a **Sensitive** task. It gets the threat check (§7.6), Claude Code's `/security-review`, and the user's approval before merge. There is no `security-engineer` role yet; this is never simply skipped.
 
 ### 7.1 Dependencies — verify existence before installing
 
@@ -117,6 +117,7 @@ Language models invent packages that do not exist, and attackers register those 
 - [ ] Confirm the maintainer and repository are the ones you expect — typosquats differ by a character.
 - [ ] Justify it: what in the project cannot do this already?
 - [ ] Get architect approval and security sign-off (`engagement-modes.md` §4). In brownfield, a new dependency may be impossible for deployment reasons that are not visible in the code.
+- [ ] After any dependency change, run `composer audit` / `npm audit`. A known-vulnerable version is blocking.
 
 Never install a package to resolve an import you wrote from memory. Fix the import.
 
@@ -124,14 +125,59 @@ Never install a package to resolve an import you wrote from memory. Fix the impo
 
 - **Never log secrets, tokens, passwords, full card numbers, or personal data.** Log identifiers, not payloads.
 - **Sanitize newlines out of user-controlled values before logging them.** Untreated, a user submitting `\n` forges log entries — this is log injection, and generated code fails it about 88% of the time.
+- **Log what matters for security:** failed logins, permission denials, password resets and admin actions, with the actor's ID and never the payload.
 - Log exceptions with context, never raw request bodies.
 - Error responses shown to users must not leak stack traces, SQL, file paths, or internal identifiers.
 
-### 7.3 What the hooks enforce, and what they do not
+### 7.3 What is enforced automatically, and what is not
 
-`.claude/hooks/` blocks writes to `vendor/`, `node_modules/`, build output, `.env`, and WordPress core, blocks irreversible shell commands, and scans written files for credentials. Those checks are deterministic and cannot be forgotten.
+The installer adds two deterministic layers that no agent can forget or skip:
 
-**Everything else in this section is still on you.** Hooks cannot see an authorization branch you failed to write, an unescaped variable, or a missing CSRF token. They are a floor, not a gate.
+- **Permission rules** in `settings.json`. Agents can never read or write `.env` files. `migrate:fresh`, `db:wipe` and force-push are denied. Pushes, hard resets and branch deletions ask the user first.
+- **Hooks** in `~/.claude/hooks/agent-company/`. They:
+  - block writes to dependencies, build output, secrets, private keys, WordPress core and lock files
+  - stop irreversible shell and PowerShell commands
+  - scan every written file for credentials
+  - run the project's own Pint on PHP files, but only where that can't cause a drive-by reformat
+
+**Everything else in this section is still on you.** Neither layer can see an authorization branch you failed to write, an unescaped variable, or a missing CSRF token. They are a floor, not a gate.
+
+### 7.4 OWASP Top 10:2025 — what new code must do
+
+| # | Risk | New code must |
+|---|---|---|
+| A01 | Broken access control (now includes SSRF) | Authorize **reads** as well as writes: scope queries to the user (`$user->orders()->findOrFail($id)`), never trust an ID from the request alone. A URL the server fetches must be `http`/`https`, public hosts only, with private and link-local IP ranges refused. |
+| A02 | Security misconfiguration | In production: `APP_DEBUG=false`; security headers (CSP, HSTS, `frame-ancestors`, `X-Content-Type-Options`); session cookies `Secure`, `HttpOnly`, `SameSite=Lax`; a CORS allowlist, never `*` with credentials. |
+| A03 | Software supply chain | §7.1: packages verified to exist, lock files committed, audit clean. |
+| A04 | Cryptographic failures | HTTPS only. Personal data at rest through the `encrypted` cast. Tokens from `Str::random()` / `random_bytes()`. Passwords through `Hash::make()` / `password_hash()`. Never home-made crypto. |
+| A05 | Injection | The floor above. XML is parsed **without** external entities (never `LIBXML_NOENT`), tested with a hostile document. |
+| A06 | Insecure design | Sensitive tasks answer the threat check (§7.6) before implementation. |
+| A07 | Authentication failures | Rate-limit login, password reset and one-time-code routes; regenerate the session on login; use `Password::defaults()` or equivalent; give one message for "no such user" and "wrong password"; offer 2FA for admin accounts where the project supports it. |
+| A08 | Data integrity failures | Verify webhook signatures; use signed URLs for sensitive links; never deserialize untrusted data. |
+| A09 | Logging and alerting failures | §7.2. |
+| A10 | Mishandling exceptional conditions | §7.5. |
+
+**Code that calls an AI model** (prompt injection is the #1 risk on OWASP's list for LLM applications):
+- Text sent to a model (user input, fetched pages, feed items) is **data, never instructions**.
+- The model's output is untrusted input. Validate it against a schema (structured output), and never let it alone decide what a business rule must decide: publishing, permissions, spending.
+- Test with a hostile input: *"ignore your instructions and…"*
+
+### 7.5 Error handling — fail closed
+
+- When a security decision errors, **deny**. An exception in an authorization check, a signature check or a rate limiter must never end in "allow".
+- Catch specific exceptions, only where you can act on them. No empty `catch`, and no catch-and-continue in silence.
+- Every external call has a timeout, a failure branch and a message for the user. Retry only transient errors, with a cap.
+- Users see a plain message; the log gets the context (§7.2).
+
+### 7.6 Threat check — every Sensitive task, before implementation
+
+The PM writes five short answers into the task record; review checks the code against them:
+
+1. **Who can reach this?** Which roles, and anonymous visitors?
+2. **What could they read or change that isn't theirs?**
+3. **What if they lie?** A forged ID, a tampered field, a replayed request, an oversized upload.
+4. **What gets logged?** Does any of it leak secrets or personal data?
+5. **What happens when something it depends on fails?** Does it fail closed?
 
 ## 8. Naming
 

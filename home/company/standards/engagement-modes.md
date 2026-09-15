@@ -20,7 +20,7 @@ When two sources of guidance disagree, the higher one wins. This ladder is the s
 
 1. **Explicit sponsor instruction** for this project or task.
 2. **The project's own committed configuration** — `.editorconfig`, `pint.json`, `.php-cs-fixer.php`, `phpcs.xml`, `.eslintrc`, `.prettierrc`, `composer.json` platform constraints. These are the project's rules, written down and enforced by its own tooling.
-3. **The conventions actually observed in the existing codebase**, as recorded in `projects/<name>/conventions.md`. When the file you are editing disagrees with the project as a whole, **the file you are editing wins** — local consistency beats global consistency.
+3. **The conventions actually observed in the existing codebase**, as recorded in `.claude/project/conventions.md`. When the file you are editing disagrees with the project as a whole, **the file you are editing wins** — local consistency beats global consistency.
 4. **`company/standards/`** — this directory. The company's defaults.
 5. **Framework or community defaults** — PSR-12, Laravel conventions, WordPress Coding Standards.
 6. **Agent preference.** Effectively never. If you are choosing on personal preference, you have skipped a rung.
@@ -39,9 +39,9 @@ If the project uses tabs, you use tabs. If it uses `snake_case` methods, you use
 
 The company's standards apply in full, and this is the only mode in which they apply in full.
 
-1. `solution-architect` selects the stack and records the decision in `projects/<name>/decisions.md`. In the absence of a reason to differ, the company default is the Laravel profile in `stack-profiles.md`.
+1. `solution-architect` selects the stack and records the decision in `.claude/project/decisions.md`. In the absence of a reason to differ, the company default is the Laravel profile in `stack-profiles.md`.
 2. `devops-engineer` initializes the repository, the toolchain, and the config files that make the standards enforceable — formatter config, linter config, `.editorconfig`, CI.
-3. `projects/<name>/conventions.md` is still written, and states that the project adopts the company standards, naming any deliberate deviation.
+3. `.claude/project/conventions.md` is still written, and states that the project adopts the company standards, naming any deliberate deviation.
 4. Everything in `coding-standards.md`, `testing-standards.md`, `git-workflow.md`, and `code-ownership.md` applies as written.
 
 ---
@@ -50,7 +50,7 @@ The company's standards apply in full, and this is the only mode in which they a
 
 **No implementation task may be assigned in a brownfield project until the codebase survey is complete and `conventions.md` exists.** The PM enforces this at Definition of Ready; an agent handed a task without it rejects the task.
 
-The survey is a task in its own right — a Spike, assigned to `solution-architect` (or the senior implementation role available), time-boxed, producing exactly one artifact: `projects/<name>/conventions.md`.
+The survey is a task in its own right — a Spike, assigned to `solution-architect` (or the senior implementation role available), time-boxed, producing exactly one artifact: `.claude/project/conventions.md`.
 
 ### 3.1 Survey checklist
 
@@ -115,7 +115,7 @@ The survey is a task in its own right — a Spike, assigned to `solution-archite
 
 ### 3.2 The output
 
-`projects/<name>/conventions.md` records the findings above, and from that moment **it is rung 3 of the precedence ladder for that project**. It is a living document: any agent discovering a convention it does not capture, or contradicting what it says, updates it in the same PR and tells the PM.
+`.claude/project/conventions.md` records the findings above, and from that moment **it is rung 3 of the precedence ladder for that project**. It is a living document: any agent discovering a convention it does not capture, or contradicting what it says, updates it in the same PR and tells the PM.
 
 ---
 

@@ -67,7 +67,7 @@ Per [`engagement-modes.md`](../standards/engagement-modes.md) §8, the PM record
 
 - [ ] **Engagement mode** — greenfield or brownfield. **Default to brownfield**; greenfield requires the sponsor to say so and the directory to be genuinely empty.
 - [ ] **Stack profile** — A (Modern Laravel), B (Legacy Laravel), C (Plain PHP), D (WordPress), or E (other framework), per [`stack-profiles.md`](../standards/stack-profiles.md).
-- [ ] **Whether `projects/<name>/conventions.md` exists.**
+- [ ] **Whether `.claude/project/conventions.md` exists.**
 
 **In a brownfield project with no `conventions.md`, the first and only task the PM may assign is the codebase survey** — a time-boxed Spike, assigned to `solution-architect`, producing that file. No implementation task may be assigned, and no estimate may be given, until the survey is complete: in an existing codebase, both are guesses.
 
@@ -222,7 +222,7 @@ Title         <imperative, one action>
 Assigned to   <role-id>              Accountable: project-manager
 Parent        PROJ-E02-S05
 Mode          greenfield | brownfield    Profile: A | B | C | D | E
-Conventions   projects/<name>/conventions.md
+Conventions   .claude/project/conventions.md
 Type          feature | defect | spike | tech-debt | ops
 Priority      Must | Should | Could  Rank: <score + framework>
 Context       Why this exists; the business outcome it serves
@@ -305,7 +305,7 @@ ID scheme: `<PROJ>-E<nn>` epic, `-S<nn>` story, `-T<nn>` task, `-D<nn>` defect, 
 
 ### 10.2 Artifacts the PM owns
 
-Kept under `projects/<project-name>/`:
+Kept in the target project, under `.claude/project/`:
 
 | Artifact | Purpose |
 |---|---|

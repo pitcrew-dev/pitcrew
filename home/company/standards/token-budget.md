@@ -16,7 +16,7 @@ The PM picks a lane per task and records it. Running the full gate on a copy cha
 | **Direct** | Copy text, a colour, a typo, a config value, a one-line content fix. No logic, no data, no permissions. | **0** — the main session does it and verifies | ~1× |
 | **Light** | A small, low-risk change with real logic but no security surface: a validation message, a display format, a simple filter. | **1** — developer only; the main session reviews the diff and runs the suite | ~2× |
 | **Standard** | Default for anything with logic, data, or user-visible behavior. | **3** — developer → `code-reviewer` → `qa-engineer` | ~4–7× |
-| **Sensitive** | Auth, permissions, payment, personal data, file upload, migrations, anything irreversible. | **3 + the user** | ~4–7× plus a human gate |
+| **Sensitive** | Auth, permissions, payment, personal data, file upload, migrations, anything irreversible. | **3 + `/security-review` + the user** | ~4–7× plus a human gate |
 
 **Rules:**
 
@@ -53,7 +53,11 @@ A subagent cannot ask a question. An incomplete dispatch produces a wrong result
 
 > The quality of the dispatch prompt is the single largest driver of subagent reliability. **One complete dispatch is cheaper than two cheap ones.**
 
-Include everything the brief asks for: task record, criteria, mode, profile, `conventions.md` path, in/out-of-scope paths, seam contract, and what upstream tasks produced.
+Include everything the brief asks for: task record, criteria, mode, profile, `conventions.md` path, in/out-of-scope paths, seam contract, what upstream tasks produced, and the BASE commit.
+
+**Rework continues the same agent.** A fix round goes back to the developer that did the work (`SendMessage` with its agent ID). It still holds the files and its reasoning, so it doesn't pay a cold start. Only the third attempt is a fresh agent, given a written summary.
+
+**Reviewers read the diff, not the story.** Review and QA get `git diff BASE` and the file list, and read around it only as far as they need.
 
 ## 5. Stop conditions
 
@@ -64,11 +68,13 @@ Grinding is the expensive failure mode. Stop and ask rather than retry:
 - **The same error twice in a row** — stop. A third attempt at the same approach will not work.
 - **A story spawning more than ~10 agent dispatches** — stop and report. The decomposition is wrong.
 - **Any loop with no new information between iterations** — stop immediately.
+- **An agent hitting its `maxTurns`** (developers 100, QA 80, review 50) — stop. The caps are a runaway guard, not a budget; an agent that hits one returns partial work, and the task is re-sliced.
 
 ## 6. Session hygiene
 
 - **One story per session where practical.** `/clear` between stories: long sessions accumulate history that is re-sent on every turn, and attention degrades as the window fills ("context rot").
 - **`/compact` at a natural boundary**, not mid-task.
+- **Keep the project files lean**, because `/next-story` reads them every time. Finished stories move to `backlog-done.md`; board reasons are one line; `status.md` is rewritten, not appended; agent reports stay under ~40 lines. On the first pilot, `backlog.md` alone had grown to ~10k tokens.
 - **`/cost` to measure.** Take a baseline before optimizing anything — without one you cannot tell whether a change helped.
 - **Keep `CLAUDE.md` stable.** It sits in the cached prefix; editing it mid-session invalidates the cache and every subsequent turn pays full price.
 
