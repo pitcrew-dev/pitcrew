@@ -36,33 +36,30 @@
 
 ## 2. Commits
 
-**Conventional Commits**, imperative mood, subject ≤ 72 characters, no trailing period:
+**One line only. Conventional Commits**, imperative mood, subject <= 72 characters, no trailing period, **no body**:
 
 ```
 <type>(<scope>): <what changed>
-
-<why it changed — the reasoning a reviewer cannot get from the diff>
-
-Refs: PROJ-E02-S05-T03
 ```
 
 ```
 feat(users): add paginated search endpoint
-
-Search was a full table scan on every keystroke. Adds a scoped query
-with an index on (last_name, email) and caps page size at 50.
-
-Refs: PROJ-E02-S05-T03
+fix(orders): round order totals to two decimals
+chore(ci): cache composer downloads
 ```
 
 Rules:
 
-- **Atomic commits.** One logical change each. The suite passes at every commit — not merely at the tip.
-- **Never mix concerns.** Formatting, refactoring, and behavior change go in separate commits. A reformatting diff bundled with a logic change is unreviewable and will be sent back.
-- The body explains **why**. The diff already shows what.
+- **One line.** No body, no bullet lists, no explanation paragraphs. A change that needs paragraphs to explain is too big: split it.
+- **No trailers.** No `Co-Authored-By`, no session or tool links, no sign-off lines.
+- Where the project uses task IDs, put the ID in the scope: `feat(PROJ-E02-S05-T03): add user search endpoint`.
+- **Atomic commits.** One logical change each. The suite passes at every commit, not merely at the tip.
+- **Never mix concerns.** Formatting, refactoring and behavior change go in separate commits. A reformatting diff bundled with a logic change is unreviewable and will be sent back.
 - Never commit: `.env`, secrets, keys, `vendor/`, `node_modules/`, `public/build/`, IDE state, `.orig`/`.rej`, or commented-out code.
-- No `wip`, `fix`, `asdf`, or `stuff` as messages. Squash them before opening the PR.
+- No `wip`, `fix`, `asdf` or `stuff` as messages. Squash them before opening the PR.
 - **Never rewrite published history** on a shared branch. Rebase your own task branch freely before review; never after others have pulled it.
+
+The reasoning that used to go in a commit body belongs in the PR body (section 3) and in `decisions.md`.
 
 ## 3. Pull requests
 

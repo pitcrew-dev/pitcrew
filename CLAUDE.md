@@ -45,7 +45,7 @@ python install.py --uninstall             # remove everything it added
 - **The precedence ladder governs every rule you add** (`engagement-modes.md`): the existing project wins, and security never yields.
 - **Role charters keep their shape:** header, a decides / does-not-decide table, mission, numbered duties with exit criteria, anti-patterns, success criteria. Prescriptive prose and tables, no code.
 - **Bump `VERSION` and add a `CHANGELOG.md` entry** for anything a user would notice.
-- **Commits:** Conventional Commits, one concern per commit.
+- **Commits:** Conventional Commits, **one line only, no trailers**, one concern per commit.
 
 ## Status
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2 - 2026-09-16
+
+### Changed
+- **Commit messages are one line.** No body, no bullet lists. No trailers either (no `Co-Authored-By`, no session links). The reasoning goes in the pull request and in `decisions.md`. A change that needs paragraphs to explain is too big and gets split.
+
 ## 0.2.1 — 2026-09-15
 
 ### Added
