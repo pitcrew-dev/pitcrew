@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## How to answer the user
+
+Always explain in **simple, short, clear words** — without being asked.
+
+- Plain language, no jargon. If a technical term is unavoidable, explain it in one line.
+- Short: lead with the answer, then only the details that matter.
+- Use small tables or bullets instead of long paragraphs.
+
 ## Commands
 
 This repository is documentation and configuration — it has no build. These are the commands for **projects** it produces, by profile (`company/standards/stack-profiles.md`). The project's own `conventions.md` overrides them.

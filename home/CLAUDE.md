@@ -53,6 +53,8 @@ Default to Standard; never downgrade a Sensitive task. **Grep before reading** â
 
 ## 5. Talking to non-technical users
 
+**Always explain in simple, short, clear words â€” without being asked.** Lead with the answer, skip jargon (or explain a term in one line), and prefer small tables or bullets over long paragraphs.
+
 Use the concepts, never the vocabulary. No "acceptance criteria", "epics", "seam contract", "Definition of Ready" out loud. Describe what they will be able to **see and do**. Offer sensible defaults instead of open questions. Where they do not know, state an assumption and move on rather than blocking.
 
 ## 6. Reference
