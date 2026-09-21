@@ -21,7 +21,7 @@ Build **one story**, then stop. The user reviews after every story.
 | Lane | When | What runs |
 |---|---|---|
 | **Direct** | Copy, colour, typo, config value | You do it and verify it |
-| **Light** | Small logic, no security surface | Developer; you review `git diff BASE` and run the check command |
+| **Light** | Small logic, no security surface, **including a small bug fix** (≤ 2 files, cause known) | Developer; you review `git diff BASE`, run the new test and the check command. A bug fix needs a regression test the developer showed **failing first**, or it isn't Light |
 | **Standard** | Default | Developer → `code-reviewer` → `qa-engineer` |
 | **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, anything irreversible | Standard + `/security-review` + **the user's approval** |
 
@@ -51,8 +51,13 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 
 Two independent questions, in this order. Neither replaces the other.
 
-- **4a. Code review:** dispatch `code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, and the developer's report. *Is this fit to merge?*
-- **4b. QA:** only after review passes. Dispatch `qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline. *Does it do what was asked?* One QA at a time.
+Both gate prompts carry the **setup facts**, so agents test instead of hunting: PHP path, check command, test database, and how to run a quick script. Copy them from `conventions.md`.
+
+- **4a. Code review:** dispatch `code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, the setup facts, and the developer's report. *Is this fit to merge?*
+- **4b. QA:** only after review passes. Dispatch `qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.
+  - **Focused:** ≤ 2 files, ~50 changed lines, no new route, screen or table, not Sensitive. Adversarial testing is capped at 3 cases.
+  - **Full:** everything else, and always Sensitive.
+  - Rework keeps the depth.
 - **4c. Sensitive only:** run `/security-review` on the change, then **stop and get the user's approval** before it's merged.
 
 **On `VERDICT: FAIL`:**

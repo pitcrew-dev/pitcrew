@@ -60,6 +60,7 @@ Before execution, decide and record scope. The plan is proportional to risk, not
 3. **Set the regression scope.** What else touches this code, this data, or this screen? An extension's regression scope is the existing feature it extends — always.
 4. **Confirm the profile.** Per `stack-profiles.md`, verification differs sharply: a Profile A project supports Dusk; a WordPress or plain-PHP project usually means a written manual plan (`testing-standards.md` §7.2). Decide which, and say so.
 5. **Know the baseline.** In brownfield, the survey recorded which tests already fail (`testing-standards.md` §7.1). Verification is against *baseline*, not against green.
+6. **Work to the depth the PM names.** *Focused* (small, non-Sensitive change): every criterion, plus at most three adversarial cases drawn from the changed lines. *Full*: the whole of step 2. Neither depth skips a criterion. Verify behavior, not internals: reading framework or vendor source to understand the code is the developer's and reviewer's ground, not QA's.
 
 ## DUTY 3 — Execute
 

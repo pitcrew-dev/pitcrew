@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.3 - 2026-09-19
+
+### Changed
+- **Faster QA and review, same checks.** Measured on 52 real gate runs: QA took twice the steps of review, and one bug fix took QA 98 steps. The time went on reading library code (`vendor/`), hunting for the PHP path and server setup, and re-running the full test suite.
+  - **QA depth:** the PM names *Focused* (small change: every criterion plus at most 3 edge cases, about 20 steps) or *Full* (everything else, always for Sensitive work).
+  - **Test, don't investigate:** QA and review no longer read `vendor/`, framework internals or server config. Missing setup facts mean asking the PM, not hunting.
+  - **Setup facts in every gate prompt:** PHP path, check command, test database, how to run a quick script.
+  - **The full suite runs once:** the reviewer runs only new and changed tests; QA runs the full suite once, at the end.
+  - **Small bug fixes go Light:** a fix of 2 files or fewer, with a known cause and no security surface, needs no QA agent if the developer shows a regression test failing first. The PM reviews the diff and runs the tests.
+  - QA writes probe files with the Write tool (not shell heredocs), reuses one probe file, and returns its report for the PM to save.
+
 ## 0.2.2 - 2026-09-16
 
 ### Changed

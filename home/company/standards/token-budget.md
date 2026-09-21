@@ -14,7 +14,7 @@ The PM picks a lane per task and records it. Running the full gate on a copy cha
 | Lane | When | Agents spawned | Cost |
 |---|---|---|---|
 | **Direct** | Copy text, a colour, a typo, a config value, a one-line content fix. No logic, no data, no permissions. | **0** — the main session does it and verifies | ~1× |
-| **Light** | A small, low-risk change with real logic but no security surface: a validation message, a display format, a simple filter. | **1** — developer only; the main session reviews the diff and runs the suite | ~2× |
+| **Light** | A small, low-risk change with real logic but no security surface: a validation message, a display format, a simple filter, **a small bug fix** (≤ 2 files, cause known) with a regression test shown failing first. | **1** — developer only; the main session reviews the diff and runs the new test and the suite | ~2× |
 | **Standard** | Default for anything with logic, data, or user-visible behavior. | **3** — developer → `code-reviewer` → `qa-engineer` | ~4–7× |
 | **Sensitive** | Auth, permissions, payment, personal data, file upload, migrations, anything irreversible. | **3 + `/security-review` + the user** | ~4–7× plus a human gate |
 
@@ -58,6 +58,12 @@ Include everything the brief asks for: task record, criteria, mode, profile, `co
 **Rework continues the same agent.** A fix round goes back to the developer that did the work (`SendMessage` with its agent ID). It still holds the files and its reasoning, so it doesn't pay a cold start. Only the third attempt is a fresh agent, given a written summary.
 
 **Reviewers read the diff, not the story.** Review and QA get `git diff BASE` and the file list, and read around it only as far as they need.
+
+**Gates test; they don't investigate.** Measured on 52 gate runs across four projects: QA took twice the steps of review (median 51 vs 26), and a one-file bug fix took QA 98 calls. The time went on reading `vendor/`, hunting for the PHP path and server config, and re-running the full suite. So:
+
+- every gate prompt carries the **setup facts** (PHP path, check command, test database, how to run a quick script)
+- QA gets a **depth**: *Focused* for small changes (≤ 3 adversarial cases, ~20 calls), *Full* otherwise
+- the reviewer runs only the new and changed tests; QA runs the full suite **once**, at the end
 
 ## 5. Stop conditions
 

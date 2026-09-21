@@ -43,7 +43,7 @@ Three agents per task costs 4–7× a single session. Match ceremony to risk:
 | Lane | Trigger | Agents |
 |---|---|---|
 | **Direct** | Copy, colour, typo, config value | 0 — do it yourself |
-| **Light** | Small logic, no security surface | 1 — developer; you review the diff |
+| **Light** | Small logic or small bug fix, no security surface | 1 — developer; you review the diff |
 | **Standard** | Default: logic, data, visible behavior | 3 — dev → review → QA |
 | **Sensitive** | Auth, payment, personal data, uploads, migrations | 3 + `/security-review` + user approval |
 

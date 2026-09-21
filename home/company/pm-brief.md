@@ -35,7 +35,7 @@ ID and parent · benefit ("so that…") · Given/When/Then criteria that are obs
 | Lane | When | What runs |
 |---|---|---|
 | **Direct** | Copy, colour, typo, config value | You do it and verify it |
-| **Light** | Small logic, no security surface | Developer; you review `git diff BASE` and run the check command |
+| **Light** | Small logic, no security surface, **including a small bug fix** (≤ 2 files, cause known) | Developer; you review `git diff BASE`, run the new test and the check command. A bug fix needs a regression test shown **failing first** |
 | **Standard** | Default: logic, data, visible behavior | Developer → `code-reviewer` → `qa-engineer` |
 | **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, anything irreversible | Standard + `/security-review` + **the user's approval** |
 
@@ -53,6 +53,8 @@ Subagents start with no memory and can't ask questions mid-task (they can stop w
 - what completed dependencies produced
 - how it will be verified
 - the **BASE** commit (`git rev-parse HEAD` before the developer starts)
+- the **setup facts:** PHP path, check command, test database, how to run a quick script. No `conventions.md` yet (a one-off fix)? Find them once yourself and pass them on; agents that hunt for these waste dozens of calls.
+- for QA, the **depth:** *Focused* (≤ 2 files, ~50 lines, no new route/screen/table, not Sensitive) or *Full*
 
 **One developer at a time, and one QA at a time.** Agents share one working folder. Parallel runs trip over each other's files; the first pilot proved it.
 
