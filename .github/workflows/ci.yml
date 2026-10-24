@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      evals:
+        description: "Also run the paid plugin evals (needs the ANTHROPIC_API_KEY secret)"
+        type: boolean
+        default: false
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.12"]
+        include:
+          - os: ubuntu-22.04  # the oldest Python the hooks support; newer runners don't ship it
+            python: "3.8"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Run the tests
+        shell: bash
+        run: python -m unittest discover -s tests -v
+
+  validate:
+    name: Plugin and marketplace check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Validate
+        run: |
+          claude plugin validate ./plugin --strict
+          claude plugin validate .
+
+  evals:
+    name: Plugin evals (paid)
+    needs: [tests, validate]
+    if: github.event_name == 'workflow_dispatch' && inputs.evals
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Claude Code and the shell sandbox
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          sudo apt-get update && sudo apt-get install -y bubblewrap socat
+      - name: Run the evals
+        working-directory: plugin
+        run: |
+          claude plugin eval . \
+            --trust-plugin \
+            --scaffold \
+            --allow-tools Write "Bash(sh *)" \
+            --json results.json \
+            --threshold 0.8 \
+            --model claude-sonnet-5-5 \
+            --judge-model claude-haiku-5-5 \
+            --no-publish \
+            --max-cost-usd 15
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-results
+          path: |
+            plugin/results.json
+            plugin/evals/results/
