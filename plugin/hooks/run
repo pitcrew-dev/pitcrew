@@ -1,11 +1,12 @@
 #!/bin/sh
 # Launcher for the hooks: finds a working Python 3.8+ and runs one hook with it.
-#   usage: sh run <hook_name_without_.py>     (stdin is passed through)
+#   usage: sh run <hook_name_without_.py> [args...]     (stdin and args are passed through)
 # The chosen Python is cached in $CLAUDE_PLUGIN_DATA/python-path.
 # No usable Python: exit 0, so a missing Python never blocks real work (fail open).
 # The session-start hook (load_agreement) also prints a plain warning that safety checks are off.
 
 name="$1"
+shift
 dir="$(cd "$(dirname "$0")" && pwd)"
 cache=""
 if [ -n "$CLAUDE_PLUGIN_DATA" ]; then
@@ -44,4 +45,4 @@ if [ -z "$py" ]; then
   fi
 fi
 
-exec "$py" "$dir/$name.py"
+exec "$py" "$dir/$name.py" "$@"

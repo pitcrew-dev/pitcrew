@@ -8,6 +8,7 @@ is counted once, from its last line.
 Not a hook itself: imported by log_activity.py and check_budget.py.
 """
 import json
+import os
 import re
 
 # Dollars per million tokens: input, output, cache read.
@@ -91,17 +92,18 @@ def story_of(task):
     return re.sub(r"-T\d+$", "", task)
 
 
-def logged(log_path):
+def logged(log_path, since=""):
     """Costs already in activity.md: ({story: dollars}, all stories' dollars).
 
-    Lines without a task count toward the project total only.
+    Lines without a task count toward the project total only. With `since`
+    ("2026-10-01"), only lines from that date on are counted.
     """
     stories, total = {}, 0.0
     try:
         with open(log_path, encoding="utf-8") as handle:
             for line in handle:
                 cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-                if len(cells) != 7 or cells[1] == "Task":
+                if len(cells) != 7 or cells[1] == "Task" or cells[0] < since:
                     continue
                 try:
                     dollars = float(cells[4]) + float(cells[5])
@@ -114,3 +116,55 @@ def logged(log_path):
     except OSError:
         pass
     return stories, total
+
+
+# Budgets: .claude/project/budget.md, else the plugin settings, else these.
+DEFAULT_STORY = 25.0
+SETTING = re.compile(r"^\W*(story|project) budget\W*:\W*(\$?\s*[\d.]+|none)", re.I | re.M)
+AMOUNT = re.compile(r"^\$?\s*(\d+(?:\.\d+)?)$")
+
+
+def find_project(start):
+    current = os.path.abspath(start)
+    while True:
+        folder = os.path.join(current, ".claude", "project")
+        if os.path.isdir(folder):
+            return folder
+        parent = os.path.dirname(current)
+        if parent == current:
+            return None
+        current = parent
+
+
+def option(name):
+    try:
+        value = float(os.environ.get("CLAUDE_PLUGIN_OPTION_" + name, ""))
+    except ValueError:
+        return None
+    return value if value > 0 else None
+
+
+def budgets(folder):
+    """(story budget, project budget or None, {story or 'project': approved top-ups})."""
+    story, project, topups = option("STORY_BUDGET") or DEFAULT_STORY, option("PROJECT_BUDGET"), {}
+    try:
+        with open(os.path.join(folder, "budget.md"), encoding="utf-8") as handle:
+            text = handle.read()
+    except OSError:
+        return story, project, topups
+    for kind, value in SETTING.findall(text):
+        number = None if value.lower() == "none" else float(value.lstrip("$ "))
+        if kind.lower() == "story" and number:
+            story = number
+        elif kind.lower() == "project":
+            project = number
+    for line in text.splitlines():
+        cells = [cell.strip().strip("*`") for cell in line.strip().strip("|").split("|")]
+        if not line.lstrip().startswith("|") or len(cells) < 3:
+            continue
+        who = next((c for c in cells if TASK_ID.fullmatch(c) or c.lower() == "project"), None)
+        amount = next((float(AMOUNT.match(c).group(1)) for c in cells if AMOUNT.match(c)), None)
+        if who and amount:
+            key = "project" if who.lower() == "project" else story_of(who)
+            topups[key] = topups.get(key, 0.0) + amount
+    return story, project, topups

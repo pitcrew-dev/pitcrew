@@ -20,62 +20,12 @@ Silent when there is no project. Fails OPEN on any internal error.
 """
 import json
 import os
-import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import costs  # noqa: E402
 
-DEFAULT_STORY = 25.0
 WARN_AT = 0.8
-SETTING = re.compile(r"^\W*(story|project) budget\W*:\W*(\$?\s*[\d.]+|none)", re.I | re.M)
-AMOUNT = re.compile(r"^\$?\s*(\d+(?:\.\d+)?)$")
-
-
-def find_project(start):
-    current = os.path.abspath(start)
-    while True:
-        folder = os.path.join(current, ".claude", "project")
-        if os.path.isdir(folder):
-            return folder
-        parent = os.path.dirname(current)
-        if parent == current:
-            return None
-        current = parent
-
-
-def option(name):
-    try:
-        value = float(os.environ.get("CLAUDE_PLUGIN_OPTION_" + name, ""))
-    except ValueError:
-        return None
-    return value if value > 0 else None
-
-
-def budgets(folder):
-    """(story budget, project budget or None, {story or 'project': approved top-ups})."""
-    story, project, topups = option("STORY_BUDGET") or DEFAULT_STORY, option("PROJECT_BUDGET"), {}
-    try:
-        with open(os.path.join(folder, "budget.md"), encoding="utf-8") as handle:
-            text = handle.read()
-    except OSError:
-        return story, project, topups
-    for kind, value in SETTING.findall(text):
-        number = None if value.lower() == "none" else float(value.lstrip("$ "))
-        if kind.lower() == "story" and number:
-            story = number
-        elif kind.lower() == "project":
-            project = number
-    for line in text.splitlines():
-        cells = [cell.strip().strip("*`") for cell in line.strip().strip("|").split("|")]
-        if not line.lstrip().startswith("|") or len(cells) < 3:
-            continue
-        who = next((c for c in cells if costs.TASK_ID.fullmatch(c) or c.lower() == "project"), None)
-        amount = next((float(AMOUNT.match(c).group(1)) for c in cells if AMOUNT.match(c)), None)
-        if who and amount:
-            key = "project" if who.lower() == "project" else costs.story_of(who)
-            topups[key] = topups.get(key, 0.0) + amount
-    return story, project, topups
 
 
 def unlogged_pm_cost(folder, payload):
@@ -111,13 +61,13 @@ def main():
     payload = json.loads(sys.stdin.read() or "{}")
     if payload.get("tool_name") not in ("Agent", "Task", "SendMessage"):
         return 0
-    folder = find_project(payload.get("cwd") or os.getcwd())
+    folder = costs.find_project(payload.get("cwd") or os.getcwd())
     if not folder:
         return 0
 
     tool_input = payload.get("tool_input") or {}
     found = costs.TASK_ID.search(str(tool_input.get("prompt") or tool_input.get("message") or ""))
-    story_budget, project_budget, topups = budgets(folder)
+    story_budget, project_budget, topups = costs.budgets(folder)
     stories, total = costs.logged(os.path.join(folder, "activity.md"))
     pm = unlogged_pm_cost(folder, payload)
 

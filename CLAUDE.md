@@ -20,8 +20,9 @@ Always explain in **simple, short, clear words**, without being asked.
 | `plugin/company/pm-brief.md` | The main session's operating brief |
 | `plugin/company/employees/` | Full role charters, read on demand |
 | `plugin/company/standards/` | Standards; `engagement-modes.md` governs the rest |
-| `plugin/agents/`, `plugin/skills/` | 5 subagents (`company:*`); `/company:start`, `/company:next` |
-| `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), and the safety and formatting hooks (Python) |
+| `plugin/agents/`, `plugin/skills/` | 5 subagents (`company:*`); `/company:start`, `/company:next`, `/company:status`, `/company:report` |
+| `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), the safety, formatting, activity-log and budget hooks (Python), `costs.py` (shared cost and budget reading), `cost_summary.py` (run by `/company:status` and `/company:report`) and `agent_status.py` (the agent status line) |
+| `plugin/settings.json` | Turns on the agent status line |
 | `install.py` (+ `install.sh`) | Removes an old 0.2.x install (`--uninstall`); kept for one release, not part of the plugin |
 | `tests/` | Tests for the hooks, the manifests and the uninstaller |
 | `report/` | Research and reviews behind design decisions; not shipped |

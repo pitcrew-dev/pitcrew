@@ -29,7 +29,7 @@ In Claude Code:
 
 Then restart Claude Code. To try it without installing, from a clone: `claude --plugin-dir ./plugin`.
 
-The plugin adds 5 agents (`company:backend-developer`, `company:frontend-developer`, `company:full-stack-developer`, `company:code-reviewer`, `company:qa-engineer`), the `/company:start` and `/company:next` commands, and the safety hooks. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
+The plugin adds 5 agents (`company:backend-developer`, `company:frontend-developer`, `company:full-stack-developer`, `company:code-reviewer`, `company:qa-engineer`), the `/company:start`, `/company:next`, `/company:status` and `/company:report` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
 
 ### Safety rules it adds (they apply in every project)
 
@@ -50,9 +50,11 @@ From any project directory, in Claude Code:
 | You say | What happens |
 |---|---|
 | "I want to build a booking site for my salon" or "take over this codebase" | `/company:start`: a short plain-language interview, a survey of any existing code, then a plan in pieces you can see working. **It stops for your approval.** |
-| "go" / "next" | `/company:next`: builds one piece through developer → review → QA, then shows you the result and **stops**. |
+| "go" / "next" | `/company:next`: builds one piece through developer → review → QA, then shows you the result and what it cost, and **stops**. |
+| "where are we?" | `/company:status`: one screen with progress per goal, money spent and left, what's next, and anything waiting on you. |
+| "write me an update" | `/company:report`: a one-page report you can send to a client or manager, saved in `.claude/project/reports/`. |
 
-Its working files go in `<your-project>/.claude/project/`: conventions, backlog, board, decisions, risks and status. Commit them. They are the team's shared memory between sessions.
+Its working files go in `<your-project>/.claude/project/`: goals, conventions, backlog, board, decisions, risks, status, budget and the activity log. Commit them. They are the team's shared memory between sessions.
 
 ## How a piece of work flows
 

@@ -36,18 +36,6 @@ HEADER = ("# Activity log\n\n"
 RESULT = re.compile(r"\b(?:VERDICT|STATUS):\s*([A-Z_]+)")
 
 
-def find_project(start):
-    current = os.path.abspath(start)
-    while True:
-        folder = os.path.join(current, ".claude", "project")
-        if os.path.isdir(folder):
-            return folder
-        parent = os.path.dirname(current)
-        if parent == current:
-            return None
-        current = parent
-
-
 def text_of(content):
     """Plain text of a message, plus the report an agent hands back."""
     if isinstance(content, str):
@@ -107,7 +95,7 @@ def load_state(path):
 
 def main():
     payload = json.loads(sys.stdin.read() or "{}")
-    folder = find_project(payload.get("cwd") or os.getcwd())
+    folder = costs.find_project(payload.get("cwd") or os.getcwd())
     agent_path = payload.get("agent_transcript_path")
     if not folder or not agent_path or not os.path.isfile(agent_path):
         return 0

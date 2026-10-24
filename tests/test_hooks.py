@@ -555,8 +555,89 @@ class CheckBudgetTest(unittest.TestCase):
         self.assertEqual((0, "", ""), run_hook("check_budget.py", payload))
 
 
+class CostSummaryTest(unittest.TestCase):
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        self.project = os.path.join(self.root, ".claude", "project")
+        os.makedirs(self.project)
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def write(self, name, text):
+        with open(os.path.join(self.project, name), "w", encoding="utf-8") as handle:
+            handle.write(text)
+
+    def summary(self, *args):
+        env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_PLUGIN_OPTION_")}
+        proc = subprocess.run([sys.executable, os.path.join(HOOKS, "cost_summary.py")] + list(args),
+                              capture_output=True, text=True, timeout=60, cwd=self.root, env=env)
+        self.assertEqual(0, proc.returncode, proc.stderr)
+        return proc.stdout
+
+    def test_a_new_project(self):
+        out = self.summary()
+        self.assertIn("No agent runs logged yet.", out)
+        self.assertIn("Budget per story: $25.00", out)
+
+    def test_a_half_done_project_with_a_cap(self):
+        self.write("activity.md", ACTIVITY)
+        self.write("budget.md", "Story budget: $25\nProject budget: $100\n\n| 2026-10-01 | SHOP-E01-S02 | $5 | user |\n")
+        out = self.summary()
+        self.assertIn("Project: $23.00 spent of $100.00 (23%), $77.00 left", out)
+        self.assertIn("SHOP-E01-S02  $20.00 of $30.00 (66%), top-ups $5.00", out)
+        self.assertIn("Not tied to a story: $3.00", out)
+
+    def test_since_counts_only_the_period(self):
+        self.write("activity.md", ACTIVITY.replace("2026-10-01 10:00", "2026-10-20 10:00"))
+        out = self.summary("--since", "2026-10-15")
+        self.assertIn("Since 2026-10-15: $3.00 in total", out)
+
+    def test_outside_a_project(self):
+        shutil.rmtree(os.path.join(self.root, ".claude"))
+        self.assertIn("No .claude/project folder", self.summary())
+
+
+class AgentStatusTest(unittest.TestCase):
+    def test_rows_with_a_task_show_agent_task_and_budget(self):
+        root = tempfile.mkdtemp()
+        try:
+            os.makedirs(os.path.join(root, ".claude", "project"))
+            with open(os.path.join(root, ".claude", "project", "activity.md"), "w", encoding="utf-8") as handle:
+                handle.write(ACTIVITY)
+            payload = {"cwd": root, "columns": 120, "tasks": [
+                {"id": "t1", "agentType": "company:qa-engineer", "description": "SHOP-E01-S02-T01 QA",
+                 "tokenCount": 45600, "status": "running"},
+                {"id": "t2", "agentType": "Explore", "description": "Look around", "tokenCount": 10},
+            ]}
+            env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_PLUGIN_OPTION_")}
+            proc = subprocess.run([sys.executable, os.path.join(HOOKS, "agent_status.py")], input=json.dumps(payload),
+                                  capture_output=True, text=True, timeout=60, env=env, encoding="utf-8")
+            rows = [json.loads(line) for line in proc.stdout.splitlines()]
+            self.assertEqual([{"id": "t1", "content":
+                               "qa-engineer · SHOP-E01-S02-T01 · story $20.00 of $25.00 · 45k tokens"}], rows)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_silent_outside_a_project(self):
+        payload = {"cwd": tempfile.gettempdir(), "tasks": [{"id": "t1", "description": "SHOP-S01 x"}]}
+        self.assertEqual((0, "", ""), run_hook("agent_status.py", payload))
+
+
 @unittest.skipUnless(shutil.which("sh"), "sh not installed")
 class LauncherTest(unittest.TestCase):
+    def test_passes_arguments_through(self):
+        root = tempfile.mkdtemp()
+        try:
+            os.makedirs(os.path.join(root, ".claude", "project"))
+            with open(os.path.join(root, ".claude", "project", "activity.md"), "w", encoding="utf-8") as handle:
+                handle.write(ACTIVITY)
+            proc = subprocess.run(["sh", os.path.join(HOOKS, "run"), "cost_summary", "--since", "2026-01-01"],
+                                  capture_output=True, text=True, timeout=60, cwd=root)
+            self.assertIn("Since 2026-01-01: $23.00 in total", proc.stdout)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
     def run_through_launcher(self, name, payload, data):
         env = dict(os.environ, CLAUDE_PLUGIN_DATA=data)
         proc = subprocess.run(["sh", os.path.join(HOOKS, "run"), name], input=json.dumps(payload),

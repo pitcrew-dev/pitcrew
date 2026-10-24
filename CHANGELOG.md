@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0 - 2026-10-24
+
+### Added
+- **`/company:status`: where the project stands, on one screen.** Progress per goal, money spent and left (flagging anything at 80% of its budget), the story in progress, what's next, and exactly what's waiting on you. It changes nothing.
+- **`/company:report`: a one-page update you can send.** What was done, grouped by goal, what it cost, risks and open questions, and what's next, written for a client or manager who has never seen the project files. Saved in `.claude/project/reports/`, never sent anywhere.
+- **Exact numbers in both.** A small script adds up the activity log and budgets, so the AI quotes the totals instead of doing the sums itself. It can also count from a start date for a report (`--since`).
+- **An agent status line.** While agents work, each row in the agent panel shows the agent, its task, and the story's spend against its budget, e.g. `qa-engineer · SHOP-E01-S02-T01 · story $14.20 of $25.00 · 45k tokens`.
+
 ## 0.6.0 - 2026-10-24
 
 ### Added

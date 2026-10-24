@@ -49,7 +49,7 @@ Default to Standard. A cheaper lane is a recorded decision. Never downgrade Sens
 
 Subagents start with no memory and can't ask questions mid-task (they can stop with `NEEDS_CONTEXT`). Every prompt has:
 
-- task ID, title, and why it exists. **Name the task ID in every prompt and follow-up** (e.g. `SHOP-E01-S02-T01`): the activity log reads it from there
+- task ID, title, and why it exists. **Name the task ID in every prompt and follow-up** (e.g. `SHOP-E01-S02-T01`), and start the agent's short `description` with it: the activity log, the budget check and the agent status line read it from there
 - mode, profile, and the path to `conventions.md`
 - in-scope and **out-of-scope** paths
 - the acceptance criteria, in full
