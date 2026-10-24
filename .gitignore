@@ -64,3 +64,7 @@ __pycache__/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Plugin eval output (claude plugin eval)
+/plugin/evals/results/
+/plugin/results.json

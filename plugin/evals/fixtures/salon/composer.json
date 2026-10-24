@@ -1,0 +1,9 @@
+{
+    "name": "example/salon",
+    "description": "Sample project for Agent Company: a hair salon site with online booking (half built).",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0"
+    }
+}
