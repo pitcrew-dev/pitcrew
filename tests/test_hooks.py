@@ -484,6 +484,77 @@ class LogActivityTest(unittest.TestCase):
         self.assertEqual(["-", "-", "4.00", "4.00", "-"], [row[1], row[3], row[4], row[5], row[6]])
 
 
+ACTIVITY = ("| Time | Task | Agent | Result | Agent $ | PM $ | Story total $ |\n|---|---|---|---|---|---|---|\n"
+            "| 2026-10-01 09:00 | SHOP-E01-S02-T01 | company:backend-developer | DONE | 12.00 | 6.00 | 18.00 |\n"
+            "| 2026-10-01 09:30 | SHOP-E01-S02-T01 | company:code-reviewer | PASS | 1.00 | 1.00 | 20.00 |\n"
+            "| 2026-10-01 10:00 | - | general-purpose | - | 3.00 | 0.00 | - |\n")
+
+
+class CheckBudgetTest(unittest.TestCase):
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        self.project = os.path.join(self.root, ".claude", "project")
+        os.makedirs(self.project)
+        self.write("activity.md", ACTIVITY)
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def write(self, name, text):
+        with open(os.path.join(self.project, name), "w", encoding="utf-8") as handle:
+            handle.write(text)
+
+    def dispatch(self, prompt, tool="Agent", env=None, transcript=None):
+        tool_input = {"message": prompt} if tool == "SendMessage" else {"prompt": prompt, "subagent_type": "x"}
+        payload = {"tool_name": tool, "tool_input": tool_input, "cwd": self.root, "session_id": "s1"}
+        if transcript:
+            payload["transcript_path"] = transcript
+        full_env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_PLUGIN_OPTION_")}
+        full_env.update(env or {})
+        proc = subprocess.run([sys.executable, os.path.join(HOOKS, "check_budget.py")], input=json.dumps(payload),
+                              capture_output=True, text=True, timeout=60, env=full_env)
+        return proc.returncode, proc.stdout, proc.stderr
+
+    def test_silent_under_80_percent_and_outside_a_project(self):
+        self.assertEqual((0, "", ""), self.dispatch("Build SHOP-E01-S03-T01."))
+        shutil.rmtree(os.path.join(self.root, ".claude"))
+        self.assertEqual((0, "", ""), self.dispatch("Build SHOP-E01-S02-T02."))
+
+    def test_warns_at_80_percent(self):
+        code, out, _ = self.dispatch("QA for SHOP-E01-S02-T01.")  # $20 of the default $25
+        self.assertEqual(0, code)
+        context = json.loads(out)["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("$20.00 of its $25.00", context)
+
+    def test_blocks_at_100_percent_until_a_top_up(self):
+        self.write("budget.md", "# Budget\n\nStory budget: $20\nProject budget: none\n")
+        code, _, err = self.dispatch("Round 2 for SHOP-E01-S02-T02.", tool="SendMessage")
+        self.assertEqual(2, code)
+        self.assertIn("Budget reached for story SHOP-E01-S02", err)
+        self.write("budget.md", "Story budget: $20\n\n## Top-ups\n\n| Date | Story | Amount | Approved by |\n"
+                                "|---|---|---|---|\n| 2026-10-01 | SHOP-E01-S02 | $10 | user |\n")
+        code, out, _ = self.dispatch("Round 2 for SHOP-E01-S02-T02.", tool="SendMessage")
+        self.assertEqual(0, code)
+        self.assertEqual("", out)  # $20 of $30 is under 80%
+
+    def test_plugin_setting_is_the_default(self):
+        code, _, _ = self.dispatch("QA for SHOP-E01-S02-T01.", env={"CLAUDE_PLUGIN_OPTION_STORY_BUDGET": "15"})
+        self.assertEqual(2, code)
+
+    def test_project_cap_counts_every_line_and_the_pm_since_the_last_one(self):
+        self.write("budget.md", "Story budget: $100\nProject budget: $26\n")
+        transcript = os.path.join(self.root, "session.jsonl")
+        write_lines(transcript, [assistant_line("p1", "2026-10-01T11:00:00Z", MILLION_IN)])  # PM: $4
+        code, _, err = self.dispatch("Ask a quick question.", transcript=transcript)
+        self.assertEqual(2, code)  # $23 logged + $4 PM = $27
+        self.assertIn("the project", err)
+
+    def test_other_tools_are_ignored(self):
+        self.write("budget.md", "Story budget: $1\n")
+        payload = {"tool_name": "Bash", "tool_input": {"command": "ls SHOP-E01-S02-T01"}, "cwd": self.root}
+        self.assertEqual((0, "", ""), run_hook("check_budget.py", payload))
+
+
 @unittest.skipUnless(shutil.which("sh"), "sh not installed")
 class LauncherTest(unittest.TestCase):
     def run_through_launcher(self, name, payload, data):
@@ -578,7 +649,7 @@ class HooksJsonTest(unittest.TestCase):
 
     def test_the_old_permission_events_are_all_wired(self):
         pre = {group["matcher"] for group in self.load()["PreToolUse"]}
-        self.assertEqual({"Write|Edit|NotebookEdit", "Read|Grep|Glob", "Bash|PowerShell"}, pre)
+        self.assertEqual({"Write|Edit|NotebookEdit", "Read|Grep|Glob", "Bash|PowerShell", "Agent|Task|SendMessage"}, pre)
 
 
 class ManifestTest(unittest.TestCase):

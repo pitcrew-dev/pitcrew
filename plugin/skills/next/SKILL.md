@@ -92,7 +92,7 @@ In **plain language**, no jargon:
 - **Which goal it moved forward**, and how far along each goal is now (e.g. "Online booking: 2 of 3 pieces done")
 - **How to look at it themselves:** the exact URL or command
 - **What the checks found**, and anything flagged
-- **What it cost:** the story total from the last line for this story in `activity.md`, e.g. "about $14 (API-equivalent)". Say what was expensive if one run stands out
+- **What it cost:** the story total from the last line for this story in `activity.md`, against its budget, e.g. "about $14 of $25 (API-equivalent)". Say what was expensive if one run stands out. If a project budget is set, add how much of it is left
 - **Anything you assumed or left out**
 - **What's next**, and roughly how much is left
 
@@ -100,4 +100,4 @@ Then **stop and wait.** End with something like: *"Say go when you'd like the ne
 
 ## Stop and ask rather than grind
 
-Three failed cycles on a task · a task past twice its estimate · the same error twice · ~10 dispatches in one story · an agent that hit its `maxTurns` · any loop producing no new information.
+Three failed cycles on a task · a task past twice its estimate · the same error twice · ~10 dispatches in one story · an agent that hit its `maxTurns` · any loop producing no new information · a budget reached (the hook blocks the next agent; ask for a top-up or a stop, per the brief).

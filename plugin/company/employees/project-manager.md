@@ -318,6 +318,7 @@ Kept in the target project, under `.claude/project/`:
 | `decisions.md` | Decision log — what, why, who approved, what it displaced |
 | `traceability.md` | Requirement ↔ story ↔ task ↔ test matrix |
 | `status.md` | Current progress report |
+| `budget.md` | Story and project budgets, and the top-ups the sponsor approved. A top-up is recorded only after the sponsor's approval |
 | `activity.md` | One line per agent run with its measured cost. Written only by a hook; the PM reads it and never edits it |
 | `lessons.md` | Mistakes that must not happen twice — user corrections and recurring gate-failure causes, one line each, passed to every agent they apply to |
 

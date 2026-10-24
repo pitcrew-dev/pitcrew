@@ -28,6 +28,12 @@
         ]
       },
       {
+        "matcher": "Agent|Task|SendMessage",
+        "hooks": [
+          { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run\" check_budget", "timeout": 30 }
+        ]
+      },
+      {
         "matcher": "Bash|PowerShell",
         "hooks": [
           { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run\" guard_bash", "timeout": 10 }

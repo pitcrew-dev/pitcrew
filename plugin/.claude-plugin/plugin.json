@@ -1,9 +1,25 @@
 {
   "name": "company",
   "displayName": "Agent Company",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Runs a PHP project like a small software company: a project manager plus developer, code-review and QA agents, with safety hooks.",
   "author": { "name": "Muhammad Kashif" },
   "license": "MIT",
-  "keywords": ["php", "laravel", "wordpress", "agents", "workflow"]
+  "keywords": ["php", "laravel", "wordpress", "agents", "workflow"],
+  "userConfig": {
+    "story_budget": {
+      "type": "number",
+      "title": "Budget per story (US dollars)",
+      "description": "API-equivalent dollars one story may cost before the PM stops and asks you. You get a warning at 80%. A project can set its own in .claude/project/budget.md.",
+      "default": 25,
+      "min": 1
+    },
+    "project_budget": {
+      "type": "number",
+      "title": "Budget per project (US dollars, 0 = no cap)",
+      "description": "API-equivalent dollars a whole project may cost before the PM stops and asks you. 0 means no cap; the PM suggests one when a project starts.",
+      "default": 0,
+      "min": 0
+    }
+  }
 }

@@ -1,13 +1,14 @@
-"""Cost reader shared by the activity log (and, later, budgets).
+"""Cost reader shared by the activity log and the budget check.
 
 Reads a Claude Code transcript (.jsonl) and prices every model call in
 API-equivalent dollars. One message can appear on several lines while it
 streams; only its last line has the final token counts, so each message id
 is counted once, from its last line.
 
-Not a hook itself: imported by log_activity.py.
+Not a hook itself: imported by log_activity.py and check_budget.py.
 """
 import json
+import re
 
 # Dollars per million tokens: input, output, cache read.
 # Cache writes cost 1.25x input (5-minute cache) or 2x input (1-hour cache).
@@ -27,6 +28,9 @@ PRICES = {
     "claude-haiku-5-5": (0.10, 0.50, 0.01),
     "claude-haiku-4-5": (1.00, 5.00, 0.10),
 }
+# Task IDs as the PM writes them: PVN-E01-S02-T01, SHOP-S03, PVN-D03.
+TASK_ID = re.compile(r"\b[A-Z][A-Z0-9]*(?:-E\d+)?-(?:S\d+(?:-T\d+)?|D\d+)\b")
+
 # A model not in the table is priced as the default model.
 FALLBACK = PRICES["claude-opus-5-5"]
 
@@ -80,3 +84,33 @@ def transcript_cost(path, since="", main=False):
             dollars += message_cost(message.get("model"), message["usage"])
             newest = max(newest, stamp)
     return dollars, newest
+
+
+def story_of(task):
+    """PVN-E01-S02-T01 -> PVN-E01-S02. Defects (PVN-D03) are their own story."""
+    return re.sub(r"-T\d+$", "", task)
+
+
+def logged(log_path):
+    """Costs already in activity.md: ({story: dollars}, all stories' dollars).
+
+    Lines without a task count toward the project total only.
+    """
+    stories, total = {}, 0.0
+    try:
+        with open(log_path, encoding="utf-8") as handle:
+            for line in handle:
+                cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+                if len(cells) != 7 or cells[1] == "Task":
+                    continue
+                try:
+                    dollars = float(cells[4]) + float(cells[5])
+                except ValueError:
+                    continue
+                total += dollars
+                if cells[1] != "-":
+                    story = story_of(cells[1])
+                    stories[story] = stories.get(story, 0.0) + dollars
+    except OSError:
+        pass
+    return stories, total

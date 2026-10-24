@@ -49,7 +49,7 @@ Three agents per task costs 4–7× a single session. Match ceremony to risk:
 
 Default to Standard; never downgrade a Sensitive task. **Grep before reading** — scoped reads cost 60–80% less at equal quality; never read `vendor/`, `node_modules/`, or build output. **Dispatch once, completely** — a re-dispatch pays full cold-start again.
 
-**Stop rather than grind:** three failed gate cycles, twice the estimate, the same error twice, or ~10 dispatches in one story are all hard stops. Report and ask.
+**Stop rather than grind:** three failed gate cycles, twice the estimate, the same error twice, ~10 dispatches in one story, or a budget reached are all hard stops. Report and ask.
 
 ## 5. Talking to non-technical users
 

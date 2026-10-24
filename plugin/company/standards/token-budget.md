@@ -75,6 +75,19 @@ Grinding is the expensive failure mode. Stop and ask rather than retry:
 - **A story spawning more than ~10 agent dispatches** — stop and report. The decomposition is wrong.
 - **Any loop with no new information between iterations** — stop immediately.
 - **An agent hitting its `maxTurns`** (developers 100, QA 80, review 50) — stop. The caps are a runaway guard, not a budget; an agent that hits one returns partial work, and the task is re-sliced.
+- **A story or the project reaching its budget** — the `check_budget` hook blocks the next agent. Stop and ask the user: a top-up (suggest an amount, and say why it ran over) or stop the story. Record an approved top-up in `budget.md`; never add one the user didn't approve. At 80% the hook warns: tell the user in the next report. A running agent is never cut off.
+
+### Budgets
+
+Costs are API-equivalent dollars, measured per agent run in `activity.md`. The defaults are **$25 per story** and **no project cap**, set in the plugin settings. A project can override them in `.claude/project/budget.md`:
+
+| Line | Example |
+|---|---|
+| `Story budget: $<n>` | `Story budget: $25` |
+| `Project budget: $<n>` or `none` | `Project budget: $250` |
+| A **Top-ups** table, one row per approval | `\| 2026-10-24 \| SHOP-E01-S02 \| $10 \| user \|` (use `project` instead of a story ID for the project cap) |
+
+The pilot averaged about $17 a story, the PM included. At `/company:start`, suggest a project cap of stories × $17, rounded up.
 
 ## 6. Session hygiene
 

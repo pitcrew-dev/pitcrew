@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0 - 2026-10-24
+
+### Added
+- **Budgets: a story can't quietly run up a big bill.** Before every agent starts or gets a follow-up, a new hook checks what the story has cost so far against its budget.
+  - **At 80%** the agent still runs, and the PM tells you in its next report.
+  - **At 100%** the next agent is blocked. The PM stops and asks you: top it up (it suggests an amount and says why it ran over), or stop the story. A running agent is never cut off mid-task.
+  - **Defaults: $25 per story, no project cap.** Change them in the plugin settings (`/config`), or per project in `.claude/project/budget.md`, which also lists every top-up you approved.
+  - **`/company:start` suggests a project cap** of about $17 a story (the pilot average), and the plan shows the budget.
+  - Costs are API-equivalent dollars, the same numbers as the activity log.
+
 ## 0.5.0 - 2026-10-24
 
 ### Added

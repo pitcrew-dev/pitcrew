@@ -130,6 +130,8 @@ Create under `.claude/project/`:
 
 `activity.md` is created by a hook on the first agent run, one line per run with its cost. Never write it yourself.
 
+Also write `budget.md` (format in `${CLAUDE_PLUGIN_ROOT}/company/standards/token-budget.md` §5): the story budget ($25 unless the user wants another), and a suggested project budget of stories × $17, rounded up, or `none` if they'd rather not cap it.
+
 Every task record carries mode, profile, the path to `conventions.md`, scope in and out, dependencies, criteria, verification and lane. **Check in-scope paths against the real tree.** Verification steps must work within the blocked list (brief).
 
 **Greenfield, Profile A:** the first task scaffolds the toolchain in `stack-profiles.md` (Pint, Pest with architecture tests, Larastan, `composer audit`), plus the frontend stack chosen in Step 3c, and records the check command. Add `QaProbe*` to `.gitignore` so a missed QA probe file can never be committed. **In brownfield, ask before adding either.**
@@ -151,6 +153,7 @@ Show them, in plain language:
 - The pieces you'll build, **in order, under the goal each one serves**, and what each gives them
 - What you assumed where they didn't know
 - What you've deliberately left out for now
+- **The budget:** about $17 a story is typical (API-equivalent, the AI's work only). Each story stops to ask you at $25; suggest a cap for the whole project and let them change either
 - Anything you need from them (logo, content, domain, accounts, API keys, which they put in `.env` themselves)
 
 Then **stop and wait for approval.** Tell them: *"Once you're happy with this, say go and I'll build the first piece, then show it to you before continuing."*

@@ -33,7 +33,6 @@ HEADER = ("# Activity log\n\n"
           "Costs are API-equivalent dollars: what the same work would cost at Anthropic's API prices.\n\n"
           "| Time | Task | Agent | Result | Agent $ | PM $ | Story total $ |\n"
           "|---|---|---|---|---|---|---|\n")
-TASK_ID = re.compile(r"\b[A-Z][A-Z0-9]*(?:-E\d+)?-(?:S\d+(?:-T\d+)?|D\d+)\b")
 RESULT = re.compile(r"\b(?:VERDICT|STATUS):\s*([A-Z_]+)")
 
 
@@ -80,7 +79,7 @@ def read_agent(path):
                 continue
             text = text_of((entry.get("message") or {}).get("content"))
             if entry.get("type") == "user":
-                found = TASK_ID.search(text)
+                found = costs.TASK_ID.search(text)
                 task = found.group(0) if found else task
             elif entry.get("type") == "assistant":
                 found = RESULT.findall(text)
@@ -96,27 +95,6 @@ def agent_type(payload, path):
             return json.load(handle).get("agentType") or "agent"
     except (OSError, ValueError):
         return "agent"
-
-
-def story_of(task):
-    return re.sub(r"-T\d+$", "", task)
-
-
-def story_total(log_path, story):
-    """Sum of agent and PM costs already logged for this story."""
-    total = 0.0
-    try:
-        with open(log_path, encoding="utf-8") as handle:
-            for line in handle:
-                cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-                if len(cells) == 7 and cells[1] != "Task" and story_of(cells[1]) == story:
-                    try:
-                        total += float(cells[4]) + float(cells[5])
-                    except ValueError:
-                        pass
-    except OSError:
-        pass
-    return total
 
 
 def load_state(path):
@@ -148,7 +126,7 @@ def main():
 
     task, result = read_agent(agent_path)
     log_path = os.path.join(folder, LOG)
-    total = (story_total(log_path, story_of(task)) if task != "-" else 0.0) + agent_cost + pm_cost
+    total = costs.logged(log_path)[0].get(costs.story_of(task), 0.0) + agent_cost + pm_cost
 
     when = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     row = "| %s | %s | %s | %s | %.2f | %.2f | %s |\n" % (

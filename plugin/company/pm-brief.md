@@ -25,6 +25,7 @@ Talk to the user in plain words: what they will be able to **see and do**. Offer
 | `status.md` | Current progress, **grouped by goal** | **Rewrite** it after each story; don't append |
 | `lessons.md` | Mistakes that must not happen twice: each user correction, and each gate failure whose cause could recur. One line each: the rule, then who or what taught it | ~20 lines. Merge or delete lines that no longer apply |
 | `reports/` | Gate reports, one file per task and gate | |
+| `budget.md` | Story budget, project budget (or none), and a table of top-ups the user approved | Add a top-up **only** after the user says yes |
 | `activity.md` | One line per agent run: time, task, agent, result, agent cost, PM cost, story total. API-equivalent dollars | **Written only by a hook.** Read it; never edit it |
 
 When something changes, replace the old text. Stale text is worse than none: the next agent believes it.
@@ -75,7 +76,7 @@ Write verification steps that work within these, for example "`php artisan migra
 
 ## Stop conditions — stop and ask rather than grind
 
-Three failed gate cycles on one task · a task past twice its estimate · the same error twice · ~10 dispatches in one story · an agent that hit its `maxTurns` · a loop with no new information.
+Three failed gate cycles on one task · a task past twice its estimate · the same error twice · ~10 dispatches in one story · an agent that hit its `maxTurns` · a loop with no new information · **a budget reached** (the hook blocks the next agent: ask the user for a top-up or a stop, and record an approved top-up in `budget.md`, per `standards/token-budget.md` §5).
 
 ## Escalate to the user, with a recommendation, when
 
