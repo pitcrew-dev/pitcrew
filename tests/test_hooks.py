@@ -282,11 +282,27 @@ class FormatPhpTest(unittest.TestCase):
 
 
 class LoadAgreementTest(unittest.TestCase):
-    def run_load(self, plugin_root):
-        env = dict(os.environ, CLAUDE_PLUGIN_ROOT=plugin_root)
-        proc = subprocess.run([sys.executable, os.path.join(HOOKS, "load_agreement.py")], input="{}",
-                              capture_output=True, text=True, timeout=60, env=env)
+    def setUp(self):
+        self.config = tempfile.mkdtemp()  # a clean Claude config folder, so this machine's own install can't leak in
+
+    def tearDown(self):
+        shutil.rmtree(self.config, ignore_errors=True)
+
+    def run_load(self, plugin_root, source="startup"):
+        env = dict(os.environ, CLAUDE_PLUGIN_ROOT=plugin_root, CLAUDE_CONFIG_DIR=self.config)
+        proc = subprocess.run([sys.executable, os.path.join(HOOKS, "load_agreement.py")],
+                              input=json.dumps({"source": source}), capture_output=True, text=True, timeout=60, env=env)
         return proc.returncode, proc.stdout, proc.stderr
+
+    def test_tells_the_user_once_about_an_old_install(self):
+        real_root = os.path.dirname(HOOKS)
+        self.assertNotIn("systemMessage", json.loads(self.run_load(real_root)[1]))
+        with open(os.path.join(self.config, ".agent-company.json"), "w", encoding="utf-8") as handle:
+            handle.write("{}")
+        data = json.loads(self.run_load(real_root)[1])
+        self.assertIn("older copy (0.2.x)", data["systemMessage"])
+        self.assertIn("install.py --uninstall", data["hookSpecificOutput"]["additionalContext"])
+        self.assertNotIn("systemMessage", json.loads(self.run_load(real_root, source="compact")[1]))
 
     def test_injects_the_agreement_and_the_company_folder(self):
         root = tempfile.mkdtemp()
