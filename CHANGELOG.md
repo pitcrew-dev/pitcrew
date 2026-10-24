@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.9.0 - 2026-10-24
+
+The release candidate for 1.0.
+
+### Added
+- **Evals:** five scripted checks of the main flows, run with `claude plugin eval` (`plugin/evals/`). They cover starting a new project, a story stopped by its budget, status, the report, and the notice about an old install.
+- **An example project:** `plugin/evals/fixtures/salon/`, a half-built salon booking site with its project files filled in. The evals use it, and you can open it yourself to try `/company:status` and `/company:report`.
+- **CI:** the tests run on Windows, macOS and Linux (and on Python 3.8), and the plugin check runs on every push. The paid evals run when started by hand.
+- **MIT licence.**
+
+### Fixed
+- **Status and report still give costs when the cost script can't run** (for example if you said no to the shell prompt). They quote each story's running total from the activity log and say the project total couldn't be worked out, instead of leaving costs out.
+
+### Changed
+- The install instructions name the repository: `/plugin marketplace add kasshif01/vide_coding`.
+
 ## 0.8.0 - 2026-10-24
 
 ### Added
