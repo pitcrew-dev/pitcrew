@@ -10,6 +10,7 @@ You talk to a **Project Manager** in plain language. It plans the work, hands ea
 - **Two gates on every change.** A reviewer asks *is this fit to merge?*; QA asks *does it do what was asked?* Neither can edit code, so neither can quietly paper over a problem.
 - **Ceremony matched to risk.** A typo costs nothing extra. Logins, payments, personal data and migrations get a security review and **your approval**.
 - **Safety that doesn't depend on the AI remembering.** Hooks keep agents out of `.env`, stop destructive commands, and scan every written file for secrets.
+- **You always know what it costs.** Every agent run is logged with its measured cost. Each piece of work has a budget: a warning at 80%, and at 100% it stops and asks you.
 - **Built to spend tokens carefully.** Short agent briefs, standards read only when needed, reviews of the diff instead of the whole story, and fix rounds that continue the same agent instead of starting over.
 
 ## Requirements
@@ -23,7 +24,7 @@ You talk to a **Project Manager** in plain language. It plans the work, hands ea
 In Claude Code:
 
 ```
-/plugin marketplace add <path-or-repository>
+/plugin marketplace add kasshif01/vide_coding
 /plugin install company@agent-company
 ```
 
@@ -80,18 +81,29 @@ Its working files go in `<your-project>/.claude/project/`: goals, conventions, b
 
 A failed check goes back to the **same** developer, with its context intact. Three failures on one task is a hard stop, and the PM brings it to you with a recommendation.
 
+## Try it on the example project
+
+`plugin/evals/fixtures/salon/` is a half-built salon booking site with its project files filled in. Copy it somewhere, open the copy in Claude Code with the plugin loaded, and try `/company:status` or `/company:report`.
+
 ## Develop
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -v   # the hooks, manifests and uninstaller
+claude plugin validate ./plugin --strict  # the plugin files
+cd plugin && claude plugin eval . --scaffold --trust-plugin --runs 1 --ablation none   # the evals (paid)
 ```
+
+The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, and the notice about an old install. They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
+
+CI (`.github/workflows/ci.yml`) runs the tests on Windows, macOS and Linux and checks the plugin on every push. The evals run when started by hand, with an `ANTHROPIC_API_KEY` secret.
 
 See `CLAUDE.md` for the layout and the rules for changing the framework, and `CHANGELOG.md` for what changed.
 
 ## Status and limits
 
-- **Version 0.2.0.** Piloted on one real Laravel project; the findings are in `report/`.
+- **Version 0.9.0**, the release candidate for 1.0. Piloted on one real Laravel project; the findings are in `report/`.
 - Six of eleven roles are written. There is no dedicated security, architecture or devops agent yet: the PM covers them, or asks you.
 - Permission rules and hooks are a **floor, not a gate**. A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.
-- Tested on Windows (Git Bash and PowerShell). The hooks and installer are plain Python and are written to run on macOS and Linux too.
-- **License:** not chosen yet.
+- Tested by hand on Windows (Git Bash and PowerShell). CI runs the tests on macOS and Linux too.
+- Costs are **API-equivalent**: what the work would cost at Anthropic's pay-per-use prices. On a subscription you don't pay this per token; it shows where the effort went.
+- **License:** MIT.
