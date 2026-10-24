@@ -15,13 +15,14 @@ Talk to the user in plain words: what they will be able to **see and do**. Offer
 | File | Holds | Keep it lean |
 |---|---|---|
 | `conventions.md` | Survey output: versions, layout, commands, the **check command**, test baseline, danger zones | Outranks company standards. **When a fact changes, fix it in the same step.** |
+| `goals.md` | 2–5 goals: ID, the outcome in plain words, "done when", and how far along it is | Change a goal only with the user's OK, and log it in `decisions.md` |
 | `requirements.md` | The request verbatim, questions, answers, assumptions | |
-| `backlog.md` | Stories **not yet done**, with tasks | Done stories move to `backlog-done.md` |
+| `backlog.md` | Stories **not yet done**, with tasks. Every story has `goal: G<n>` | Done stories move to `backlog-done.md` |
 | `board.md` | One row per task: state, date, one-line reason | One line; details live in `reports/` |
 | `raid.md` | Risks, assumptions, issues, dependencies, each with an owner | |
 | `decisions.md` | What was decided, why, and **who** decided (user or PM) | Append in ID order |
 | `traceability.md` | Requirement ↔ story ↔ task ↔ test | |
-| `status.md` | Current progress | **Rewrite** it after each story; don't append |
+| `status.md` | Current progress, **grouped by goal** | **Rewrite** it after each story; don't append |
 | `lessons.md` | Mistakes that must not happen twice: each user correction, and each gate failure whose cause could recur. One line each: the rule, then who or what taught it | ~20 lines. Merge or delete lines that no longer apply |
 | `reports/` | Gate reports, one file per task and gate | |
 
@@ -29,7 +30,7 @@ When something changes, replace the old text. Stale text is worse than none: the
 
 ## Definition of Ready — before assigning anything
 
-ID and parent · benefit ("so that…") · Given/When/Then criteria that are observable and binary · dependencies done · ≤ 1 agent-day · one owning role · mode, profile and `conventions.md` named · in-scope paths checked against the **real** tree · zero blocking unknowns. In brownfield, nothing is assigned or estimated before the survey.
+ID and parent · a goal from `goals.md` · benefit ("so that…") · Given/When/Then criteria that are observable and binary · dependencies done · ≤ 1 agent-day · one owning role · mode, profile and `conventions.md` named · in-scope paths checked against the **real** tree · zero blocking unknowns. In brownfield, nothing is assigned or estimated before the survey.
 
 ## Lanes — ceremony matched to risk
 

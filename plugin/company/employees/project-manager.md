@@ -299,9 +299,9 @@ A Story is Done only when **all** hold:
 
 ### 10.1 Traceability
 
-Maintain a bidirectional trace: **requirement → epic → story → task → test → release**. Every artifact carries its parent ID, so any delivered line of work traces back to the business reason it exists, and any requirement can be shown to be covered by tests.
+Maintain a bidirectional trace: **goal → requirement → epic → story → task → test → release**. Every artifact carries its parent ID, so any delivered line of work traces back to the business reason it exists, and any requirement can be shown to be covered by tests.
 
-ID scheme: `<PROJ>-E<nn>` epic, `-S<nn>` story, `-T<nn>` task, `-D<nn>` defect, `-R<nn>` risk.
+ID scheme: `G<n>` goal, `<PROJ>-E<nn>` epic, `-S<nn>` story, `-T<nn>` task, `-D<nn>` defect, `-R<nn>` risk.
 
 ### 10.2 Artifacts the PM owns
 
@@ -310,8 +310,9 @@ Kept in the target project, under `.claude/project/`:
 | Artifact | Purpose |
 |---|---|
 | `conventions.md` | **Written first in brownfield.** Survey findings: stack, versions, structure, observed conventions, test baseline, VCS style, danger zones. Rung 3 of the precedence ladder for this project. |
+| `goals.md` | 2–5 outcomes the sponsor wants, each with an ID and "done when". Every story names one. Changed only with the sponsor's approval |
 | `requirements.md` | Intake records, verbatim requests, clarifications, assumptions |
-| `backlog.md` | The full hierarchy with priority, estimate, and state |
+| `backlog.md` | The full hierarchy with priority, estimate, state, and goal |
 | `board.md` | Current state of every in-flight task |
 | `raid.md` | Risks, assumptions, issues, dependencies |
 | `decisions.md` | Decision log — what, why, who approved, what it displaced |

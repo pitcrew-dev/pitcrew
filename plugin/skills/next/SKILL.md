@@ -11,7 +11,9 @@ Build **one story**, then stop. The user reviews after every story.
 
 ## Step 1 — Pick the story
 
-1. Read `.claude/project/backlog.md` (live stories only) and `board.md`. Take the highest-priority story whose dependencies are all Done.
+1. Read `.claude/project/goals.md`, `backlog.md` (live stories only) and `board.md`. Take the highest-priority story whose dependencies are all Done.
+   - **No `goals.md`** (a project started before goals existed): propose 2–5 goals built from the backlog, using the format in `/company:start` Step 4, and show which story serves which goal. **Stop for the user's OK**, then write `goals.md`, add `goal:` to every story, and carry on.
+   - **The story has no goal:** ask the user which goal it serves, or whether it should be dropped. Don't build it until they answer.
 2. **Check Definition of Ready** (brief). If it fails, fix the specification, or ask the user the one question that unblocks it.
 3. **Check the facts are current.** If `conventions.md` disagrees with the repository (versions, layout, commands), fix it first. Agents trust it blindly.
 4. Plan verification steps that work within the blocked list (brief). Never plan `migrate:fresh` and the like.
@@ -78,7 +80,8 @@ Should-fix and nit items don't block. Log them in `backlog.md` as `tech-debt`, a
 3. Update `board.md` (state, date, **one-line** reason pointing at the report), `traceability.md`, and `raid.md` if anything new surfaced.
 4. **When the story is done:**
    - move it from `backlog.md` to `backlog-done.md`
-   - **rewrite** `status.md`
+   - update its goal's progress in `goals.md`. When the last story of a goal is done, ask the user to run the "done when" check before marking it met
+   - **rewrite** `status.md`, grouped by goal: each goal, its stories done out of total, and what's next for it
    - if any fact changed (versions, layout, commands, the check command), update `conventions.md`, and the project `CLAUDE.md` if it repeats the fact, **now**
 
 ## Step 6 — Report and STOP
@@ -86,6 +89,7 @@ Should-fix and nit items don't block. Log them in `backlog.md` as `tech-debt`, a
 In **plain language**, no jargon:
 
 - **What now works**, as something they can see or do
+- **Which goal it moved forward**, and how far along each goal is now (e.g. "Online booking: 2 of 3 pieces done")
 - **How to look at it themselves:** the exact URL or command
 - **What the checks found**, and anything flagged
 - **Anything you assumed or left out**

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 - 2026-10-24
+
+### Added
+- **Every project now has goals.** `/company:start` writes `.claude/project/goals.md`: 2–5 outcomes in plain words, each with a "done when" check the user can do themselves. The user confirms the goals before anything else in the plan.
+  - **Every story names its goal** (`goal: G1`). A story that serves no goal is questioned instead of built.
+  - **Progress is shown per goal**, in `status.md` and in the report at the end of each `/company:next` (e.g. "Online booking: 2 of 3 pieces done"). When a goal's last story is done, the user runs its check before it counts as met.
+  - **Older projects are offered goals** on their first `/company:next`: the PM proposes them from the existing backlog and waits for an OK.
+
 ## 0.3.0 - 2026-10-24
 
 ### Changed

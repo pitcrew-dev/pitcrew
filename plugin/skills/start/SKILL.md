@@ -102,6 +102,14 @@ Ask with the `AskUserQuestion` tool, in one call, **recommended option first**, 
 
 ## Step 4 — Decompose and write the files
 
+**Goals first.** From their answers on business outcome and verification, write **2–5 goals**: what will be different for them once the work is done. Each goal has:
+
+- an ID: `G1`, `G2`, …
+- the outcome in their words, e.g. "Customers can book a table online without calling"
+- **done when:** one check they could do themselves, e.g. "I book a table on my phone and it shows in the admin list"
+
+More than five means the project is too big for one plan: say so and suggest what to leave for later. Then **every story names one goal** (`goal: G1`). A story that serves no goal is out of scope: drop it, or ask whether a goal is missing.
+
 Slice **vertically**: each story is something they could see working, never "set up the database". Put the riskiest unknown first, as a short spike, before code depends on it.
 
 Create under `.claude/project/`:
@@ -109,14 +117,15 @@ Create under `.claude/project/`:
 | File | Contents |
 |---|---|
 | `conventions.md` | Survey output (brownfield), or the standards adopted and any deliberate deviations (greenfield) |
+| `goals.md` | The goals: ID, outcome, done when, and progress (`0 of N stories`) |
 | `requirements.md` | Their verbatim request, your questions, their answers, stated assumptions |
-| `backlog.md` | Live stories → tasks. Each with benefit, Given/When/Then criteria, size, role, lane, in-scope paths, dependencies |
+| `backlog.md` | Live stories → tasks. Each with its goal, benefit, Given/When/Then criteria, size, role, lane, in-scope paths, dependencies |
 | `backlog-done.md` | Empty for now; finished stories move here |
 | `board.md` | Every task with its state. All start `Ready` or `Blocked` |
 | `raid.md` | Risks, assumptions, issues, dependencies, each with an owner |
 | `decisions.md` | Mode, profile, stack, and why; who decided each |
-| `traceability.md` | Requirement ↔ story ↔ task ↔ test |
-| `status.md` | Current progress |
+| `traceability.md` | Goal ↔ requirement ↔ story ↔ task ↔ test |
+| `status.md` | Current progress, grouped by goal |
 | `lessons.md` | Empty for now; mistakes that must not happen twice go here |
 
 Every task record carries mode, profile, the path to `conventions.md`, scope in and out, dependencies, criteria, verification and lane. **Check in-scope paths against the real tree.** Verification steps must work within the blocked list (brief).
@@ -136,7 +145,8 @@ Every task record carries mode, profile, the path to `conventions.md`, scope in 
 Show them, in plain language:
 
 - What you understood they want, in a few sentences
-- The pieces you'll build, **in order**, and what each gives them
+- **The goals**, each with how they'll know it's done. Ask them to confirm these first: everything else hangs off them
+- The pieces you'll build, **in order, under the goal each one serves**, and what each gives them
 - What you assumed where they didn't know
 - What you've deliberately left out for now
 - Anything you need from them (logo, content, domain, accounts, API keys, which they put in `.env` themselves)
