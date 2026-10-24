@@ -201,6 +201,7 @@ class GuardPathsTest(unittest.TestCase):
             "C:/p/.env", "C:\\p\\.env.production", "/srv/site/wp-config.php", "storage/oauth-private.key",
             "vendor/laravel/framework/x.php", "composer.lock", "package-lock.json", "public/js/app.min.js",
             "wp-includes/load.php", ".git/config", "C:\\Users\\me\\.ssh\\id_rsa", "public/build/app.css",
+            "C:\\p\\.claude\\project\\activity.md", "/srv/app/.claude/project/.activity-state.json",
         ]:
             with self.subTest(path=path):
                 self.assertEqual("deny", self.verdict(path))
@@ -208,7 +209,7 @@ class GuardPathsTest(unittest.TestCase):
     def test_allows_normal_files(self):
         for path in [
             ".env.example", "C:\\p\\app\\Models\\User.php", "resources/js/app.js", "config/services.php",
-            "wp-content/themes/child/functions.php", "keyboard.php",
+            "wp-content/themes/child/functions.php", "keyboard.php", ".claude/project/status.md",
         ]:
             with self.subTest(path=path):
                 self.assertEqual("allow", self.verdict(path))
@@ -352,6 +353,135 @@ class ReloadProjectTest(unittest.TestCase):
         self.assertEqual(0, code)
         self.assertLess(len(out), 5000)
         self.assertIn("cut here", out)
+
+
+def assistant_line(mid, stamp, usage, model="claude-opus-5-5", content=None, **extra):
+    entry = {"type": "assistant", "timestamp": stamp,
+             "message": {"id": mid, "model": model, "usage": usage, "content": content or []}}
+    entry.update(extra)
+    return json.dumps(entry)
+
+
+def user_line(text):
+    return json.dumps({"type": "user", "message": {"role": "user", "content": text}})
+
+
+def write_lines(path, lines, mode="w"):
+    with open(path, mode, encoding="utf-8") as handle:
+        handle.write("\n".join(lines) + "\n")
+
+
+MILLION_IN = {"input_tokens": 1000000, "output_tokens": 0}
+
+
+class CostsTest(unittest.TestCase):
+    def setUp(self):
+        sys.path.insert(0, HOOKS)
+        import costs
+        self.costs = costs
+        self.root = tempfile.mkdtemp()
+
+    def tearDown(self):
+        sys.path.remove(HOOKS)
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def test_prices_by_model(self):
+        self.assertEqual((4.00, 20.00, 0.20), self.costs.price("claude-opus-5-5[1m]"))
+        self.assertEqual((2.00, 10.00, 0.20), self.costs.price("claude-sonnet-5"))
+        self.assertEqual((2.00, 10.00, 0.20), self.costs.price("claude-sonnet-5-5"))
+        self.assertEqual(self.costs.FALLBACK, self.costs.price("claude-unknown-9"))
+
+    def test_cache_writes_and_reads(self):
+        usage = {"input_tokens": 0, "output_tokens": 1000000, "cache_read_input_tokens": 1000000,
+                 "cache_creation": {"ephemeral_5m_input_tokens": 1000000, "ephemeral_1h_input_tokens": 1000000}}
+        # opus 5.5: output 20 + read 0.20 + 5m write 4*1.25 + 1h write 4*2
+        self.assertAlmostEqual(33.20, self.costs.message_cost("claude-opus-5-5", usage))
+
+    def test_counts_each_message_once_and_only_after_the_mark(self):
+        path = os.path.join(self.root, "t.jsonl")
+        write_lines(path, [
+            assistant_line("m1", "2026-10-01T10:00:00Z", {"input_tokens": 1000000, "output_tokens": 1}),
+            assistant_line("m1", "2026-10-01T10:00:01Z", MILLION_IN),
+            assistant_line("m2", "2026-10-01T10:05:00Z", MILLION_IN),
+            "not json",
+        ])
+        dollars, mark = self.costs.transcript_cost(path)
+        self.assertAlmostEqual(8.00, dollars)
+        self.assertEqual("2026-10-01T10:05:00Z", mark)
+        self.assertEqual((0.0, mark), self.costs.transcript_cost(path, mark))
+
+    def test_main_session_skips_side_conversations(self):
+        path = os.path.join(self.root, "t.jsonl")
+        write_lines(path, [
+            assistant_line("m1", "2026-10-01T10:00:00Z", MILLION_IN),
+            assistant_line("m2", "2026-10-01T10:01:00Z", MILLION_IN, isSidechain=True),
+        ])
+        self.assertAlmostEqual(4.00, self.costs.transcript_cost(path, main=True)[0])
+
+
+class LogActivityTest(unittest.TestCase):
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        self.project = os.path.join(self.root, ".claude", "project")
+        self.main = os.path.join(self.root, "session.jsonl")
+        self.agent = os.path.join(self.root, "agent-a1.jsonl")
+        write_lines(self.main, [assistant_line("p1", "2026-10-01T09:00:00Z", MILLION_IN)])
+        with open(os.path.join(self.root, "agent-a1.meta.json"), "w", encoding="utf-8") as handle:
+            json.dump({"agentType": "company:qa-engineer"}, handle)
+        handback = [{"type": "tool_use", "name": "SubagentHandback",
+                     "input": {"message": "All criteria met.\n\nVERDICT: PASS"}}]
+        write_lines(self.agent, [
+            user_line("QA for task SHOP-E01-S02-T01, depends on SHOP-E01-S01-T03."),
+            assistant_line("a1", "2026-10-01T09:10:00Z", MILLION_IN, model="claude-sonnet-5-5", content=handback),
+        ])
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def stop(self, cwd=None):
+        return run_hook("log_activity.py", {
+            "hook_event_name": "SubagentStop", "cwd": cwd or self.root, "session_id": "s1",
+            "transcript_path": self.main, "agent_id": "a1", "agent_transcript_path": self.agent})
+
+    def rows(self):
+        with open(os.path.join(self.project, "activity.md"), encoding="utf-8") as handle:
+            lines = [line for line in handle if line.startswith("| 20")]
+        return [[cell.strip() for cell in line.strip().strip("|").split("|")] for line in lines]
+
+    def test_silent_without_a_project(self):
+        self.assertEqual((0, "", ""), self.stop())
+        self.assertFalse(os.path.exists(self.project))
+
+    def test_logs_one_line_per_run(self):
+        os.makedirs(self.project)
+        code, out, err = self.stop(cwd=os.path.join(self.root))
+        self.assertEqual((0, "", ""), (code, out, err))
+        [row] = self.rows()
+        self.assertEqual(["SHOP-E01-S02-T01", "company:qa-engineer", "PASS", "2.00", "4.00", "6.00"], row[1:])
+
+    def test_a_follow_up_counts_only_new_work_and_adds_to_the_story(self):
+        os.makedirs(self.project)
+        self.stop()
+        self.assertEqual((0, "", ""), self.stop())
+        write_lines(self.agent, [
+            user_line("Fix round 2 for SHOP-E01-S02-T02."),
+            assistant_line("a2", "2026-10-01T09:30:00Z", MILLION_IN, model="claude-sonnet-5-5",
+                           content=[{"type": "text", "text": "STATUS: DONE_WITH_CONCERNS\nOne note."}]),
+        ], mode="a")
+        write_lines(self.main, [assistant_line("p2", "2026-10-01T09:20:00Z", MILLION_IN)], mode="a")
+        self.stop()
+        first, repeat, follow_up = self.rows()
+        self.assertEqual(["0.00", "0.00", "6.00"], repeat[4:])
+        self.assertEqual(["SHOP-E01-S02-T02", "company:qa-engineer", "DONE_WITH_CONCERNS", "2.00", "4.00", "12.00"],
+                         follow_up[1:])
+
+    def test_unknown_task_still_logs_the_cost(self):
+        os.makedirs(self.project)
+        write_lines(self.agent, [user_line("Look around the codebase."),
+                                 assistant_line("a1", "2026-10-01T09:10:00Z", MILLION_IN)])
+        self.stop()
+        [row] = self.rows()
+        self.assertEqual(["-", "-", "4.00", "4.00", "-"], [row[1], row[3], row[4], row[5], row[6]])
 
 
 @unittest.skipUnless(shutil.which("sh"), "sh not installed")

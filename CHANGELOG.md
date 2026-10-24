@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 - 2026-10-24
+
+### Added
+- **Every agent run is logged, with what it cost.** A new hook adds one line to `.claude/project/activity.md` each time an agent finishes: time, task, agent, result (`PASS`, `FAIL`, `DONE`, ...), the agent's cost, the PM's cost since the previous line, and the story's running total.
+  - **The numbers are measured, not guessed.** The hook reads the token counts Claude Code records for every model call and prices them in API-equivalent dollars: what the same work would cost at Anthropic's API prices. Subscription users don't pay this; it shows where the effort went.
+  - **The PM's own cost is included.** In the pilot, the PM was about 40% of the total.
+  - **A follow-up to the same agent is counted once.** It gets its own line with only the new work.
+  - **The report at the end of `/company:next` says what the story cost.**
+  - **Only the hook writes the log.** Agents are blocked from editing `activity.md`.
+
 ## 0.4.0 - 2026-10-24
 
 ### Added

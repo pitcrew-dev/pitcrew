@@ -47,6 +47,9 @@ DENY = [
     (r"\.(pem|key|p12|pfx|jks|keystore)$|(^|/)id_(rsa|dsa|ecdsa|ed25519)$|(^|/)\.ssh/",
      "Private keys and certificates are never written by an agent. Tell the user what is needed "
      "and let them create it."),
+    (r"(^|/)\.claude/project/(activity\.md|\.activity-state\.json)$",
+     "The activity log is written only by the log_activity hook, one line per agent run, so its "
+     "costs stay measured. Read it; never edit it."),
 ]
 
 

@@ -92,6 +92,7 @@ In **plain language**, no jargon:
 - **Which goal it moved forward**, and how far along each goal is now (e.g. "Online booking: 2 of 3 pieces done")
 - **How to look at it themselves:** the exact URL or command
 - **What the checks found**, and anything flagged
+- **What it cost:** the story total from the last line for this story in `activity.md`, e.g. "about $14 (API-equivalent)". Say what was expensive if one run stands out
 - **Anything you assumed or left out**
 - **What's next**, and roughly how much is left
 

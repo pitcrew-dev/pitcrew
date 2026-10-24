@@ -128,6 +128,8 @@ Create under `.claude/project/`:
 | `status.md` | Current progress, grouped by goal |
 | `lessons.md` | Empty for now; mistakes that must not happen twice go here |
 
+`activity.md` is created by a hook on the first agent run, one line per run with its cost. Never write it yourself.
+
 Every task record carries mode, profile, the path to `conventions.md`, scope in and out, dependencies, criteria, verification and lane. **Check in-scope paths against the real tree.** Verification steps must work within the blocked list (brief).
 
 **Greenfield, Profile A:** the first task scaffolds the toolchain in `stack-profiles.md` (Pint, Pest with architecture tests, Larastan, `composer audit`), plus the frontend stack chosen in Step 3c, and records the check command. Add `QaProbe*` to `.gitignore` so a missed QA probe file can never be committed. **In brownfield, ask before adding either.**

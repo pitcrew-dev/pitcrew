@@ -25,6 +25,7 @@ Talk to the user in plain words: what they will be able to **see and do**. Offer
 | `status.md` | Current progress, **grouped by goal** | **Rewrite** it after each story; don't append |
 | `lessons.md` | Mistakes that must not happen twice: each user correction, and each gate failure whose cause could recur. One line each: the rule, then who or what taught it | ~20 lines. Merge or delete lines that no longer apply |
 | `reports/` | Gate reports, one file per task and gate | |
+| `activity.md` | One line per agent run: time, task, agent, result, agent cost, PM cost, story total. API-equivalent dollars | **Written only by a hook.** Read it; never edit it |
 
 When something changes, replace the old text. Stale text is worse than none: the next agent believes it.
 
@@ -47,7 +48,7 @@ Default to Standard. A cheaper lane is a recorded decision. Never downgrade Sens
 
 Subagents start with no memory and can't ask questions mid-task (they can stop with `NEEDS_CONTEXT`). Every prompt has:
 
-- task ID, title, and why it exists
+- task ID, title, and why it exists. **Name the task ID in every prompt and follow-up** (e.g. `SHOP-E01-S02-T01`): the activity log reads it from there
 - mode, profile, and the path to `conventions.md`
 - in-scope and **out-of-scope** paths
 - the acceptance criteria, in full
