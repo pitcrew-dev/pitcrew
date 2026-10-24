@@ -1,7 +1,7 @@
 {
   "name": "company",
   "displayName": "Agent Company",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Runs a PHP project like a small software company: a project manager plus developer, code-review and QA agents, with safety hooks.",
   "author": { "name": "Muhammad Kashif" },
   "license": "MIT",
@@ -9,15 +9,15 @@
   "userConfig": {
     "story_budget": {
       "type": "number",
-      "title": "Budget per story (US dollars)",
-      "description": "API-equivalent dollars one story may cost before the PM stops and asks you. You get a warning at 80%. A project can set its own in .claude/project/budget.md.",
+      "title": "Budget per piece of work (US dollars)",
+      "description": "How much AI work one piece of the project may use, priced at Anthropic's pay-per-use rates, before the project manager stops and asks you. You get a warning at 80%. A typical piece costs about $17. Each project can change it.",
       "default": 25,
       "min": 1
     },
     "project_budget": {
       "type": "number",
-      "title": "Budget per project (US dollars, 0 = no cap)",
-      "description": "API-equivalent dollars a whole project may cost before the PM stops and asks you. 0 means no cap; the PM suggests one when a project starts.",
+      "title": "Budget per project (US dollars, 0 = no limit)",
+      "description": "The same, for a whole project. 0 means no limit; the project manager suggests one when a project starts.",
       "default": 0,
       "min": 0
     }

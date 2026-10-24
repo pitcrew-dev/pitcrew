@@ -31,6 +31,19 @@ Then restart Claude Code. To try it without installing, from a clone: `claude --
 
 The plugin adds 5 agents (`company:backend-developer`, `company:frontend-developer`, `company:full-stack-developer`, `company:code-reviewer`, `company:qa-engineer`), the `/company:start`, `/company:next`, `/company:status` and `/company:report` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
 
+### Your first ten minutes
+
+1. **Install** (above). Claude Code asks for two budgets: per piece of work ($25 is a good start) and per project (0 for no limit). You can change both later in `/config`.
+2. **Open your project folder** in Claude Code, empty or with existing code.
+3. **Say what you want**, e.g. `/company:start I want a website for my salon where customers can book online`.
+4. **Answer one round of questions.** Every question has a default; skip what you don't know. For existing code, it reads the code first and asks less.
+5. **Read the plan:** your goals, the pieces in order, what it assumed, what it left out, the budget, and what it needs from you. For a new site it also shows three looks to choose from.
+6. **Say "go"** and it builds the first piece.
+
+In our test (a new salon booking site), steps 3 to 5 took about 4½ minutes of AI time and cost about $1.65.
+
+If you had version 0.2.x installed, the first session tells you, and shows the one command that removes it.
+
 ### Safety rules it adds (they apply in every project)
 
 A plugin cannot ship permission rules, so these are enforced by hooks.

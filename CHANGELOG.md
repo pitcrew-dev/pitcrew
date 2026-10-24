@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0 - 2026-10-24
+
+### Added
+- **The plugin notices an old 0.2.x install.** When a session starts and the old copy is still in `~/.claude`, you get one plain message saying so, and the one command that removes it (`python install.py --uninstall`, with `--dry-run` to look first). Before this, the two versions ran side by side and every agent appeared twice.
+- **"Your first ten minutes" in the README:** install to an approved plan, step by step. In a test run on a new salon booking site, it took about 4½ minutes of AI time and $1.65.
+
+### Changed
+- **Clearer budget settings.** The install dialog now says what a budget means in plain words ("how much AI work one piece may use, priced at Anthropic's pay-per-use rates") and that a typical piece costs about $17.
+
 ## 0.7.0 - 2026-10-24
 
 ### Added
