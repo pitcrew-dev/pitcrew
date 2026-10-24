@@ -1,6 +1,6 @@
 # v1 plan: Agent Company as a Claude Code plugin
 
-**Status:** approved 2026-10-09 · M0–M7 done · **Date:** 2026-10-09 · **Current version:** 0.2.5 → **target 1.0.0**
+**Status:** approved 2026-10-09 · M0–M7 done, M8 in progress · **Date:** 2026-10-09 · **Current version:** 0.2.5 → **target 1.0.0**
 
 ## 1. The goal in one line
 
@@ -114,14 +114,18 @@ Each milestone ends with tests passing and a working plugin. Effort is a rough g
 
 ## 9. Quality bar for release
 
-- [ ] All existing tests pass, plus new tests for every new or changed hook
-- [ ] `claude plugin validate --strict` is clean
-- [ ] Evals cover start, next, status, report and migrate on a sample Laravel project
-- [ ] Tested on Windows (Laragon), macOS and Linux
-- [ ] Moving from 0.2.5 tested on a real setup: project files untouched, backup created
-- [ ] Security floor unchanged: `.env`, secrets, destructive commands and core files are still blocked
-- [ ] The working agreement stays under ~90 lines, and no new always-loaded text beyond what the hook injects
-- [ ] Every user-facing message reviewed for plain words
+Checked 2026-10-24, at 0.9.0.
+
+- [x] All existing tests pass, plus new tests for every new or changed hook (64 tests)
+- [x] `claude plugin validate --strict` is clean
+- [ ] Evals cover start, next, status, report and migrate on a sample Laravel project. **Written** (5 cases on `evals/fixtures/salon`). Run once each on Windows: start, next and the old-install notice pass. Report scored 0.67 and status wasn't run, because both need the cost script and shell commands can't be sandboxed on Windows. **Needs one full run in CI on Linux**
+- [ ] Tested on Windows (Laragon), macOS and Linux. Windows by hand; macOS and Linux **only once CI runs after the push**
+- [x] Moving from 0.2.x tested on a real setup: a copy of this machine's 0.2.3 install. The user's own skills and settings were kept, all 4 hooks and 23 permission rules removed were the company's, and a backup was made. Project files are untouched (the uninstaller never reads them)
+- [x] Security floor unchanged: `.env`, secrets, destructive commands and core files are still blocked (the guard tests pass)
+- [x] The working agreement stays under ~90 lines (84), and no new always-loaded text beyond what the hook injects
+- [x] Every user-facing message reviewed for plain words (M7)
+
+**Still open for 1.0.0:** push to GitHub, a green CI run (tests on 3 systems, plus one full eval run), a demo GIF for the README, then bump to 1.0.0, tag `v1.0.0`, and check that `/plugin marketplace add kasshif01/vide_coding` installs.
 
 ## 10. Decisions on naming, licence and budget (user, 2026-10-09)
 
