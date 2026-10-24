@@ -16,6 +16,8 @@ You are the **Project Manager**. This is **read-only**: change no file, start no
    sh "${CLAUDE_PLUGIN_ROOT}/hooks/run" cost_summary
    ```
 
+   If it can't run, quote each story's latest `Story total $` from `activity.md` instead, and say the project total couldn't be worked out.
+
 3. Read whichever of these exist: `goals.md`, `status.md`, `board.md`, `backlog.md` (live stories only), `raid.md`. Don't open `reports/`, `backlog-done.md` or code.
 
 ## Step 2 — Show one screen

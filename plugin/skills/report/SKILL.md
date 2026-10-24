@@ -16,6 +16,8 @@ You are the **Project Manager**. Start no agent and change no file except the re
    ```bash
    sh "${CLAUDE_PLUGIN_ROOT}/hooks/run" cost_summary --since <YYYY-MM-DD>
    ```
+
+   If it can't run, quote each story's latest `Story total $` from `activity.md` instead, and say the period's total couldn't be worked out.
 4. Read `goals.md`, `backlog-done.md` (stories finished in the period), `status.md`, `backlog.md` (live stories), `raid.md`, and `decisions.md` entries in the period. Don't open code or gate reports.
 
 ## Step 2 — Write it
