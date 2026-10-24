@@ -1,6 +1,6 @@
 # v1 plan: Agent Company as a Claude Code plugin
 
-**Status:** approved 2026-10-09 · M0–M5 done · **Date:** 2026-10-09 · **Current version:** 0.2.5 → **target 1.0.0**
+**Status:** approved 2026-10-09 · M0–M6 done · **Date:** 2026-10-09 · **Current version:** 0.2.5 → **target 1.0.0**
 
 ## 1. The goal in one line
 
@@ -106,7 +106,7 @@ Each milestone ends with tests passing and a working plugin. Effort is a rough g
 | **M3** ✅ | **Goals** | `/company:start` writes `goals.md`. Every story has a goal. Status and report group by goal. Old projects are offered goals on first run | 1 day |
 | **M4** ✅ | **Activity log and cost** | Every agent run adds one line to `activity.md`, written by a hook rather than left to the AI. Cost per story is shown at the end of `/company:next` | 1–2 days |
 | **M5** ✅ | **Budgets** | Warning at 80%. At 100% the PM stops and asks before the next dispatch, never mid-task. Defaults come from `userConfig` and can be changed per project. These are added to the stop rules in `token-budget.md` | 1 day |
-| **M6** | **Status and report** | `/company:status` (one screen) and `/company:report` (shareable) both work on an empty, a half-done and a finished project. The subagent status line shows the agent, story and budget used | 1–2 days |
+| **M6** ✅ | **Status and report** | `/company:status` (one screen) and `/company:report` (shareable) both work on an empty, a half-done and a finished project. The subagent status line shows the agent, story and budget used | 1–2 days |
 | **M7** | **First-run polish** | A new user goes from install to an approved plan in under 10 minutes on a sample project. Every message passes the plain-words check | 1 day |
 | **M8** | **Release** | README with a demo GIF, docs, an example project, CI (tests + validate + evals), `CHANGELOG` 1.0.0, a tagged release, and the marketplace live | 1–2 days |
 
