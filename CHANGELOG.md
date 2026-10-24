@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.3.0 - 2026-10-24
+
+### Changed
+- **Agent Company is now a Claude Code plugin.** It is installed from a marketplace (`/plugin marketplace add`, then `/plugin install company@agent-company`) instead of by copying files into `~/.claude/`. Nothing about how the team works has changed.
+  - **The commands are renamed:** `/new-project` is now `/company:start` and `/next-story` is now `/company:next`. The agents are now `company:backend-developer`, `company:frontend-developer`, `company:full-stack-developer`, `company:code-reviewer` and `company:qa-engineer`.
+  - **The working agreement is loaded by a hook** at the start of every session, because a plugin can't load a `CLAUDE.md`.
+  - **The permission rules moved into hooks**, because a plugin can't ship permission rules. Same rules as before: no reading or writing `.env`, no `migrate:fresh` or force-push, and an ask before every push.
+  - **A small launcher** finds a working Python 3.8+ for the hooks. If there is none, hooks don't block work, but the session starts with a plain warning that the safety checks are off.
+  - **`install.py` now only removes the old version.** Run `python install.py --uninstall` (try `--dry-run` first) to remove a 0.2.x install before installing the plugin. Your own agents, skills, settings and `CLAUDE.md` text are kept, and everything removed is backed up. It will be dropped in a later release.
+
+## 0.2.5 - 2026-09-24
+
+### Added
+- **The PM remembers where the project stands after `/compact`.** Compacting squeezes the chat into a summary, and the PM could lose track of progress. A new hook puts `status.md` and `lessons.md` back into the chat right after every compact. It stays silent outside a project, and caps each file so a big one can't flood the chat.
+- **Mistakes aren't repeated: `lessons.md`.** When the user corrects something, or a gate fails for a reason that could happen again, the PM adds one line to `.claude/project/lessons.md`. Every agent gets the lines that apply to its task, so the next one doesn't make the same mistake. Kept to about 20 lines.
+
+## 0.2.4 - 2026-09-22
+
+### Fixed
+- **JavaScript no longer ends up inline in templates.** The frontend agent was only told where JS goes when a project uses Vite. In a project without a build step it was told "no Vite, no npm", given nowhere else to put JS, and wrote it inline.
+  - **The frontend brief now says it directly:** JS and CSS go in their own files, in the folder the project already uses (`resources/js/` with a build step, `public/js/` without one). The only `<script>` allowed in a template is a `src` link or the JSON data bridge. If the agent can't tell where files go, it asks.
+  - **The project survey records asset folders** in `conventions.md`, so the agent doesn't have to guess.
+  - **Review flags it:** a new `<script>` or `<style>` block in a template is should-fix.
+
+### Added
+- **New projects ask which stack to use.** Nothing is assumed any more. `/new-project` asks four questions, each with options and a recommended choice: what kind of site it is (Laravel, WordPress or plain PHP), how interactive it is (plain JavaScript, Alpine.js, Livewire or jQuery), how styles are written (custom SCSS, Tailwind or Bootstrap), and which database. The answers go into `conventions.md` and outrank the jQuery default.
+
 ## 0.2.3 - 2026-09-19
 
 ### Changed
