@@ -1,6 +1,6 @@
 # v1 plan: Agent Company as a Claude Code plugin
 
-**Status:** approved 2026-10-09 · M0–M6 done · **Date:** 2026-10-09 · **Current version:** 0.2.5 → **target 1.0.0**
+**Status:** approved 2026-10-09 · M0–M7 done · **Date:** 2026-10-09 · **Current version:** 0.2.5 → **target 1.0.0**
 
 ## 1. The goal in one line
 
@@ -107,7 +107,7 @@ Each milestone ends with tests passing and a working plugin. Effort is a rough g
 | **M4** ✅ | **Activity log and cost** | Every agent run adds one line to `activity.md`, written by a hook rather than left to the AI. Cost per story is shown at the end of `/company:next` | 1–2 days |
 | **M5** ✅ | **Budgets** | Warning at 80%. At 100% the PM stops and asks before the next dispatch, never mid-task. Defaults come from `userConfig` and can be changed per project. These are added to the stop rules in `token-budget.md` | 1 day |
 | **M6** ✅ | **Status and report** | `/company:status` (one screen) and `/company:report` (shareable) both work on an empty, a half-done and a finished project. The subagent status line shows the agent, story and budget used | 1–2 days |
-| **M7** | **First-run polish** | A new user goes from install to an approved plan in under 10 minutes on a sample project. Every message passes the plain-words check | 1 day |
+| **M7** ✅ | **First-run polish** | A new user goes from install to an approved plan in under 10 minutes on a sample project. Every message passes the plain-words check | 1 day |
 | **M8** | **Release** | README with a demo GIF, docs, an example project, CI (tests + validate + evals), `CHANGELOG` 1.0.0, a tagged release, and the marketplace live | 1–2 days |
 
 **Total: about 10–13 working days.** Order: M0 → M1 → M2 must come first. M3–M6 can then go one story at a time, then M7 and M8.
@@ -193,3 +193,11 @@ Tested on Windows 11, Claude Code 2.1.294, with a throwaway plugin. macOS and Li
 
 - **v2, grow the team:** a hiring flow with approval, security and architect roles, company memory
 - **v3, autopilot:** scheduled Light-lane work that queues for approval, and a multi-project overview
+
+## 14. M7 results (2026-10-24)
+
+- **First run, timed.** A new salon booking site, from an empty folder, in a real session with the default model: the interview round took 34 s, and the plan after one round of answers took 227 s. That's about 4½ minutes of AI time and $1.65, well inside the 10-minute target. The plan had 4 goals, 8 stories each tied to a goal, a $140 project cap (8 × $17), and three looks to choose from. The messages were in plain words.
+- **Gap from M2, fixed here.** M2 was marked done without the "plugin detects the old install" part. The session-start hook now detects it and tells the user once, at startup.
+- **Not covered:** the time a person spends reading and answering, a brownfield first run, and the interactive install dialog for the budget settings.
+- **Known gap:** the PM's own cost in a session that starts no agents (such as the `/company:start` interview) isn't logged in `activity.md`, because the cost is logged when an agent finishes.
+
