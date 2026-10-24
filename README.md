@@ -9,48 +9,39 @@ You talk to a **Project Manager** in plain language. It plans the work, hands ea
 - **Your existing code wins.** On an existing codebase it surveys first, then matches the project's own conventions, versions and structure. No "modernizing" your code as a side effect.
 - **Two gates on every change.** A reviewer asks *is this fit to merge?*; QA asks *does it do what was asked?* Neither can edit code, so neither can quietly paper over a problem.
 - **Ceremony matched to risk.** A typo costs nothing extra. Logins, payments, personal data and migrations get a security review and **your approval**.
-- **Safety that doesn't depend on the AI remembering.** Permission rules and hooks keep agents out of `.env`, stop destructive commands, and scan every written file for secrets.
+- **Safety that doesn't depend on the AI remembering.** Hooks keep agents out of `.env`, stop destructive commands, and scan every written file for secrets.
 - **Built to spend tokens carefully.** Short agent briefs, standards read only when needed, reviews of the diff instead of the whole story, and fix rounds that continue the same agent instead of starting over.
 
 ## Requirements
 
 - [Claude Code](https://code.claude.com)
-- Python 3.8+ (for the installer and the hooks; nothing else to install)
+- Python 3.8+ (for the hooks; nothing else to install)
 - git
 
 ## Install
 
-```bash
-git clone <repository-url> agent-company
-cd agent-company
-python install.py --dry-run   # shows exactly what would change
-python install.py
+In Claude Code:
+
+```
+/plugin marketplace add <path-or-repository>
+/plugin install company@agent-company
 ```
 
-Then restart Claude Code. To update: `git pull && python install.py`. To remove: `python install.py --uninstall`.
+Then restart Claude Code. To try it without installing, from a clone: `claude --plugin-dir ./plugin`.
 
-### What the installer changes
-
-| Where | What | Your own things |
-|---|---|---|
-| `~/.claude/CLAUDE.md` | Adds **one import line** for the working agreement | Kept |
-| `~/.claude/company/` | Working agreement, PM brief, role charters, standards | — |
-| `~/.claude/agents/` | 5 agents (`backend-developer`, `frontend-developer`, `full-stack-developer`, `code-reviewer`, `qa-engineer`) | Kept. Same-named ones are replaced and backed up |
-| `~/.claude/skills/` | `new-project`, `next-story` | Kept |
-| `~/.claude/hooks/agent-company/` | 4 hooks | — |
-| `~/.claude/settings.json` | Adds the hooks and permission rules below | Everything else kept |
-
-Everything replaced is backed up to `~/.claude/.backup/<time>/`. A manifest records what was added, so updates and uninstall touch only that. If your `settings.json` isn't valid JSON, the installer changes nothing.
+The plugin adds 5 agents (`company:backend-developer`, `company:frontend-developer`, `company:full-stack-developer`, `company:code-reviewer`, `company:qa-engineer`), the `/company:start` and `/company:next` commands, and the safety hooks. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
 
 ### Safety rules it adds (they apply in every project)
 
+A plugin cannot ship permission rules, so these are enforced by hooks.
+
 | Kind | Rules |
 |---|---|
-| **Denied** | Reading or writing `.env`, `.env.local`, `.env.production`, `.env.staging`; `migrate:fresh`, `migrate:reset`, `db:wipe`; force-push |
-| **Asks you first** | `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, PowerShell `Remove-Item` |
+| **Denied** | Reading or writing `.env` files (not `.env.example`); `migrate:fresh`, `migrate:reset`, `db:wipe`; force-push |
+| **Asks you first** | Every `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, PowerShell `Remove-Item` |
 | **Hooks** | Block writes to `vendor/`, `node_modules/`, build output, lock files, WordPress core, `wp-config.php` and private keys; stop irreversible Bash and PowerShell commands; flag secrets in written files; format PHP with the project's own Pint when that can't reformat old code |
 
-You can change any rule in your `settings.json`. Uninstall removes only the rules the installer added.
+A search over a whole folder can still match lines inside `.env`; only a path that points straight at a `.env` file is blocked.
 
 ## Use
 
@@ -58,8 +49,8 @@ From any project directory, in Claude Code:
 
 | You say | What happens |
 |---|---|
-| "I want to build a booking site for my salon" or "take over this codebase" | `/new-project`: a short plain-language interview, a survey of any existing code, then a plan in pieces you can see working. **It stops for your approval.** |
-| "go" / "next" | `/next-story`: builds one piece through developer → review → QA, then shows you the result and **stops**. |
+| "I want to build a booking site for my salon" or "take over this codebase" | `/company:start`: a short plain-language interview, a survey of any existing code, then a plan in pieces you can see working. **It stops for your approval.** |
+| "go" / "next" | `/company:next`: builds one piece through developer → review → QA, then shows you the result and **stops**. |
 
 Its working files go in `<your-project>/.claude/project/`: conventions, backlog, board, decisions, risks and status. Commit them. They are the team's shared memory between sessions.
 

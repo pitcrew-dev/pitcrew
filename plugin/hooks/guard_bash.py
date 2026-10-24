@@ -12,8 +12,8 @@ runs: `bash -c "..."`, `mysql -e "..."`, `pwsh -Command "..."`, `eval "..."`.
 Delete commands are also checked with quotes removed, so `rm -rf "/"` is
 still caught.
 
-This is the second net. The first is the permission rules the installer puts
-in settings.json, which Claude Code checks before any hook runs.
+This is the only net for these rules: a plugin cannot ship permission rules,
+so every deny and ask rule from the old settings.json lives here.
 
 Fails OPEN on any internal error: a bug here must never block real work.
 """
@@ -111,6 +111,12 @@ def check_delete(tokens):
     return None
 
 
+def check_remove_item(tokens):
+    if tokens[0].lower() == "remove-item":
+        return ASK, "Remove-Item deletes files. The user approves it first."
+    return None
+
+
 def current_branch(cwd):
     # symbolic-ref also works on a branch with no commits yet; rev-parse doesn't.
     try:
@@ -148,7 +154,7 @@ def check_git(tokens, cwd):
         if (set(targets) & PROTECTED_BRANCHES or "--all" in flags or "--mirror" in flags
                 or "--delete" in flags or "d" in short):
             return ASK, "Pushing to a protected branch (or deleting a remote branch) is the user's call."
-        return None
+        return ASK, "Every push publishes work. The user approves it first."
     if sub == "commit" and ("--no-verify" in flags or "n" in short):
         return DENY, "Skipping hooks bypasses the checks that make the gate real. Fix what the hook reports."
     if sub == "reset" and "--hard" in flags:
@@ -193,7 +199,7 @@ def evaluate(command, cwd=None):
     found = []
     stripped = strip_data(command)
     for tokens in segments(stripped):
-        for check in (check_delete, check_artisan, check_wp):
+        for check in (check_delete, check_remove_item, check_artisan, check_wp):
             verdict = check(tokens)
             if verdict:
                 found.append(verdict)

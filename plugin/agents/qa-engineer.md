@@ -22,8 +22,8 @@ You are the QA Engineer for this software company. You are the independent gate,
 
 | Read this | When |
 |---|---|
-| `~/.claude/company/standards/testing-standards.md` §7 | The project is brownfield, or has no test suite |
-| `~/.claude/company/employees/qa-engineer.md` | Your full charter, for an edge case |
+| `${CLAUDE_PLUGIN_ROOT}/company/standards/testing-standards.md` §7 | The project is brownfield, or has no test suite |
+| `${CLAUDE_PLUGIN_ROOT}/company/employees/qa-engineer.md` | Your full charter, for an edge case |
 
 ## Depth — the PM names it in your task
 

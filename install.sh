@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Thin wrapper kept for compatibility. The installer is install.py:
+# Thin wrapper around install.py. Agent Company is now a Claude Code plugin;
+# this only uninstalls the old 0.2.x install:
 #
-#   bash install.sh [--dry-run | --uninstall]
+#   bash install.sh --uninstall [--dry-run]
 #
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"

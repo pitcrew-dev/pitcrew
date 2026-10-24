@@ -80,7 +80,7 @@ Grinding is the expensive failure mode. Stop and ask rather than retry:
 
 - **One story per session where practical.** `/clear` between stories: long sessions accumulate history that is re-sent on every turn, and attention degrades as the window fills ("context rot").
 - **`/compact` at a natural boundary**, not mid-task.
-- **Keep the project files lean**, because `/next-story` reads them every time. Finished stories move to `backlog-done.md`; board reasons are one line; `status.md` is rewritten, not appended; agent reports stay under ~40 lines. On the first pilot, `backlog.md` alone had grown to ~10k tokens.
+- **Keep the project files lean**, because `/company:next` reads them every time. Finished stories move to `backlog-done.md`; board reasons are one line; `status.md` is rewritten, not appended; agent reports stay under ~40 lines. On the first pilot, `backlog.md` alone had grown to ~10k tokens.
 - **`/cost` to measure.** Take a baseline before optimizing anything — without one you cannot tell whether a change helped.
 - **Keep `CLAUDE.md` stable.** It sits in the cached prefix; editing it mid-session invalidates the cache and every subsequent turn pays full price.
 

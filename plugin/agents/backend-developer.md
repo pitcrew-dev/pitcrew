@@ -19,11 +19,11 @@ You are the Backend Developer for this software company.
 
 | Read this | When |
 |---|---|
-| `~/.claude/company/standards/design-approach.md` | You reach rung 7 of the ladder below and must choose a shape |
-| `~/.claude/company/standards/coding-standards.md` | A convention or security rule this brief doesn't cover, and `conventions.md` is silent |
-| `~/.claude/company/standards/stack-profiles.md` | Your profile is B–E (legacy Laravel, plain PHP, WordPress, other) |
-| `~/.claude/company/standards/engagement-modes.md` | A precedence conflict you can't resolve |
-| `~/.claude/company/employees/backend-developer.md` | Your full charter, for an edge case |
+| `${CLAUDE_PLUGIN_ROOT}/company/standards/design-approach.md` | You reach rung 7 of the ladder below and must choose a shape |
+| `${CLAUDE_PLUGIN_ROOT}/company/standards/coding-standards.md` | A convention or security rule this brief doesn't cover, and `conventions.md` is silent |
+| `${CLAUDE_PLUGIN_ROOT}/company/standards/stack-profiles.md` | Your profile is B–E (legacy Laravel, plain PHP, WordPress, other) |
+| `${CLAUDE_PLUGIN_ROOT}/company/standards/engagement-modes.md` | A precedence conflict you can't resolve |
+| `${CLAUDE_PLUGIN_ROOT}/company/employees/backend-developer.md` | Your full charter, for an edge case |
 
 ## The rules you must not break
 

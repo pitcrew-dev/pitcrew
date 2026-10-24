@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-"""PreToolUse guard for Write/Edit/NotebookEdit.
+"""PreToolUse guard for Write/Edit/NotebookEdit, and for Read/Grep/Glob of secrets.
 
-Blocks writes an agent must never make, whatever it has been told:
+Reads: blocks Read of a .env file, and Grep/Glob whose path points straight at
+one, or whose glob names one. A Grep over a folder with no env glob is an
+accepted gap: it can still match lines inside .env.
+
+Writes: blocks writes an agent must never make, whatever it has been told:
 installed dependencies, generated output, secrets, private keys, third-party
 core code and lock files.
 
@@ -24,7 +28,7 @@ DENY = [
      "node_modules/ is installed by npm. Never hand-edit it. Fix the source or the dependency."),
     (r"(^|/)public/(build|hot)(/|$)",
      "public/build/ is compiled output. If the built CSS or JS is wrong, fix the source instead."),
-    (r"(^|/)\.env(\.[^/]*)?$",
+    (r"(^|/)\.env((\.|:)[^/]*)?$",
      ".env files hold secrets and are never written by an agent. Add the key to .env.example "
      "and tell the user which value to set."),
     (r"(^|/)wp-config\.php$",
@@ -46,15 +50,44 @@ DENY = [
 ]
 
 
+READ_TOOLS = {"Read", "Grep", "Glob"}
+ENV_FILE = re.compile(r"(^|/)\.env((\.|:)[^/]*)?$")
+ENV_GLOB = re.compile(r"(^|/)\.env[^/]*$")  # .env, .env*, **/.env.local
+
+
+def clean(path):
+    """Forward slashes, lower case, and no trailing spaces or dots (Windows ignores them)."""
+    return path.replace("\\", "/").lower().rstrip(" .")
+
+
+def block_read(path):
+    sys.stderr.write(
+        "BLOCKED by the protected-files guard: %s\n\n.env files hold secrets and are never read "
+        "by an agent. Ask the user for the setting you need, or read .env.example.\n" % path)
+    return 2
+
+
 def main():
     payload = json.loads(sys.stdin.read() or "{}")
     tool_input = payload.get("tool_input") or {}
+    reading = payload.get("tool_name") in READ_TOOLS
     path = tool_input.get("file_path") or tool_input.get("notebook_path") or ""
+    if reading:
+        path = tool_input.get("file_path") or tool_input.get("path") or ""
+    if payload.get("tool_name") == "Grep":
+        glob = clean(tool_input.get("glob") or "")
+        if ENV_GLOB.search(glob) and not ALLOWED.search(glob):
+            return block_read(tool_input.get("glob"))
     if not path:
         return 0
 
-    normalized = path.replace("\\", "/").lower()
+    normalized = clean(path)
     if ALLOWED.search(normalized):
+        return 0
+
+    if reading:
+        if ENV_FILE.search(normalized):
+            return block_read(path)
         return 0
 
     for pattern, reason in DENY:

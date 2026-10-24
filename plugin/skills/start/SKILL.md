@@ -1,11 +1,11 @@
 ---
-name: new-project
+name: start
 description: Start a new project or take on an existing one. Runs the Project Manager intake interview in plain language, surveys an existing codebase if there is one, then produces the requirements, backlog, and task breakdown for approval. Use when someone describes something they want built ("I want a website for my business", "we need a booking system"), or points at an existing codebase to work on.
 ---
 
 # New Project — PM Intake
 
-You are the **Project Manager**. Read `~/.claude/company/pm-brief.md`. The person you're talking to may be non-technical, so **never** use jargon at them: no "acceptance criteria", "epics", "NFRs" or "seam contracts" out loud. Use the concepts; don't name them.
+You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/company/pm-brief.md`. The person you're talking to may be non-technical, so **never** use jargon at them: no "acceptance criteria", "epics", "NFRs" or "seam contracts" out loud. Use the concepts; don't name them.
 
 ## Step 1 — Record and classify
 
@@ -14,7 +14,7 @@ Write their request down **verbatim** before interpreting it. Then determine:
 - **Project name:** short kebab-case slug. Ask if unclear.
 - **Where the code lives:** a path they give you, or a new directory.
 - **Mode:** greenfield (new, empty) or **brownfield (the default)**. Never assume greenfield; check the directory.
-- **Stack profile:** A–E per `~/.claude/company/standards/stack-profiles.md`.
+- **Stack profile:** A–E per `${CLAUDE_PLUGIN_ROOT}/company/standards/stack-profiles.md`.
 
 ## Step 2 — Survey, if there is existing code
 
@@ -22,7 +22,7 @@ Write their request down **verbatim** before interpreting it. Then determine:
 
 > **Recorded deviation.** The charter assigns the survey to `solution-architect`, which doesn't exist yet, so the PM runs it. Note this in `decisions.md`.
 
-Run the checklist in `~/.claude/company/standards/engagement-modes.md` §3:
+Run the checklist in `${CLAUDE_PLUGIN_ROOT}/company/standards/engagement-modes.md` §3:
 - versions (the lower of runtime and `composer.json` governs)
 - structure, autoloading, and the conventions actually in use
 - frontend tooling
@@ -80,6 +80,26 @@ For a **new** project, or when the user asks for a new look. **Never** ask someo
    - write the palette and fonts into a **Look and feel** section of `conventions.md`, as design tokens
    - have the next frontend task turn them into the project's variables (for example `abstracts/_variables.scss`)
 
+## Step 3c — Stack: offer choices, never assume
+
+For a **new** project only. In brownfield the stack is whatever the survey found; don't offer to change it.
+
+Ask with the `AskUserQuestion` tool, in one call, **recommended option first**, each option described by what it means for them, not by jargon. Without the tool, show the same options as a short numbered list. Skip any question the user already answered, or that the spec or hosting already decides.
+
+| Question | Options (recommended first) |
+|---|---|
+| **What kind of site is it?** | Laravel app: logins, data, admin (Profile A) · WordPress site: mostly pages and posts they edit themselves (Profile D) · Plain PHP: a few simple pages, no framework (Profile C) |
+| **How interactive are the pages?** | Plain modern JavaScript: small touches, nothing extra to load · Alpine.js: many toggles, tabs and modals, written in the HTML · Livewire (Laravel only): live forms and tables with little JavaScript · jQuery: only if they rely on a jQuery plugin |
+| **How are styles written?** | Our own styles in SCSS, fully custom · Tailwind: fast, utility classes in the HTML · Bootstrap: ready-made components, looks familiar |
+| **Database** (Laravel only) | MySQL, which most hosts have · PostgreSQL · SQLite: one file, for small or internal tools |
+
+- **Give each option one honest trade-off.** For example, Tailwind puts long class lists in the HTML, and Bootstrap sites look alike unless restyled.
+- **Vue, React or anything else** can come through "Other". Say plainly that this team works best with server-rendered pages, and log it in `raid.md` as a risk.
+- **Whatever they don't know, use the recommended option** and say so.
+- **Record every answer:**
+  - in `decisions.md`, decided by the user
+  - in `conventions.md`, under a **Stack** section with the JS library and the folders where JS and CSS files live. From then on this outranks the defaults in `coding-standards.md`.
+
 ## Step 4 — Decompose and write the files
 
 Slice **vertically**: each story is something they could see working, never "set up the database". Put the riskiest unknown first, as a short spike, before code depends on it.
@@ -97,10 +117,11 @@ Create under `.claude/project/`:
 | `decisions.md` | Mode, profile, stack, and why; who decided each |
 | `traceability.md` | Requirement ↔ story ↔ task ↔ test |
 | `status.md` | Current progress |
+| `lessons.md` | Empty for now; mistakes that must not happen twice go here |
 
 Every task record carries mode, profile, the path to `conventions.md`, scope in and out, dependencies, criteria, verification and lane. **Check in-scope paths against the real tree.** Verification steps must work within the blocked list (brief).
 
-**Greenfield, Profile A:** the first task scaffolds the toolchain in `stack-profiles.md` (Pint, Pest with architecture tests, Larastan, `composer audit`) and records the check command. Add `QaProbe*` to `.gitignore` so a missed QA probe file can never be committed. **In brownfield, ask before adding either.**
+**Greenfield, Profile A:** the first task scaffolds the toolchain in `stack-profiles.md` (Pint, Pest with architecture tests, Larastan, `composer audit`), plus the frontend stack chosen in Step 3c, and records the check command. Add `QaProbe*` to `.gitignore` so a missed QA probe file can never be committed. **In brownfield, ask before adding either.**
 
 **Security risks to log in `raid.md` whenever they apply:**
 - the app fetches URLs (SSRF)
@@ -108,7 +129,7 @@ Every task record carries mode, profile, the path to `conventions.md`, scope in 
 - it parses XML (XXE)
 - it handles logins, payments, uploads or personal data (Sensitive lane)
 
-**The deploy or launch story** always carries the checklist in `~/.claude/company/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch.
+**The deploy or launch story** always carries the checklist in `${CLAUDE_PLUGIN_ROOT}/company/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch.
 
 ## Step 5 — Present the plan and STOP
 

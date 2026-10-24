@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This repository is **agent-company**, a Claude Code framework that runs a project like a small software company: a Project Manager (the main session) plus developer, code-review and QA agents, for PHP work (Laravel, plain PHP, WordPress). It is installed into `~/.claude/` and then used from any project.
+This repository is **agent-company**, a Claude Code framework that runs a project like a small software company: a Project Manager (the main session) plus developer, code-review and QA agents, for PHP work (Laravel, plain PHP, WordPress). It ships as a Claude Code plugin named `company` (marketplace `agent-company`) and is then used from any project.
 
 ## How to answer the user
 
@@ -12,31 +12,33 @@ Always explain in **simple, short, clear words**, without being asked.
 
 ## Layout
 
-| Path | Installed to | What it is |
-|---|---|---|
-| `home/company/working-agreement.md` | `~/.claude/company/` | Always-loaded rules, imported by one line in `~/.claude/CLAUDE.md` |
-| `home/company/pm-brief.md` | `~/.claude/company/` | The main session's operating brief |
-| `home/company/employees/` | `~/.claude/company/` | Full role charters, read on demand |
-| `home/company/standards/` | `~/.claude/company/` | Standards; `engagement-modes.md` governs the rest |
-| `home/agents/`, `home/skills/` | `~/.claude/agents/`, `~/.claude/skills/` | 5 subagents; `/new-project`, `/next-story` |
-| `home/hooks/` | `~/.claude/hooks/agent-company/` | Safety and formatting hooks (Python) |
-| `home/settings.fragment.json` | merged into `~/.claude/settings.json` | Hook wiring and permission rules |
-| `install.py` (+ `install.sh`) | — | Installer: `--dry-run`, `--uninstall`, `--target` |
-| `tests/` | — | Tests for the hooks and the installer |
-| `report/` | — | Research and reviews behind design decisions; not installed |
+| Path | What it is |
+|---|---|
+| `plugin/.claude-plugin/plugin.json` | Plugin manifest; `version` must equal `VERSION` |
+| `.claude-plugin/marketplace.json` | Marketplace manifest; install id `company@agent-company` |
+| `plugin/company/working-agreement.md` | Always-loaded rules, injected at session start by the `load_agreement` hook |
+| `plugin/company/pm-brief.md` | The main session's operating brief |
+| `plugin/company/employees/` | Full role charters, read on demand |
+| `plugin/company/standards/` | Standards; `engagement-modes.md` governs the rest |
+| `plugin/agents/`, `plugin/skills/` | 5 subagents (`company:*`); `/company:start`, `/company:next` |
+| `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), and the safety and formatting hooks (Python) |
+| `install.py` (+ `install.sh`) | Removes an old 0.2.x install (`--uninstall`); kept for one release, not part of the plugin |
+| `tests/` | Tests for the hooks, the manifests and the uninstaller |
+| `report/` | Research and reviews behind design decisions; not shipped |
 
 ## Commands
 
 ```bash
 python -m unittest discover -s tests -v   # run before every commit
-python install.py --dry-run               # what an install would change
-python install.py                         # install or update ~/.claude
-python install.py --uninstall             # remove everything it added
+claude --plugin-dir ./plugin              # try the plugin in a session
+claude plugin validate ./plugin           # check the manifests (also: claude plugin validate .)
 ```
 
 ## Rules for changing this repo
 
-- **Edit under `home/`, never `~/.claude/` directly.** Reinstall to try a change.
+- **Edit under `plugin/`.** Try a change with `claude --plugin-dir ./plugin`.
+- **A plugin cannot ship permission rules**, so every deny and ask rule lives in a hook (`guard_paths.py`, `guard_bash.py`) with a test.
+- **Hook commands go through `plugin/hooks/run`** (it must keep LF line endings; see `.gitattributes`).
 - **Every hook change comes with a test** in `tests/test_hooks.py`. Hooks fail open, exit 2 to block, and stay silent when all is well.
 - **Tokens are a design constraint:**
   - the working agreement stays under ~90 lines

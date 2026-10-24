@@ -90,6 +90,7 @@ The survey is a task in its own right — a Spike, assigned to `solution-archite
 - [ ] Templating — Blade, plain PHP includes, WP template hierarchy, a template engine
 - [ ] CSS — SCSS, LESS, plain CSS, a framework (Bootstrap and version, Tailwind); compiled or hand-written
 - [ ] JS — jQuery (which version), vanilla, modules, a framework; how it is included
+- [ ] Asset locations — the folders where JS and CSS files live (source and public), and how a page links them. Record them in `conventions.md`.
 - [ ] Build tooling — Vite, Laravel Mix, Gulp, Webpack, or none. **If there is no build step, do not introduce one** without architect and sponsor approval.
 
 **Tests**

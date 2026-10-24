@@ -1,0 +1,9 @@
+{
+  "name": "company",
+  "displayName": "Agent Company",
+  "version": "0.3.0",
+  "description": "Runs a PHP project like a small software company: a project manager plus developer, code-review and QA agents, with safety hooks.",
+  "author": { "name": "Muhammad Kashif" },
+  "license": "MIT",
+  "keywords": ["php", "laravel", "wordpress", "agents", "workflow"]
+}

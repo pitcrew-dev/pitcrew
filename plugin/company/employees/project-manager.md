@@ -317,6 +317,7 @@ Kept in the target project, under `.claude/project/`:
 | `decisions.md` | Decision log — what, why, who approved, what it displaced |
 | `traceability.md` | Requirement ↔ story ↔ task ↔ test matrix |
 | `status.md` | Current progress report |
+| `lessons.md` | Mistakes that must not happen twice — user corrections and recurring gate-failure causes, one line each, passed to every agent they apply to |
 
 Standards these artifacts conform to live in `company/standards/`. Where a standard exists there, it overrides this charter's defaults.
 

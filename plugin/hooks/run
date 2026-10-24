@@ -1,0 +1,47 @@
+#!/bin/sh
+# Launcher for the hooks: finds a working Python 3.8+ and runs one hook with it.
+#   usage: sh run <hook_name_without_.py>     (stdin is passed through)
+# The chosen Python is cached in $CLAUDE_PLUGIN_DATA/python-path.
+# No usable Python: exit 0, so a missing Python never blocks real work (fail open).
+# The session-start hook (load_agreement) also prints a plain warning that safety checks are off.
+
+name="$1"
+dir="$(cd "$(dirname "$0")" && pwd)"
+cache=""
+if [ -n "$CLAUDE_PLUGIN_DATA" ]; then
+  cache="$CLAUDE_PLUGIN_DATA/python-path"
+fi
+
+works() {
+  "$1" -c "import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)" >/dev/null 2>&1
+}
+
+py=""
+if [ -n "$cache" ] && [ -f "$cache" ]; then
+  cached="$(cat "$cache" 2>/dev/null)"
+  if [ -n "$cached" ] && [ -f "$cached" ] && [ -x "$cached" ]; then
+    py="$cached"
+  fi
+fi
+
+if [ -z "$py" ]; then
+  for candidate in python3 python py; do
+    found="$(command -v "$candidate" 2>/dev/null)"
+    if [ -n "$found" ] && works "$found"; then
+      py="$found"
+      break
+    fi
+  done
+  if [ -z "$py" ]; then
+    if [ "$name" = "load_agreement" ]; then
+      printf '%s\n' '{"systemMessage": "Agent Company: safety checks are OFF because Python 3.8 or newer was not found. Install Python 3 (python.org) and restart Claude Code.", "hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "The Agent Company working agreement and safety hooks are NOT loaded because Python 3.8 or newer is missing on this machine. Tell the user this plainly at the start of your first reply: safety checks are off until they install Python 3 (python.org) and restart Claude Code."}}'
+    fi
+    exit 0
+  fi
+  if [ -n "$cache" ]; then
+    mkdir -p "$CLAUDE_PLUGIN_DATA" 2>/dev/null
+    printf '%s\n' "$py" > "$cache" 2>/dev/null
+  fi
+fi
+
+exec "$py" "$dir/$name.py"

@@ -88,7 +88,7 @@ Rejection carries the specific reason and, where useful, the exact question the 
 
 ## DUTY 5 — Implement: Behavior
 
-1. All JS is a Vite-bundled module under `resources/js/` (`coding-standards.md` §6). No inline handlers, no `<script>` logic in templates, no CDN tags.
+1. All JS is a Vite-bundled module under `resources/js/` (`coding-standards.md` §6) — or, where there is no build step, a plain file in the project's public assets folder, linked with `<script src>`. No inline handlers, no `<script>` logic in templates, no CDN tags. Not knowing where files go is a question for the PM, never a reason to write inline.
 2. **Bind to `js-` classes or `data-*` hooks, delegated from a stable ancestor**, so dynamically inserted markup works without rebinding.
 3. **Scope and cache selections.** Search within a root element rather than the whole document; store repeated lookups.
 4. **Server data arrives via `data-*` attributes or one JSON script tag** — never templated into a JS file.

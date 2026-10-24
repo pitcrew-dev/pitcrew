@@ -76,7 +76,10 @@ public function store(StoreUserRequest $request, CreateUser $createUser): Redire
 
 ## 6. jQuery
 
+jQuery is the default only when the project hasn't chosen otherwise (`conventions.md` → Stack). With plain JavaScript or Alpine.js, every rule below still applies in that library's own syntax: `.text()` becomes `textContent`, and `.html()` becomes `innerHTML`.
+
 - **All JS is a module under `resources/js/`, bundled by Vite.** No `<script>` blocks in Blade beyond the data bridge below, and no CDN `<script>` tags — dependencies come through `package.json`.
+- **No build step does not mean inline.** Without one, JS and CSS are plain files in the project's public assets folder (e.g. `public/js/`, `public/css/`), one per page or component, linked with `<script src="{{ asset(…) }}">` or the project's own include pattern.
 - **No inline event handlers.** `onclick="doThing()"` in markup is rejected on sight.
 - **Bind behavior to `js-` classes or `data-*` attributes, never to styling classes.** A designer renaming `.btn-primary` must not break behavior.
   ```js
@@ -131,10 +134,10 @@ Never install a package to resolve an import you wrote from memory. Fix the impo
 
 ### 7.3 What is enforced automatically, and what is not
 
-The installer adds two deterministic layers that no agent can forget or skip:
+The plugin adds two deterministic layers that no agent can forget or skip:
 
-- **Permission rules** in `settings.json`. Agents can never read or write `.env` files. `migrate:fresh`, `db:wipe` and force-push are denied. Pushes, hard resets and branch deletions ask the user first.
-- **Hooks** in `~/.claude/hooks/agent-company/`. They:
+- **Permission guards** in the plugin's hooks. Agents can never read or write `.env` files. `migrate:fresh`, `db:wipe` and force-push are denied. Pushes, hard resets and branch deletions ask the user first.
+- **Other hooks** in the plugin's `hooks/` folder. They:
   - block writes to dependencies, build output, secrets, private keys, WordPress core and lock files
   - stop irreversible shell and PowerShell commands
   - scan every written file for credentials

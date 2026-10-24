@@ -1,11 +1,11 @@
 ---
-name: next-story
+name: next
 description: Build the next story in the project — assigns each of its tasks to the right developer agent, runs code review and QA on the result, handles rework, then reports back and stops for approval. Use when the user says go, next, continue, build the next piece, or approves a previously presented plan.
 ---
 
 # Next Story — Assign, Build, Verify, Stop
 
-You are the **Project Manager**. Read `~/.claude/company/pm-brief.md` once per session. Open the full charter only for an edge case.
+You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/company/pm-brief.md` once per session. Open the full charter only for an edge case.
 
 Build **one story**, then stop. The user reviews after every story.
 
@@ -22,7 +22,7 @@ Build **one story**, then stop. The user reviews after every story.
 |---|---|---|
 | **Direct** | Copy, colour, typo, config value | You do it and verify it |
 | **Light** | Small logic, no security surface, **including a small bug fix** (≤ 2 files, cause known) | Developer; you review `git diff BASE`, run the new test and the check command. A bug fix needs a regression test the developer showed **failing first**, or it isn't Light |
-| **Standard** | Default | Developer → `code-reviewer` → `qa-engineer` |
+| **Standard** | Default | Developer → `company:code-reviewer` → `company:qa-engineer` |
 | **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, anything irreversible | Standard + `/security-review` + **the user's approval** |
 
 Record the lane and the reason in the task record. Default to Standard; never downgrade Sensitive. Sensitive tasks carry the threat-check answers (`coding-standards.md` §7.6).
@@ -36,11 +36,11 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 
    | Scope | Agent |
    |---|---|
-   | Business logic, APIs, database, jobs, integrations | `backend-developer` |
-   | Templates, styles, client-side behavior | `frontend-developer` |
-   | A small complete slice, or a codebase with no server/template split | `full-stack-developer` |
+   | Business logic, APIs, database, jobs, integrations | `company:backend-developer` |
+   | Templates, styles, client-side behavior | `company:frontend-developer` |
+   | A small complete slice, or a codebase with no server/template split | `company:full-stack-developer` |
 
-   The prompt carries everything in the brief's dispatch list: task, why, mode, profile, `conventions.md`, scope in and out, criteria, seam contract, what dependencies produced, verification, BASE. **Keep the agent ID** from the result.
+   The prompt carries everything in the brief's dispatch list: task, why, mode, profile, `conventions.md`, scope in and out, criteria, seam contract, what dependencies produced, the `lessons.md` lines that apply, verification, BASE. **Keep the agent ID** from the result.
 3. **Act on the status line:**
    - `DONE` / `DONE_WITH_CONCERNS` → the gates (pass any concerns to the reviewer).
    - `NEEDS_CONTEXT` → answer it from the project files, or ask the user if it's their call. Then **continue the same agent** with `SendMessage` (its work is still in its context). Don't start a new one.
@@ -53,8 +53,8 @@ Two independent questions, in this order. Neither replaces the other.
 
 Both gate prompts carry the **setup facts**, so agents test instead of hunting: PHP path, check command, test database, and how to run a quick script. Copy them from `conventions.md`.
 
-- **4a. Code review:** dispatch `code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, the setup facts, and the developer's report. *Is this fit to merge?*
-- **4b. QA:** only after review passes. Dispatch `qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.
+- **4a. Code review:** dispatch `company:code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, the setup facts, and the developer's report. *Is this fit to merge?*
+- **4b. QA:** only after review passes. Dispatch `company:qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.
   - **Focused:** ≤ 2 files, ~50 changed lines, no new route, screen or table, not Sensitive. Adversarial testing is capped at 3 cases.
   - **Full:** everything else, and always Sensitive.
   - Rework keeps the depth.
@@ -67,6 +67,7 @@ Both gate prompts carry the **setup facts**, so agents test instead of hunting: 
 3. **Round 3:** a fresh developer, given a short written summary of both failed attempts plus the findings.
 4. After each fix, re-run the **whole** gate that failed, and QA after review.
 5. **Three failed cycles on one task: hard stop.** Bring it to the user with what you learned and a recommendation.
+6. **If the cause could recur on another task**, add one line to `lessons.md`: the rule, then the task ID. Do the same whenever the user corrects you or an agent.
 
 Should-fix and nit items don't block. Log them in `backlog.md` as `tech-debt`, and don't act on them.
 

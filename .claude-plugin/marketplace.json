@@ -1,0 +1,12 @@
+{
+  "name": "agent-company",
+  "owner": { "name": "Muhammad Kashif" },
+  "description": "Agent Company: a project manager and specialist agents for PHP work.",
+  "plugins": [
+    {
+      "name": "company",
+      "source": "./plugin",
+      "description": "Runs a PHP project like a small software company, with safety hooks."
+    }
+  ]
+}
