@@ -10,8 +10,8 @@
     "story_budget": {
       "type": "number",
       "title": "Budget per piece of work (US dollars)",
-      "description": "How much AI work one piece of the project may use, priced at Anthropic's pay-per-use rates, before the project manager stops and asks you. You get a warning at 80%. A typical piece costs about $17. Each project can change it.",
-      "default": 25,
+      "description": "How much AI work one piece of the project may use, priced at Anthropic's pay-per-use rates, before the project manager stops and asks you. You get a warning at 80%. A typical piece costs about $7 in Quick mode (an estimate) and about $17 in Careful mode. Each project can change it.",
+      "default": 12,
       "min": 1
     },
     "project_budget": {

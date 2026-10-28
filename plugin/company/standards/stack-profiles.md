@@ -155,4 +155,4 @@ No company defaults apply beyond the security floor and the no-drive-by rule.
 1. The survey is deeper than usual: identify the framework's own conventions and its documented project layout.
 2. Follow the framework's official standards as rung 5, beneath the project's actual conventions.
 3. `solution-architect` records in `decisions.md` which company standards are suspended and what replaces them.
-4. Where the framework version is unsupported or the docs are gone, record that as a project risk in `raid.md`.
+4. Where the framework version is unsupported or the docs are gone, record that as a project risk in `decisions.md` (`## Risks`).

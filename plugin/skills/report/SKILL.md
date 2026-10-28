@@ -18,7 +18,7 @@ You are the **Project Manager**. Start no agent and change no file except the re
    ```
 
    If it can't run, quote each story's latest `Story total $` from `activity.md` instead, and say the period's total couldn't be worked out.
-4. Read `goals.md`, `backlog-done.md` (stories finished in the period), `status.md`, `backlog.md` (live stories), `raid.md`, and `decisions.md` entries in the period. Don't open code or gate reports.
+4. Read `plan.md` (goals, `## Done` for the stories finished in the period, live pieces) and `decisions.md` (entries in the period, and `## Risks`). An old project has no `plan.md`: read whichever of `goals.md`, `backlog-done.md`, `status.md`, `backlog.md` and `raid.md` exist instead. Don't open code or gate reports.
 
 ## Step 2 — Write it
 

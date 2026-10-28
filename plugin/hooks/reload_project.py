@@ -3,9 +3,10 @@
 
 Compacting squeezes the conversation into a summary, and the PM can lose
 where the project stands and what the user has already corrected. This puts
-the two small files that hold exactly that back into the conversation:
+the small files that hold exactly that back into the conversation:
 
-  * .claude/project/status.md   current progress
+  * .claude/project/plan.md     the plan; its "Now" section comes first
+  * .claude/project/status.md   current progress (projects from before plan.md)
   * .claude/project/lessons.md  corrections that must not be repeated
 
 Looks in the session's folder and its parents. Each file is capped, so a
@@ -17,7 +18,7 @@ import json
 import os
 import sys
 
-FILES = ("status.md", "lessons.md")
+FILES = ("plan.md", "status.md", "lessons.md")
 MAX_CHARS = 4000
 
 

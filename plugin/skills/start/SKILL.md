@@ -1,6 +1,6 @@
 ---
 name: start
-description: Start a new project or take on an existing one. Runs the Project Manager intake interview in plain language, surveys an existing codebase if there is one, then produces the requirements, backlog, and task breakdown for approval. Use when someone describes something they want built ("I want a website for my business", "we need a booking system"), or points at an existing codebase to work on.
+description: Start a new project or take on an existing one. Runs the Project Manager intake interview in plain language, surveys an existing codebase if there is one, then produces the plan and task breakdown for approval. Use when someone describes something they want built ("I want a website for my business", "we need a booking system"), or points at an existing codebase to work on.
 ---
 
 # New Project — PM Intake
@@ -38,7 +38,7 @@ Write `.claude/project/conventions.md`. From then on it outranks the company sta
 
 ## Step 3 — Interview
 
-Ask in **plain language**, in **one batched round**: six to ten questions, grouped, with examples.
+Ask in **plain language**, in **one batched round**: **3–5 questions**, each with a default the user can just accept. The table lists what you might need; pick the 3–5 that matter most for this request and assume the rest (say what you assumed).
 
 | You need to know | Ask something like |
 |---|---|
@@ -55,12 +55,12 @@ Ask in **plain language**, in **one batched round**: six to ten questions, group
 
 - **Offer sensible defaults** rather than making them decide everything.
 - If they don't know, **say what you'll assume** and write it down.
-- Only genuinely blocking unknowns get a second round. Two rounds maximum.
+- Only a true blocker gets a second round. Two rounds maximum.
 - Watch for the "and": a request with several things in it is several pieces of work.
 
-## Step 3b — Look and feel: show options, never ask for hex codes
+## Step 3b — Look and feel: only when the user asks
 
-For a **new** project, or when the user asks for a new look. **Never** ask someone to name colours or fonts from nothing. Show them choices they can see:
+Do this **only** when the user asks for a look or a redesign, or says they care about how it looks. Otherwise use a clean default look with system fonts, record it in `decisions.md`, and tell them they can ask for design options at any time. **Never** ask someone to name colours or fonts from nothing. Show them choices they can see:
 
 1. **Three genuinely different directions** of one real screen from their project (usually the homepage), plus a second screen if it helps. Each direction has:
    - a name for its mood
@@ -84,7 +84,7 @@ For a **new** project, or when the user asks for a new look. **Never** ask someo
 
 For a **new** project only. In brownfield the stack is whatever the survey found; don't offer to change it.
 
-Ask with the `AskUserQuestion` tool, in one call, **recommended option first**, each option described by what it means for them, not by jargon. Without the tool, show the same options as a short numbered list. Skip any question the user already answered, or that the spec or hosting already decides.
+**Ask at most one question: what kind of site is it** (the first row). It counts within the 3–5 interview questions. Ask the others **only if the user brings up the stack**; otherwise use the recommended option for each and say so in the plan. Ask with the `AskUserQuestion` tool, **recommended option first**, each option described by what it means for them, not by jargon. Without the tool, show a short numbered list. Skip any question the user already answered, or that the spec or hosting already decides.
 
 | Question | Options (recommended first) |
 |---|---|
@@ -94,13 +94,13 @@ Ask with the `AskUserQuestion` tool, in one call, **recommended option first**, 
 | **Database** (Laravel only) | MySQL, which most hosts have · PostgreSQL · SQLite: one file, for small or internal tools |
 
 - **Give each option one honest trade-off.** For example, Tailwind puts long class lists in the HTML, and Bootstrap sites look alike unless restyled.
-- **Vue, React or anything else** can come through "Other". Say plainly that this team works best with server-rendered pages, and log it in `raid.md` as a risk.
+- **Vue, React or anything else** can come through "Other". Say plainly that this team works best with server-rendered pages, and log it in `decisions.md` under `## Risks` as a risk.
 - **Whatever they don't know, use the recommended option** and say so.
 - **Record every answer:**
   - in `decisions.md`, decided by the user
   - in `conventions.md`, under a **Stack** section with the JS library and the folders where JS and CSS files live. From then on this outranks the defaults in `coding-standards.md`.
 
-## Step 4 — Decompose and write the files
+## Step 4 — Decompose, then write the files
 
 **Goals first.** From their answers on business outcome and verification, write **2–5 goals**: what will be different for them once the work is done. Each goal has:
 
@@ -112,37 +112,40 @@ More than five means the project is too big for one plan: say so and suggest wha
 
 Slice **vertically**: each story is something they could see working, never "set up the database". Put the riskiest unknown first, as a short spike, before code depends on it.
 
-Create under `.claude/project/`:
+Before writing any file, do the **git safety net** (Step 4b). Then create under `.claude/project/`:
 
 | File | Contents |
 |---|---|
 | `conventions.md` | Survey output (brownfield), or the standards adopted and any deliberate deviations (greenfield) |
-| `goals.md` | The goals: ID, outcome, done when, and progress (`0 of N stories`) |
-| `requirements.md` | Their verbatim request, your questions, their answers, stated assumptions |
-| `backlog.md` | Live stories → tasks. Each with its goal, benefit, Given/When/Then criteria, size, role, lane, in-scope paths, dependencies |
-| `backlog-done.md` | Empty for now; finished stories move here |
-| `board.md` | Every task with its state. All start `Ready` or `Blocked` |
-| `raid.md` | Risks, assumptions, issues, dependencies, each with an owner |
-| `decisions.md` | Mode, profile, stack, and why; who decided each |
-| `traceability.md` | Goal ↔ requirement ↔ story ↔ task ↔ test |
-| `status.md` | Current progress, grouped by goal |
+| `plan.md` | `## Now` first (3–6 lines: the plan is ready, what the first piece is, what you need from them). Then `## The request` (their verbatim request, your questions, their answers, stated assumptions, brief). `## Goals` (ID, outcome, done when, progress such as `0 of N stories`). `## Pieces`: each live story with its ID, title, goal, "so that", Given/When/Then checks, size and lane, then a task table (ID, what, role, lane, state, date, one-line note); all tasks start `Ready` or `Blocked`. `## Done`, empty for now: finished stories collapse to one line each |
+| `decisions.md` | Mode, profile, stack, and why; who decided each. Plus a `## Risks` section: risks, assumptions, issues, dependencies, each with an owner |
 | `lessons.md` | Empty for now; mistakes that must not happen twice go here |
 
 `activity.md` is created by a hook on the first agent run, one line per run with its cost. Never write it yourself.
 
-Also write `budget.md` (format in `${CLAUDE_PLUGIN_ROOT}/company/standards/token-budget.md` §5): the story budget ($25 unless the user wants another), and a suggested project budget of stories × $17, rounded up, or `none` if they'd rather not cap it.
+Also write `budget.md` (format in `${CLAUDE_PLUGIN_ROOT}/company/standards/token-budget.md` §5): the story budget ($12 unless the user wants another), and a suggested project budget of stories × $7 in Quick mode (the `Mode:` line in your session context; none means Quick) or stories × $17 in Careful, rounded up, or `none` if they'd rather not cap it.
 
 Every task record carries mode, profile, the path to `conventions.md`, scope in and out, dependencies, criteria, verification and lane. **Check in-scope paths against the real tree.** Verification steps must work within the blocked list (brief).
 
 **Greenfield, Profile A:** the first task scaffolds the toolchain in `stack-profiles.md` (Pint, Pest with architecture tests, Larastan, `composer audit`), plus the frontend stack chosen in Step 3c, and records the check command. Add `QaProbe*` to `.gitignore` so a missed QA probe file can never be committed. **In brownfield, ask before adding either.**
 
-**Security risks to log in `raid.md` whenever they apply:**
+**Security risks to log in `decisions.md` under `## Risks` whenever they apply:**
 - the app fetches URLs (SSRF)
 - it sends text to an AI model (prompt injection)
 - it parses XML (XXE)
 - it handles logins, payments, uploads or personal data (Sensitive lane)
 
 **The deploy or launch story** always carries the checklist in `${CLAUDE_PLUGIN_ROOT}/company/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch.
+
+## Step 4b — Git safety net (before writing files)
+
+| Folder | Do |
+|---|---|
+| Not a git repo, **empty** | Just do it, and say so in one line |
+| Not a git repo, **has code** | Ask first, in one line (recommended: yes). Never run `git init` over someone's code unasked |
+| Already a repo | Nothing to do |
+
+To set it up: write a `.gitignore` that at least excludes `.env`, `.env.*` (but not `.env.example`), `vendor/`, `node_modules/` and `QaProbe*` (add to an existing one rather than replacing it); run `git init`; make a first commit. **Check `git status` before the first commit** and never commit a `.env` or any file holding a secret.
 
 ## Step 5 — Present the plan and STOP
 
@@ -153,7 +156,8 @@ Show them, in plain language:
 - The pieces you'll build, **in order, under the goal each one serves**, and what each gives them
 - What you assumed where they didn't know
 - What you've deliberately left out for now
-- **The budget:** about $17 a story is typical (API-equivalent, the AI's work only). Each story stops to ask you at $25; suggest a cap for the whole project and let them change either
+- **The budget:** about $7 a piece is typical in Quick mode (an estimate; about $17 in Careful mode), API-equivalent, the AI's work only. Each piece stops to ask you at $12; suggest a cap for the whole project and let them change either
+- If you skipped design options or stack choices, one line: you used a clean default look and the recommended tools, and they can ask for options anytime
 - Anything you need from them (logo, content, domain, accounts, API keys, which they put in `.env` themselves)
 
 Then **stop and wait for approval.** Tell them: *"Once you're happy with this, say go and I'll build the first piece, then show it to you before continuing."*

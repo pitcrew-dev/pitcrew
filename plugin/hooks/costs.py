@@ -119,7 +119,7 @@ def logged(log_path, since=""):
 
 
 # Budgets: .claude/project/budget.md, else the plugin settings, else these.
-DEFAULT_STORY = 25.0
+DEFAULT_STORY = 12.0
 SETTING = re.compile(r"^\W*(story|project) budget\W*:\W*(\$?\s*[\d.]+|none)", re.I | re.M)
 AMOUNT = re.compile(r"^\$?\s*(\d+(?:\.\d+)?)$")
 

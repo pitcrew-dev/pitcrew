@@ -310,14 +310,8 @@ Kept in the target project, under `.claude/project/`:
 | Artifact | Purpose |
 |---|---|
 | `conventions.md` | **Written first in brownfield.** Survey findings: stack, versions, structure, observed conventions, test baseline, VCS style, danger zones. Rung 3 of the precedence ladder for this project. |
-| `goals.md` | 2–5 outcomes the sponsor wants, each with an ID and "done when". Every story names one. Changed only with the sponsor's approval |
-| `requirements.md` | Intake records, verbatim requests, clarifications, assumptions |
-| `backlog.md` | The full hierarchy with priority, estimate, state, and goal |
-| `board.md` | Current state of every in-flight task |
-| `raid.md` | Risks, assumptions, issues, dependencies |
-| `decisions.md` | Decision log — what, why, who approved, what it displaced |
-| `traceability.md` | Requirement ↔ story ↔ task ↔ test matrix |
-| `status.md` | Current progress report |
+| `plan.md` | `## Now` (3–6 lines, rewritten after each piece), the verbatim request with questions, answers and assumptions, 2–5 goals each with an ID and "done when" (changed only with the sponsor's approval), the live pieces with their tasks, state, checks and the tests that cover them (the trace: goal → story → task → test), and finished stories as one line each |
+| `decisions.md` | Decision log — what, why, who approved, what it displaced — plus a `## Risks` section for risks, assumptions, issues and dependencies, each with an owner |
 | `budget.md` | Story and project budgets, and the top-ups the sponsor approved. A top-up is recorded only after the sponsor's approval |
 | `activity.md` | One line per agent run with its measured cost. Written only by a hook; the PM reads it and never edits it |
 | `lessons.md` | Mistakes that must not happen twice — user corrections and recurring gate-failure causes, one line each, passed to every agent they apply to |

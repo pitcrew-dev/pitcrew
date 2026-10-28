@@ -1,7 +1,7 @@
 # Standard — Token Budget
 
 **Applies to:** every role, every dispatch.
-**Why:** multi-agent workflows cost **4–7× a single session**, because each subagent runs a fresh context and re-reads what it needs. Our default flow spawns three agents per task. Unchecked, that is how a budget disappears in an afternoon.
+**Why:** multi-agent workflows cost **4–7× a single session**, because each subagent runs a fresh context and re-reads what it needs. **Careful** mode spawns three agents per task; **Quick** (the default) spawns one per task plus one QA per piece. Unchecked, that is how a budget disappears in an afternoon.
 
 The goal is not to spend less on everything. It is to **spend where verification actually prevents a defect, and nowhere else.**
 
@@ -15,12 +15,12 @@ The PM picks a lane per task and records it. Running the full gate on a copy cha
 |---|---|---|---|
 | **Direct** | Copy text, a colour, a typo, a config value, a one-line content fix. No logic, no data, no permissions. | **0** — the main session does it and verifies | ~1× |
 | **Light** | A small, low-risk change with real logic but no security surface: a validation message, a display format, a simple filter, **a small bug fix** (≤ 2 files, cause known) with a regression test shown failing first. | **1** — developer only; the main session reviews the diff and runs the new test and the suite | ~2× |
-| **Standard** | Default for anything with logic, data, or user-visible behavior. | **3** — developer → `code-reviewer` → `qa-engineer` | ~4–7× |
-| **Sensitive** | Auth, permissions, payment, personal data, file upload, migrations, anything irreversible. | **3 + `/security-review` + the user** | ~4–7× plus a human gate |
+| **Standard** | Default for anything with logic, data, or user-visible behavior. | **Quick:** a developer per task (the PM checks `git diff BASE`, runs the check command and the new test), then **one** `qa-engineer` run after the piece's last task. No `code-reviewer`. **Careful:** developer → `code-reviewer` → `qa-engineer` per task | Quick ~2–3×; Careful ~4–7× |
+| **Sensitive** | Auth, permissions, payment, personal data, file upload, migrations, deploy or going live, anything irreversible. | **Always the full flow, in both modes:** developer → `code-reviewer` → `qa-engineer` per task, `/security-review` and **the user** | ~4–7× plus a human gate |
 
 **Rules:**
 
-- **Default to Standard.** Choosing a cheaper lane is a decision the PM records with a reason, not a shortcut taken quietly.
+- **Default to Standard.** The mode (the `Mode:` line in the session context; none means Quick) only changes Standard. A typical piece costs about $7 in Quick (an estimate, still to be measured) and about $17 in Careful (the pilot's average). Choosing a cheaper lane is a decision the PM records with a reason, not a shortcut taken quietly.
 - **Never downgrade a Sensitive task.** The lane is set by what the code touches, not by how small the diff looks.
 - **Never batch lanes.** Three Direct changes are still Direct; one Standard task in the group makes that task Standard, not all of them.
 - **A failed gate does not downgrade.** Rework re-runs the same lane.
@@ -79,22 +79,22 @@ Grinding is the expensive failure mode. Stop and ask rather than retry:
 
 ### Budgets
 
-Costs are API-equivalent dollars, measured per agent run in `activity.md`. The defaults are **$25 per story** and **no project cap**, set in the plugin settings. A project can override them in `.claude/project/budget.md`:
+Costs are API-equivalent dollars, measured per agent run in `activity.md`. The defaults are **$12 per story** and **no project cap**, set in the plugin settings. A project can override them in `.claude/project/budget.md`:
 
 | Line | Example |
 |---|---|
-| `Story budget: $<n>` | `Story budget: $25` |
+| `Story budget: $<n>` | `Story budget: $12` |
 | `Project budget: $<n>` or `none` | `Project budget: $250` |
 | `Mode: quick` or `careful` (optional; overrides the plugin setting for this project) | `Mode: careful` |
 | A **Top-ups** table, one row per approval | `\| 2026-10-24 \| SHOP-E01-S02 \| $10 \| user \|` (use `project` instead of a story ID for the project cap) |
 
-The pilot averaged about $17 a story, the PM included. At `/company:start`, suggest a project cap of stories × $17, rounded up.
+A typical piece is about $7 in Quick mode (an estimate) and about $17 in Careful mode (the pilot's average, the PM included). At `/company:start`, suggest a project cap of stories × $7 (Quick) or × $17 (Careful), rounded up.
 
 ## 6. Session hygiene
 
 - **One story per session where practical.** `/clear` between stories: long sessions accumulate history that is re-sent on every turn, and attention degrades as the window fills ("context rot").
 - **`/compact` at a natural boundary**, not mid-task.
-- **Keep the project files lean**, because `/company:next` reads them every time. Finished stories move to `backlog-done.md`; board reasons are one line; `status.md` is rewritten, not appended; agent reports stay under ~40 lines. On the first pilot, `backlog.md` alone had grown to ~10k tokens.
+- **Keep the project files lean**, because `/company:next` reads them every time. Finished stories collapse to one line in `plan.md`; task notes are one line; its **Now** section is rewritten, not appended; agent reports stay under ~40 lines. On the first pilot, the backlog alone had grown to ~10k tokens.
 - **`/cost` to measure.** Take a baseline before optimizing anything — without one you cannot tell whether a change helped.
 - **Keep `CLAUDE.md` stable.** It sits in the cached prefix; editing it mid-session invalidates the cache and every subsequent turn pays full price.
 

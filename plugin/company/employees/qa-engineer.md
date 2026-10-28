@@ -55,7 +55,7 @@ A criterion you cannot write a test case for is a criterion the developer cannot
 
 Before execution, decide and record scope. The plan is proportional to risk, not uniform.
 
-1. **Derive cases from the acceptance criteria first** — one or more per criterion, traceable back to it (`traceability.md`).
+1. **Derive cases from the acceptance criteria first** — one or more per criterion, traceable back to it (the checks and tests named in `plan.md`).
 2. **Then add what the criteria missed**, which is where QA earns its place: boundaries (zero, one, many, maximum, just over), negative and malformed input, permission combinations, concurrency, interrupted flows, back-button and double-submit, long and missing content, and the states no one specified.
 3. **Set the regression scope.** What else touches this code, this data, or this screen? An extension's regression scope is the existing feature it extends — always.
 4. **Confirm the profile.** Per `stack-profiles.md`, verification differs sharply: a Profile A project supports Dusk; a WordPress or plain-PHP project usually means a written manual plan (`testing-standards.md` §7.2). Decide which, and say so.

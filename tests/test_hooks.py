@@ -399,8 +399,8 @@ class ReloadProjectTest(unittest.TestCase):
     def test_silent_without_a_project(self):
         self.assertEqual((0, "", ""), self.reload(self.root))
 
-    def test_reloads_status_and_lessons_from_a_subfolder(self):
-        self.write("status.md", "Story S2 of 5 done; next: contact form.")
+    def test_reloads_plan_and_lessons_from_a_subfolder(self):
+        self.write("plan.md", "## Now\\n\\nStory S2 of 5 done; next: contact form.")
         self.write("lessons.md", "- Tests use the MySQL test schema, never SQLite. (user, S1)")
         sub = os.path.join(self.root, "app", "Http")
         os.makedirs(sub)
@@ -409,8 +409,14 @@ class ReloadProjectTest(unittest.TestCase):
         self.assertIn("next: contact form", out)
         self.assertIn("never SQLite", out)
 
+    def test_old_projects_still_reload_status_md(self):
+        self.write("status.md", "Story S2 of 5 done; next: contact form.")
+        code, out, _ = self.reload(self.root)
+        self.assertEqual(0, code)
+        self.assertIn("next: contact form", out)
+
     def test_caps_a_file_that_grew_too_big(self):
-        self.write("status.md", "x" * 20000)
+        self.write("plan.md", "x" * 20000)
         code, out, _ = self.reload(self.root)
         self.assertEqual(0, code)
         self.assertLess(len(out), 5000)
@@ -594,7 +600,7 @@ class CheckBudgetTest(unittest.TestCase):
         self.assertEqual((0, "", ""), self.dispatch("Build SHOP-E01-S02-T02."))
 
     def test_warns_at_80_percent(self):
-        code, out, _ = self.dispatch("QA for SHOP-E01-S02-T01.")  # $20 of the default $25
+        code, out, _ = self.dispatch("QA for SHOP-E01-S02-T01.", env={"CLAUDE_PLUGIN_OPTION_STORY_BUDGET": "25"})  # $20 of $25
         self.assertEqual(0, code)
         context = json.loads(out)["hookSpecificOutput"]["additionalContext"]
         self.assertIn("$20.00 of its $25.00", context)
@@ -651,7 +657,7 @@ class CostSummaryTest(unittest.TestCase):
     def test_a_new_project(self):
         out = self.summary()
         self.assertIn("No agent runs logged yet.", out)
-        self.assertIn("Budget per story: $25.00", out)
+        self.assertIn("Budget per story: $12.00", out)
 
     def test_a_half_done_project_with_a_cap(self):
         self.write("activity.md", ACTIVITY)
@@ -684,6 +690,7 @@ class AgentStatusTest(unittest.TestCase):
                 {"id": "t2", "agentType": "Explore", "description": "Look around", "tokenCount": 10},
             ]}
             env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_PLUGIN_OPTION_")}
+            env["CLAUDE_PLUGIN_OPTION_STORY_BUDGET"] = "25"
             proc = subprocess.run([sys.executable, os.path.join(HOOKS, "agent_status.py")], input=json.dumps(payload),
                                   capture_output=True, text=True, timeout=60, env=env, encoding="utf-8")
             rows = [json.loads(line) for line in proc.stdout.splitlines()]

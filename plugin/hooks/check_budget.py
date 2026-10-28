@@ -14,7 +14,7 @@ The project total is checked the same way when a project budget is set.
 An agent that is already running is never interrupted.
 
 Budgets come from .claude/project/budget.md, else the plugin settings
-(story_budget, project_budget), else $25 per story and no project cap.
+(story_budget, project_budget), else $12 per story and no project cap.
 
 Silent when there is no project. Fails OPEN on any internal error.
 """

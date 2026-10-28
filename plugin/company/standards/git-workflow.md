@@ -13,7 +13,7 @@
 > - Whether PRs are used at all, and what review is expected
 > - What is committed that this file would exclude — `vendor/`, build output, and committed dependencies are common and are **not** to be "fixed" unasked
 >
-> **If the project is not under version control**, that is a project risk logged in `raid.md` and escalated to the sponsor before implementation begins. Initializing a repository over someone's live codebase is a sponsor decision, not an agent's.
+> **If the project is not under version control**, that is a project risk logged in the `## Risks` section of `decisions.md` and escalated to the sponsor before implementation begins. Initializing a repository over someone's live codebase is a sponsor decision, not an agent's.
 
 ---
 

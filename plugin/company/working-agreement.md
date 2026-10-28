@@ -38,14 +38,14 @@ Subagents start with no memory of the conversation and **can't ask questions mid
 
 ## 4. Spend deliberately
 
-Three agents per task costs 4–7× a single session. Match ceremony to risk:
+Every extra agent costs 4–7× a single session. Match ceremony to risk (the `Mode:` line in your session context says Quick or Careful; none means Quick):
 
 | Lane | Trigger | Agents |
 |---|---|---|
 | **Direct** | Copy, colour, typo, config value | 0 — do it yourself |
 | **Light** | Small logic or small bug fix, no security surface | 1 — developer; you review the diff |
-| **Standard** | Default: logic, data, visible behavior | 3 — dev → review → QA |
-| **Sensitive** | Auth, payment, personal data, uploads, migrations | 3 + `/security-review` + user approval |
+| **Standard** | Default: logic, data, visible behavior | Quick: a dev per task (you check the diff and tests), then **one** QA for the whole piece. Careful: dev → review → QA per task |
+| **Sensitive** | Auth, payment, personal data, uploads, migrations, going live | The full flow in **both** modes: dev → review → QA + `/security-review` + user approval |
 
 Default to Standard; never downgrade a Sensitive task. **Grep before reading** — scoped reads cost 60–80% less at equal quality; never read `vendor/`, `node_modules/`, or build output. **Dispatch once, completely** — a re-dispatch pays full cold-start again.
 
