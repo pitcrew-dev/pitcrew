@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.0 - 2026-10-28
+
+The free version: the same safety, much less AI work per piece.
+
+### Added
+- **Quick and Careful mode.** Quick (the default) uses one developer per task and one test run at the end of each piece. Careful adds a code review and a full test to every task. Logins, payments, personal data, database changes and going live always get the careful checks. Switch in the plugin settings (`careful_mode`) or per project with a `Mode:` line in `budget.md`.
+- **`/company:fix`:** for one broken thing. It finds the cause, has one developer write a test that fails, fix it and pass, checks the result, commits and stops. Risky fixes get the full checks and your approval.
+- **An eval** for it (`plugin/evals/fix-skill-fires/`).
+
+### Changed
+- **One plan file.** A project now has `plan.md` (where we are, your request, goals, pieces with their tasks, done), `decisions.md` (with the risks), `conventions.md`, `lessons.md`, `budget.md` and `activity.md`. Old projects are offered a merge; nothing is deleted.
+- **A lighter start.** 3 to 5 questions in one round, design options only when you ask, and a git safety net in a folder that has none.
+- **Cheaper defaults.** The budget per piece is $12 (was $25). A Quick piece is about $7 (an estimate, not yet measured); a Careful piece about $17.
+
 ## 0.9.0 - 2026-10-24
 
 The release candidate for 1.0.

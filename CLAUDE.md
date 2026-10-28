@@ -20,7 +20,7 @@ Always explain in **simple, short, clear words**, without being asked.
 | `plugin/company/pm-brief.md` | The main session's operating brief |
 | `plugin/company/employees/` | Full role charters, read on demand |
 | `plugin/company/standards/` | Standards; `engagement-modes.md` governs the rest |
-| `plugin/agents/`, `plugin/skills/` | 5 subagents (`company:*`); `/company:start`, `/company:next`, `/company:status`, `/company:report` |
+| `plugin/agents/`, `plugin/skills/` | 5 subagents (`company:*`); `/company:start`, `/company:next`, `/company:fix`, `/company:status`, `/company:report` |
 | `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), the safety, formatting, activity-log and budget hooks (Python), `costs.py` (shared cost and budget reading), `cost_summary.py` (run by `/company:status` and `/company:report`) and `agent_status.py` (the agent status line) |
 | `plugin/settings.json` | Turns on the agent status line |
 | `plugin/evals/` | Plugin evals (`claude plugin eval`), and `fixtures/salon/`, the sample project they and the README use |

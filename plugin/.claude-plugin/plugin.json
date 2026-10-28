@@ -1,8 +1,8 @@
 {
   "name": "company",
   "displayName": "Agent Company",
-  "version": "0.9.0",
-  "description": "Runs a PHP project like a small software company: a project manager plus developer, code-review and QA agents, with safety hooks.",
+  "version": "1.0.0",
+  "description": "Runs a PHP project like a small software company: a project manager plus developer, code-review and QA agents, with safety hooks. Quick mode keeps it cheap.",
   "author": { "name": "Muhammad Kashif" },
   "license": "MIT",
   "keywords": ["php", "laravel", "wordpress", "agents", "workflow"],

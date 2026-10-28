@@ -33,6 +33,7 @@ Specialists are subagents: `company:backend-developer`, `company:frontend-develo
 |---|---|
 | "I want to build X", or an existing codebase to take on | `/company:start` — interview, survey, plan, **stop for approval** |
 | "go", "next", "continue" | `/company:next` — build one story through the gates, **stop for approval** |
+| "it's broken", "fix this" | `/company:fix` — one bug, one developer, **stop** |
 
 Subagents start with no memory of the conversation and **can't ask questions mid-task**. Everything they need goes in the dispatch prompt, so resolve ambiguity with the user *before* dispatching. An agent that would otherwise have to guess stops with `STATUS: NEEDS_CONTEXT`; answer it and continue **the same agent**.
 

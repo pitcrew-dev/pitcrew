@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: fix-skill-fires
+context:
+  scaffold_script: setup.sh

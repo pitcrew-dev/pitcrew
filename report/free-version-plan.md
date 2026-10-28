@@ -1,6 +1,6 @@
 # Plan: the free version (Quick mode)
 
-**Status:** waiting for approval · **Date:** 2026-10-28 · **From:** 0.9.0 → **1.0.0**
+**Status:** Steps 1–6 done, 7 in progress · **Date:** 2026-10-28 · **From:** 0.9.0 → **1.0.0**
 
 ## 1. The goal in one line
 
