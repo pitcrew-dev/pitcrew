@@ -20,6 +20,12 @@
       "description": "The same, for a whole project. 0 means no limit; the project manager suggests one when a project starts.",
       "default": 0,
       "min": 0
+    },
+    "careful_mode": {
+      "type": "boolean",
+      "title": "Careful mode",
+      "description": "Off (Quick): one developer per task and one test at the end of each piece, which costs much less. On (Careful): every task also gets a code review and a full test. Logins, payments, personal data, database changes and going live always get the careful checks.",
+      "default": false
     }
   }
 }

@@ -144,6 +144,24 @@ def option(name):
     return value if value > 0 else None
 
 
+MODE = re.compile(r"^\W*mode\W*:\W*(careful|quick)\b", re.I | re.M)
+
+
+def mode(folder):
+    """(mode name, where it came from): budget.md, else the plugin setting, else Quick."""
+    if folder:
+        try:
+            with open(os.path.join(folder, "budget.md"), encoding="utf-8") as handle:
+                found = MODE.findall(handle.read())
+        except OSError:
+            found = []
+        if found:
+            return found[-1].capitalize(), "from .claude/project/budget.md"
+    if os.environ.get("CLAUDE_PLUGIN_OPTION_CAREFUL_MODE", "").strip().lower() in ("true", "1", "yes", "on"):
+        return "Careful", "from the plugin setting"
+    return "Quick", "the default"
+
+
 def budgets(folder):
     """(story budget, project budget or None, {story or 'project': approved top-ups})."""
     story, project, topups = option("STORY_BUDGET") or DEFAULT_STORY, option("PROJECT_BUDGET"), {}

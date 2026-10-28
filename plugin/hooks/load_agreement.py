@@ -15,6 +15,9 @@ import json
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import costs  # noqa: E402
+
 
 def plugin_root():
     root = os.environ.get("CLAUDE_PLUGIN_ROOT")
@@ -47,12 +50,13 @@ def main():
         agreement = handle.read().strip()
     if not agreement:
         return 0
+    payload = json.loads(sys.stdin.read() or "{}")
+    name, source = costs.mode(costs.find_project(payload.get("cwd") or os.getcwd()))
     intro = "Company files are in: %s/ -- paths below are relative to it." % folder.replace("\\", "/")
     output = {"hookSpecificOutput": {
         "hookEventName": "SessionStart",
-        "additionalContext": intro + "\n\n" + agreement,
+        "additionalContext": intro + "\n\n" + agreement + "\n\nMode: %s (%s)." % (name, source),
     }}
-    payload = json.loads(sys.stdin.read() or "{}")
     old = old_install() if payload.get("source", "startup") == "startup" else None
     if old:
         message = OLD_INSTALL % old.replace("\\", "/")

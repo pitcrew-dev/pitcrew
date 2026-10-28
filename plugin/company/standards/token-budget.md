@@ -85,6 +85,7 @@ Costs are API-equivalent dollars, measured per agent run in `activity.md`. The d
 |---|---|
 | `Story budget: $<n>` | `Story budget: $25` |
 | `Project budget: $<n>` or `none` | `Project budget: $250` |
+| `Mode: quick` or `careful` (optional; overrides the plugin setting for this project) | `Mode: careful` |
 | A **Top-ups** table, one row per approval | `\| 2026-10-24 \| SHOP-E01-S02 \| $10 \| user \|` (use `project` instead of a story ID for the project cap) |
 
 The pilot averaged about $17 a story, the PM included. At `/company:start`, suggest a project cap of stories × $17, rounded up.

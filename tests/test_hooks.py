@@ -288,10 +288,16 @@ class LoadAgreementTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.config, ignore_errors=True)
 
-    def run_load(self, plugin_root, source="startup"):
-        env = dict(os.environ, CLAUDE_PLUGIN_ROOT=plugin_root, CLAUDE_CONFIG_DIR=self.config)
+    def run_load(self, plugin_root, source="startup", cwd=None, careful=None):
+        env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_PLUGIN_OPTION_")}
+        env.update(CLAUDE_PLUGIN_ROOT=plugin_root, CLAUDE_CONFIG_DIR=self.config)
+        if careful is not None:
+            env["CLAUDE_PLUGIN_OPTION_CAREFUL_MODE"] = careful
+        payload = {"source": source}
+        if cwd:
+            payload["cwd"] = cwd
         proc = subprocess.run([sys.executable, os.path.join(HOOKS, "load_agreement.py")],
-                              input=json.dumps({"source": source}), capture_output=True, text=True, timeout=60, env=env)
+                              input=json.dumps(payload), capture_output=True, text=True, timeout=60, env=env)
         return proc.returncode, proc.stdout, proc.stderr
 
     def test_tells_the_user_once_about_an_old_install(self):
@@ -318,6 +324,46 @@ class LoadAgreementTest(unittest.TestCase):
             self.assertIn(os.path.join(root, "company").replace("\\", "/"), data["additionalContext"])
         finally:
             shutil.rmtree(root, ignore_errors=True)
+
+    def mode_line(self, budget_text=None, careful=None):
+        """The 'Mode:' line the hook adds, for a temp project with the given budget.md."""
+        root, project = tempfile.mkdtemp(), tempfile.mkdtemp()
+        try:
+            os.makedirs(os.path.join(root, "company"))
+            with open(os.path.join(root, "company", "working-agreement.md"), "w", encoding="utf-8") as handle:
+                handle.write("Agreement.\n")
+            if budget_text is not None:
+                os.makedirs(os.path.join(project, ".claude", "project"))
+                with open(os.path.join(project, ".claude", "project", "budget.md"), "w", encoding="utf-8") as handle:
+                    handle.write(budget_text)
+            code, out, err = self.run_load(root, cwd=project, careful=careful)
+            self.assertEqual((0, ""), (code, err))
+            data = json.loads(out)
+            self.assertNotIn("systemMessage", data)
+            lines = [l for l in data["hookSpecificOutput"]["additionalContext"].splitlines() if l.startswith("Mode:")]
+            self.assertEqual(1, len(lines))
+            return lines[0]
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+            shutil.rmtree(project, ignore_errors=True)
+
+    def test_mode_defaults_to_quick(self):
+        self.assertEqual("Mode: Quick (the default).", self.mode_line())
+        self.assertEqual("Mode: Quick (the default).", self.mode_line(careful="no"))
+
+    def test_mode_from_the_plugin_setting(self):
+        for value in ("true", "1", "YES", "On"):
+            self.assertEqual("Mode: Careful (from the plugin setting).", self.mode_line(careful=value))
+
+    def test_budget_file_overrides_the_setting(self):
+        self.assertEqual("Mode: Careful (from .claude/project/budget.md).",
+                         self.mode_line("Mode: careful\n", careful="false"))
+        self.assertEqual("Mode: Quick (from .claude/project/budget.md).",
+                         self.mode_line("Mode: quick\n", careful="true"))
+
+    def test_mode_line_tolerates_markdown(self):
+        self.assertEqual("Mode: Careful (from .claude/project/budget.md).",
+                         self.mode_line("# Budget\n\n- **Mode:** Careful\n"))
 
     def test_silent_when_the_file_is_missing(self):
         root = tempfile.mkdtemp()
@@ -400,6 +446,17 @@ class CostsTest(unittest.TestCase):
     def tearDown(self):
         sys.path.remove(HOOKS)
         shutil.rmtree(self.root, ignore_errors=True)
+
+    def test_mode_reader(self):
+        old = os.environ.pop("CLAUDE_PLUGIN_OPTION_CAREFUL_MODE", None)
+        try:
+            self.assertEqual(("Quick", "the default"), self.costs.mode(None))
+            with open(os.path.join(self.root, "budget.md"), "w", encoding="utf-8") as handle:
+                handle.write("Story budget: $5\n* mode : CAREFUL\n")
+            self.assertEqual(("Careful", "from .claude/project/budget.md"), self.costs.mode(self.root))
+        finally:
+            if old is not None:
+                os.environ["CLAUDE_PLUGIN_OPTION_CAREFUL_MODE"] = old
 
     def test_prices_by_model(self):
         self.assertEqual((4.00, 20.00, 0.20), self.costs.price("claude-opus-5-5[1m]"))
