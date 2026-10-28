@@ -51,7 +51,10 @@ def main():
     if not agreement:
         return 0
     payload = json.loads(sys.stdin.read() or "{}")
-    name, source = costs.mode(costs.find_project(payload.get("cwd") or os.getcwd()))
+    try:
+        name, source = costs.mode(costs.find_project(payload.get("cwd") or os.getcwd()))
+    except Exception:
+        name, source = "Quick", "the default"
     intro = "Company files are in: %s/ -- paths below are relative to it." % folder.replace("\\", "/")
     output = {"hookSpecificOutput": {
         "hookEventName": "SessionStart",

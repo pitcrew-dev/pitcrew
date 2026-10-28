@@ -310,6 +310,24 @@ class LoadAgreementTest(unittest.TestCase):
         self.assertIn("install.py --uninstall", data["hookSpecificOutput"]["additionalContext"])
         self.assertNotIn("systemMessage", json.loads(self.run_load(real_root, source="compact")[1]))
 
+    def test_a_failing_mode_lookup_still_loads_the_agreement(self):
+        root = tempfile.mkdtemp()
+        try:
+            os.makedirs(os.path.join(root, "company"))
+            with open(os.path.join(root, "company", "working-agreement.md"), "w", encoding="utf-8") as handle:
+                handle.write("# Working agreement\n\nThink before coding.\n")
+            env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_PLUGIN_OPTION_")}
+            env.update(CLAUDE_PLUGIN_ROOT=root, CLAUDE_CONFIG_DIR=self.config)
+            proc = subprocess.run([sys.executable, os.path.join(HOOKS, "load_agreement.py")],
+                                  input=json.dumps({"source": "startup", "cwd": 123}),  # not a path: the lookup raises
+                                  capture_output=True, text=True, timeout=60, env=env)
+            self.assertEqual(0, proc.returncode)
+            context = json.loads(proc.stdout)["hookSpecificOutput"]["additionalContext"]
+            self.assertIn("Think before coding.", context)
+            self.assertIn("Mode: Quick (the default).", context)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
     def test_injects_the_agreement_and_the_company_folder(self):
         root = tempfile.mkdtemp()
         try:

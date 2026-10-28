@@ -36,7 +36,7 @@ Record the lane and the reason in the task record. Default to Standard; never do
 
 In dependency order. **Never two developers at once**, even on "independent" paths: they share one working folder.
 
-1. **Record BASE:** `git rev-parse HEAD`, noted in the task record.
+1. **Record BASE:** `git rev-parse HEAD`, noted in the task record. In Quick mode, the **first** task's BASE is also kept as the piece's BASE for the end-of-piece QA.
 2. **Dispatch** with the Agent tool, routed by discipline:
 
    | Scope | Agent |
@@ -60,6 +60,7 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 
 - **After each task:** you run `git diff BASE`, the check command and the new test. Anything wrong goes back to the same developer (rework below). Then commit (Step 5).
 - **After the piece's last task:** dispatch **one** `company:qa-engineer` with all of the piece's Given/When/Then checks, BASE (the commit before the piece's **first** task), the developers' reports, `conventions.md` and its test baseline, the setup facts, and the depth: **Full** if the piece adds a route, screen or table, else **Focused**. No code-reviewer.
+- The end-of-piece QA covers the piece's Standard tasks. A Sensitive task inside the piece has already had its own full gates and is not re-tested, though all of the piece's Given/When/Then checks are still verified.
 - On `VERDICT: FAIL`, send the finding to the developer of the task it is in (same agent, rework rules below), then re-run QA.
 
 **Careful, and every Sensitive task in either mode:** the two gates below, per task. Two independent questions, in this order. Neither replaces the other.
