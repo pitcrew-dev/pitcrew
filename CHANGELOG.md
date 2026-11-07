@@ -41,7 +41,7 @@ The release candidate for 1.0.
 - **Status and report still give costs when the cost script can't run** (for example if you said no to the shell prompt). They quote each story's running total from the activity log and say the project total couldn't be worked out, instead of leaving costs out.
 
 ### Changed
-- The install instructions name the repository: `/plugin marketplace add kasshif01/vide_coding`.
+- The install instructions name the repository: `/plugin marketplace add pitcrew-dev/pitcrew`.
 
 ## 0.8.0 - 2026-10-24
 

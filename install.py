@@ -178,7 +178,7 @@ class Uninstaller:
 MESSAGE = """
 Agent Company is now a Claude Code plugin. Install it inside Claude Code:
 
-    /plugin marketplace add kasshif01/vide_coding
+    /plugin marketplace add pitcrew-dev/pitcrew
     /plugin install pit@pitcrew
 
 To remove the old 0.2.x install first, run:

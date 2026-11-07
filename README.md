@@ -7,7 +7,7 @@
 You talk to a **Project Manager** in plain words. It plans the work, hands each task to a specialist developer, and has every result checked by **code review** and **QA** before you see it.
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue)](CHANGELOG.md)
-[![CI](https://github.com/kasshif01/vide_coding/actions/workflows/ci.yml/badge.svg)](https://github.com/kasshif01/vide_coding/actions/workflows/ci.yml)
+[![CI](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml/badge.svg)](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](#status-and-limits)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-orange)](https://code.claude.com)
 
@@ -155,7 +155,7 @@ flowchart LR
 In Claude Code:
 
 ```
-/plugin marketplace add kasshif01/vide_coding
+/plugin marketplace add pitcrew-dev/pitcrew
 /plugin install pit@pitcrew
 ```
 
@@ -171,7 +171,7 @@ PitCrew is the new name of Agent Company. The commands changed from `/company:` 
 ```
 /plugin uninstall company@agent-company
 /plugin marketplace remove agent-company
-/plugin marketplace add kasshif01/vide_coding
+/plugin marketplace add pitcrew-dev/pitcrew
 /plugin install pit@pitcrew
 ```
 
