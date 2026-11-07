@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.1.0 - 2026-11-07
+
+PitCrew now works with React and Next.js, on PostgreSQL or MySQL through Prisma. PHP projects work exactly as before.
+
+### Added
+- **Stack guides** in `plugin/crew/stacks/`: Next.js, React, Prisma, PostgreSQL and MySQL, plus `index.md`, which tells the survey how to detect each stack. Each guide points to the framework's own docs for your version (for example Next.js's bundled docs) and adds only the crew's rules: who owns which files, tests, security, dangerous commands, and a checklist for review and QA.
+- **Stack detection:** the survey reads `package.json` and its lock file, the Prisma schema and `.env.example`, and writes a **Stack** block with versions into `conventions.md`.
+- **Every task names its stack guide**, and the PM sends Next.js work to the full-stack developer by default.
+- **New projects:** a "web app with React (Next.js)" option, and the choice **"Recommended setup, or let me choose?"**. Non-technical users get proven defaults; developers pick styles, database and hosting.
+- **Database safety:** blocks `prisma migrate reset`, data-loss `prisma db push`, `drizzle-kit drop`, `dropdb` and `mysqladmin drop`, and blocks an agent from setting Prisma's consent variable. Asks first for `prisma migrate deploy`, `drizzle-kit push`, and npm scripts named like `reset`, `drop` or `wipe`.
+- **Prettier formatting:** JavaScript, TypeScript and stylesheets are formatted with the project's own Prettier, only when the project uses it, and never on old unformatted files.
+- Writes to `.next/`, `.turbo/` and `.vercel/output/` are blocked, because they're build output.
+- A Next.js + Prisma + PostgreSQL sample project (`plugin/evals/fixtures/bistro/`) and four evals for the stacks.
+
 ## 2.0.0 - 2026-11-07
 
 Agent Company is now **PitCrew**.

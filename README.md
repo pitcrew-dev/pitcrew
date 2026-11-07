@@ -6,7 +6,7 @@
 
 You talk to a **Project Manager** in plain words. It plans the work, hands each task to a specialist developer, and has every result checked by **code review** and **QA** before you see it.
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue)](CHANGELOG.md)
 [![CI](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml/badge.svg)](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](#status-and-limits)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-orange)](https://code.claude.com)
@@ -26,6 +26,7 @@ You talk to a **Project Manager** in plain words. It plans the work, hands each 
 - [Use](#use)
 - [Your project board](#your-project-board)
 - [Quick or Careful](#quick-or-careful)
+- [Stacks](#stacks)
 - [Safety rules](#safety-rules)
 - [Try it on the example project](#try-it-on-the-example-project)
 - [Develop](#develop)
@@ -47,7 +48,7 @@ In Formula 1, a pit crew is a team of specialists: a crew chief gives the signal
 | 💰 **You always know the cost** | Every agent run is logged with its cost. Each piece of work has a budget: a warning at 80%, and at 100% it stops and asks you. |
 | ⚡ **Careful with tokens** | Short agent briefs, standards read only when needed, reviews of the diff instead of the whole story, and fix rounds that continue the same agent instead of starting over. |
 
-Built for PHP today: modern and legacy Laravel, plain PHP and WordPress. More stacks are on the [roadmap](#status-and-limits).
+Works with PHP (modern and legacy Laravel, plain PHP, WordPress), and with **React and Next.js** on **PostgreSQL or MySQL through Prisma**. More stacks are on the [roadmap](#status-and-limits).
 
 ---
 
@@ -290,15 +291,36 @@ Turn Careful on in the plugin settings (`careful_mode`), or per project with a `
 
 ---
 
+## Stacks
+
+PitCrew detects the stack from your project's files (`package.json` and its lock file, `composer.json`, the Prisma schema, `.env.example`), and writes it with exact versions into `conventions.md`. Each task then names a short **stack guide**, and the agent doing it reads only that one.
+
+| Stack | Guide | What the guide adds |
+|---|---|---|
+| Laravel, plain PHP, WordPress | `standards/stack-profiles.md` | The PHP rules PitCrew started with |
+| **Next.js** | `stacks/nextjs.md` | Uses Next.js's own docs for your version (`node_modules/next/dist/docs/`). Server actions validated and permission-checked, no secrets in `NEXT_PUBLIC_` variables, full-stack developer by default. |
+| **React** | `stacks/react.md` | react.dev for your version, rules of hooks, no secrets in the browser bundle, tests by role and label |
+| **Prisma** | `stacks/prisma.md` | Migrations only, never edited after they're applied. Safe raw SQL. Resets blocked. |
+| **PostgreSQL** | `stacks/postgres.md` | Indexed foreign keys, real constraints, row-level security on Supabase |
+| **MySQL / MariaDB** | `stacks/mysql.md` | utf8mb4, strict mode, index limits, SQLite-in-tests traps |
+
+**The guides don't copy the framework docs.** Research showed that official, version-matched docs beat hand-written rules, so each guide points to them and adds only the crew's rules: who owns which files, tests, security, and dangerous commands. Reviewer and QA check each guide's checklist. The reasoning is in `report/multi-stack-research.md`.
+
+**New projects:** `/pit:start` asks what kind of site it is (now including "a web app with React (Next.js)"), then **"Recommended setup, or let me choose?"**. Non-technical users get proven defaults and only business questions. Developers can pick styles, database and hosting themselves.
+
+Other stacks (Vue, Svelte, Drizzle, MongoDB and so on) still work: PitCrew follows the code that's there and the framework's official docs, and notes that it has no guide for that stack yet.
+
+---
+
 ## Safety rules
 
 A plugin cannot ship permission rules, so PitCrew enforces these with hooks, in every project:
 
 | Kind | Rules |
 |---|---|
-| ⛔ **Denied** | Reading or writing `.env` files (not `.env.example`); `migrate:fresh`, `migrate:reset`, `db:wipe`; force-push |
-| ✋ **Asks you first** | Every `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, PowerShell `Remove-Item` |
-| 🛡️ **Guarded** | Blocks writes to `vendor/`, `node_modules/`, build output, lock files, WordPress core, `wp-config.php` and private keys; stops irreversible Bash and PowerShell commands; flags secrets in written files; formats PHP with the project's own Pint when that can't reformat old code |
+| ⛔ **Denied** | Reading or writing `.env` files (not `.env.example`); `migrate:fresh`, `migrate:reset`, `db:wipe`; `prisma migrate reset` and data-loss `prisma db push`; `drizzle-kit drop`; `DROP DATABASE`, `dropdb`; an agent setting Prisma's consent variable; force-push |
+| ✋ **Asks you first** | Every `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, `prisma migrate deploy`, `drizzle-kit push`, `DROP TABLE` or `TRUNCATE`, npm scripts named like `reset`, `drop` or `wipe`, PowerShell `Remove-Item` |
+| 🛡️ **Guarded** | Blocks writes to `vendor/`, `node_modules/`, build output (including `.next/`), lock files, WordPress core, `wp-config.php` and private keys; stops irreversible Bash and PowerShell commands; flags secrets in written files; formats PHP with the project's own Pint, and JavaScript and TypeScript with its own Prettier, when that can't reformat old code |
 
 A search over a whole folder can still match lines inside `.env`. Only a path that points straight at a `.env` file is blocked.
 
@@ -306,7 +328,9 @@ A search over a whole folder can still match lines inside `.env`. Only a path th
 
 ## Try it on the example project
 
-`plugin/evals/fixtures/salon/` is a half-built salon booking site with its project files filled in. Copy it somewhere, open the copy in Claude Code with the plugin loaded, and try `/pit:status` or `/pit:report`.
+`plugin/evals/fixtures/salon/` is a half-built salon booking site in Laravel, with its project files filled in. Copy it somewhere, open the copy in Claude Code with the plugin loaded, and try `/pit:status` or `/pit:report`.
+
+`plugin/evals/fixtures/bistro/` is a half-built restaurant booking app in **Next.js, Prisma and PostgreSQL**. Copy it and try `/pit:start` to see the stack detection. Its PitCrew project files are in `bistro-project/`.
 
 ---
 
@@ -318,7 +342,7 @@ claude plugin validate ./plugin --strict  # the plugin files
 cd plugin && claude plugin eval . --scaffold --trust-plugin --runs 1 --ablation none   # the evals (paid)
 ```
 
-The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, the fix command, and the notice about an old install. They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
+The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, the fix command, the notice about an old install, and the stacks: detecting Next.js on an existing project, naming the guide on dispatch, and the recommended or custom setup for a new Next.js app. They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
 
 CI (`.github/workflows/ci.yml`) runs the tests on Windows, macOS and Linux and checks the plugin on every push. The evals run when started by hand, with an `ANTHROPIC_API_KEY` secret.
 
@@ -328,8 +352,8 @@ See `CLAUDE.md` for the layout and the rules for changing the framework, and `CH
 
 ## Status and limits
 
-- **Version 2.0.0.** Piloted on one real Laravel project; the findings are in `report/`.
-- **Stacks:** PHP today (Laravel, plain PHP, WordPress). Frontend frameworks, databases and other languages are planned.
+- **Version 2.1.0.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support is new in 2.1 and checked by evals, not yet by a real pilot.
+- **Stacks:** PHP (Laravel, plain PHP, WordPress), React and Next.js, and PostgreSQL or MySQL through Prisma. **Next on the roadmap:** a security agent and a devops agent, both used only for risky work and going live; then Vue and Nuxt, SQLite, Drizzle and Biome.
 - **Roles:** six of eleven are written. There is no dedicated security, architecture or devops agent yet: the PM covers them, or asks you.
 - **Safety is a floor, not a gate.** A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.
 - **Tested** by hand on Windows (Git Bash and PowerShell). CI runs the tests on macOS and Linux too.

@@ -1,8 +1,8 @@
 {
   "name": "pit",
   "displayName": "PitCrew",
-  "version": "2.0.0",
-  "description": "PitCrew: an AI dev team inside Claude Code. A project manager plans the work, developers build it, code review and QA check it, and safety hooks guard it. Built for PHP today (Laravel, plain PHP, WordPress). Quick mode keeps it cheap.",
+  "version": "2.1.0",
+  "description": "PitCrew: an AI dev team inside Claude Code. A project manager plans the work, developers build it, code review and QA check it, and safety hooks guard it. For PHP (Laravel, plain PHP, WordPress), React and Next.js, with PostgreSQL or MySQL through Prisma. Quick mode keeps it cheap.",
   "author": {
     "name": "Muhammad Kashif"
   },
@@ -16,7 +16,12 @@
     "code-review",
     "php",
     "laravel",
-    "wordpress"
+    "wordpress",
+    "react",
+    "nextjs",
+    "prisma",
+    "postgresql",
+    "mysql"
   ],
   "userConfig": {
     "story_budget": {

@@ -66,6 +66,7 @@ Read on demand, not by default — files in the crew folder:
 |---|---|
 | Greenfield vs brownfield, precedence, the survey | `standards/engagement-modes.md` |
 | Laravel / plain PHP / WordPress / other specifics | `standards/stack-profiles.md` |
+| React, Next.js, Prisma, PostgreSQL, MySQL; detecting a stack | `stacks/index.md` |
 | PHP, Blade, SCSS, jQuery conventions; security | `standards/coding-standards.md` |
 | Do we need this code? Which shape? | `standards/design-approach.md` |
 | Going live: server, headers, scans, backups | `standards/launch-security.md` |

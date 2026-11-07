@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This repository is **PitCrew** (formerly agent-company), a Claude Code framework that runs a project like a small software company: a Project Manager (the main session) plus developer, code-review and QA agents, for PHP work (Laravel, plain PHP, WordPress). It ships as a Claude Code plugin named `pit` (marketplace `pitcrew`, so commands are `/pit:*`) and is then used from any project.
+This repository is **PitCrew** (formerly agent-company), a Claude Code framework that runs a project like a small software company: a Project Manager (the main session) plus developer, code-review and QA agents, for PHP work (Laravel, plain PHP, WordPress) and, since 2.1, React and Next.js with PostgreSQL or MySQL through Prisma. It ships as a Claude Code plugin named `pit` (marketplace `pitcrew`, so commands are `/pit:*`) and is then used from any project.
 
 ## How to answer the user
 
@@ -20,6 +20,7 @@ Always explain in **simple, short, clear words**, without being asked.
 | `plugin/crew/pm-brief.md` | The main session's operating brief |
 | `plugin/crew/employees/` | Full role charters, read on demand |
 | `plugin/crew/standards/` | Standards; `engagement-modes.md` governs the rest |
+| `plugin/crew/stacks/` | Stack guides (Next.js, React, Prisma, PostgreSQL, MySQL), read on demand; `index.md` detects the stack |
 | `plugin/agents/`, `plugin/skills/` | 5 subagents (`pit:*`); `/pit:start`, `/pit:next`, `/pit:fix`, `/pit:status`, `/pit:report` |
 | `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), the safety, formatting, activity-log and budget hooks (Python), `costs.py` (shared cost and budget reading), `cost_summary.py` (run by `/pit:status` and `/pit:report`) and `agent_status.py` (the agent status line) |
 | `plugin/settings.json` | Turns on the agent status line |
