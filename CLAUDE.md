@@ -21,13 +21,13 @@ Always explain in **simple, short, clear words**, without being asked.
 | `plugin/crew/employees/` | Full role charters, read on demand |
 | `plugin/crew/standards/` | Standards; `engagement-modes.md` governs the rest |
 | `plugin/crew/stacks/` | Stack guides (Next.js, React, Prisma, PostgreSQL, MySQL), read on demand; `index.md` detects the stack |
-| `plugin/agents/`, `plugin/skills/` | 5 subagents (`pit:*`); `/pit:start`, `/pit:next`, `/pit:fix`, `/pit:status`, `/pit:report` |
+| `plugin/agents/`, `plugin/skills/` | 6 subagents (`pit:*`); `/pit:start`, `/pit:next`, `/pit:fix`, `/pit:status`, `/pit:report` |
 | `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), the safety, formatting, activity-log and budget hooks (Python), `costs.py` (shared cost and budget reading), `cost_summary.py` (run by `/pit:status` and `/pit:report`) and `agent_status.py` (the agent status line) |
 | `plugin/settings.json` | Turns on the agent status line |
 | `plugin/evals/` | Plugin evals (`claude plugin eval`), and `fixtures/salon/`, the sample project they and the README use |
 | `.github/workflows/ci.yml` | Tests on Windows, macOS and Linux and the plugin check on every push; the paid evals on demand |
 | `install.py` (+ `install.sh`) | Removes an old 0.2.x install (`--uninstall`); kept for one release, not part of the plugin |
-| `tests/` | Tests for the hooks, the manifests and the uninstaller |
+| `tests/` | Tests for the hooks, the manifests, the agent files and the uninstaller |
 | `report/` | Research and reviews behind design decisions; not shipped |
 
 ## Commands
@@ -55,4 +55,4 @@ claude plugin validate ./plugin           # check the manifests (also: claude pl
 
 ## Status
 
-Six roles are written: PM, backend, frontend, full-stack, code-reviewer, QA. The rest (security, architect, devops, UX, BA, product owner) are not; the PM covers them or escalates to the user. The first real pilot, a Laravel news site, is reviewed in `report/`.
+Seven roles are written: PM, backend, frontend, full-stack, code-reviewer, QA and, since 2.2, security (Sensitive work and launches only). The rest (architect, devops, UX, BA, product owner) are not; the PM covers them or escalates to the user. The first real pilot, a Laravel news site, is reviewed in `report/`.

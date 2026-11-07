@@ -6,7 +6,7 @@
 
 You talk to a **Project Manager** in plain words. It plans the work, hands each task to a specialist developer, and has every result checked by **code review** and **QA** before you see it.
 
-[![Version](https://img.shields.io/badge/version-2.1.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue)](CHANGELOG.md)
 [![CI](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml/badge.svg)](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](#status-and-limits)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-orange)](https://code.claude.com)
@@ -42,8 +42,8 @@ In Formula 1, a pit crew is a team of specialists: a crew chief gives the signal
 |---|---|
 | 🧭 **One person to talk to** | The Project Manager speaks plain language, asks a few questions, and turns your idea into a plan you can see working, piece by piece. |
 | 🏠 **Your existing code wins** | On an existing codebase it reads first, then follows the project's own conventions, versions and structure. No "modernising" your code as a side effect. |
-| 🔍 **Independent checks** | A reviewer asks *is this fit to merge?* QA asks *does it do what was asked?* Neither one writes the fix, so neither can quietly cover up a problem. |
-| ⚖️ **Effort matched to risk** | A typo costs nothing extra. Logins, payments, personal data and database changes always get the full checks, a security review and **your approval**. |
+| 🔍 **Independent checks** | A reviewer asks *is this fit to merge?* QA asks *does it do what was asked?* On risky work a security engineer asks *can someone take what isn't theirs?* None of them writes the fix, so none can quietly cover up a problem. |
+| ⚖️ **Effort matched to risk** | A typo costs nothing extra. Logins, payments, personal data and database changes always get a threat check before building, the full checks, a security pass and **your approval**. |
 | 🛡️ **Safety that doesn't rely on memory** | Hooks keep agents out of `.env`, stop destructive commands and scan every written file for secrets, in every project. |
 | 💰 **You always know the cost** | Every agent run is logged with its cost. Each piece of work has a budget: a warning at 80%, and at 100% it stops and asks you. |
 | ⚡ **Careful with tokens** | Short agent briefs, standards read only when needed, reviews of the diff instead of the whole story, and fix rounds that continue the same agent instead of starting over. |
@@ -70,6 +70,7 @@ flowchart TD
         direction LR
         CR["🔍 Code Reviewer<br/>fit to merge?"]
         QA["🧪 QA Engineer<br/>does what was asked?"]
+        SE["🔐 Security Engineer<br/>risky work only"]
     end
 
     HOOKS[["🛡️ Safety hooks<br/>guard every step"]]
@@ -90,6 +91,7 @@ flowchart TD
 | 🧩 **Full-stack Developer** | A small complete slice, from server to page. The default in Quick mode. | Yes |
 | 🔍 **Code Reviewer** | Reads the change against the project's conventions and the security rules. Decides if it is fit to merge. | No |
 | 🧪 **QA Engineer** | Checks every promise in the task and tries to break it. Decides if it is delivered. | No (only throwaway test probes) |
+| 🔐 **Security Engineer** | Only for logins, payments, personal data, uploads, database changes and going live. Before building, it reads the code and turns five safety questions into checks the developer must meet. After building, it looks for ways someone could take what isn't theirs. Before launch, it works through the launch checklist on your staging site. | No |
 
 Every developer writes tests it has **seen fail first**, then makes them pass. If something is unclear, it stops and asks the Project Manager instead of guessing.
 
@@ -138,7 +140,7 @@ flowchart LR
     L -->|"Direct<br/>typo · colour · config"| A["PM does it<br/>0 agents"]
     L -->|"Light<br/>small fix, no security"| B["1 developer<br/>PM checks the diff"]
     L -->|"Standard<br/>the default"| C["Developer per task<br/>+ QA"]
-    L -->|"Sensitive<br/>login · payment · data · go-live"| D["Developer → Review → QA<br/>+ security review<br/>+ your approval"]
+    L -->|"Sensitive<br/>login · payment · data · go-live"| D["Threat check → Developer<br/>→ Review → Security → QA<br/>+ your approval"]
 
     style A fill:#e8f5e9,stroke:#43a047,color:#1b5e20
     style B fill:#e3f2fd,stroke:#1e88e5,color:#0d47a1
@@ -163,7 +165,7 @@ In Claude Code:
 
 Then restart Claude Code. To try it without installing, from a clone: `claude --plugin-dir ./plugin`.
 
-It adds 5 agents (`pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`), the 5 `/pit:` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
+It adds 6 agents (`pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`, `pit:security-engineer`), the 5 `/pit:` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
 
 <details>
 <summary><b>Upgrading from Agent Company (1.x)</b></summary>
@@ -342,7 +344,7 @@ claude plugin validate ./plugin --strict  # the plugin files
 cd plugin && claude plugin eval . --scaffold --trust-plugin --runs 1 --ablation none   # the evals (paid)
 ```
 
-The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, the fix command, the notice about an old install, and the stacks: detecting Next.js on an existing project, naming the guide on dispatch, and the recommended or custom setup for a new Next.js app. They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
+The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, the fix command, the notice about an old install, and the stacks: detecting Next.js on an existing project, naming the guide on dispatch, and the recommended or custom setup for a new Next.js app; and a Sensitive story going to the security engineer for a threat check first. They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
 
 CI (`.github/workflows/ci.yml`) runs the tests on Windows, macOS and Linux and checks the plugin on every push. The evals run when started by hand, with an `ANTHROPIC_API_KEY` secret.
 
@@ -352,9 +354,9 @@ See `CLAUDE.md` for the layout and the rules for changing the framework, and `CH
 
 ## Status and limits
 
-- **Version 2.1.0.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support is new in 2.1 and checked by evals, not yet by a real pilot.
-- **Stacks:** PHP (Laravel, plain PHP, WordPress), React and Next.js, and PostgreSQL or MySQL through Prisma. **Next on the roadmap:** a security agent and a devops agent, both used only for risky work and going live; then Vue and Nuxt, SQLite, Drizzle and Biome.
-- **Roles:** six of eleven are written. There is no dedicated security, architecture or devops agent yet: the PM covers them, or asks you.
+- **Version 2.2.0.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support (2.1) and the security engineer (2.2) are checked by evals, not yet by a real pilot.
+- **Stacks:** PHP (Laravel, plain PHP, WordPress), React and Next.js, and PostgreSQL or MySQL through Prisma. **Next on the roadmap:** a devops agent, used only for setup and going live; then Vue and Nuxt, SQLite, Drizzle and Biome.
+- **Roles:** seven of eleven are written. There is no dedicated architecture or devops agent yet: the PM covers them, or asks you.
 - **Safety is a floor, not a gate.** A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.
 - **Tested** by hand on Windows (Git Bash and PowerShell). CI runs the tests on macOS and Linux too.
 - **Costs are API-equivalent:** what the work would cost at Anthropic's pay-per-use prices. On a subscription you don't pay this per token; it shows where the effort went.

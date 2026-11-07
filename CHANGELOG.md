@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.2.0 - 2026-11-08
+
+A security engineer joins the crew, for risky work only.
+
+### Added
+- **`pit:security-engineer`**, a read-only agent with three jobs:
+  - **Threat check**, once per Sensitive story before it's built: it reads the real code, answers the five safety questions, and turns them into checks the developer builds and QA tests.
+  - **Security pass** on each Sensitive task, after code review and before QA: it traces every input, checks the threat-check promises, verifies new packages, and reports only holes it can show are exploitable.
+  - **Launch check** before going live: every box of the launch checklist with evidence, on the staging URLs you name; what only you can confirm is marked unverified.
+- An eval that checks a Sensitive story goes to the security engineer first, and tests that the review, security and QA agents can't edit code.
+
+### Changed
+- **The Sensitive lane** is now: threat check → developer → code review → security pass → QA → your approval. The security pass replaces the PM's `/security-review` step, so it isn't paid for twice. You can still run `/security-review` yourself at any time.
+- Standard, Light and Direct work is unchanged: the security engineer never runs there.
+
 ## 2.1.0 - 2026-11-07
 
 PitCrew now works with React and Next.js, on PostgreSQL or MySQL through Prisma. PHP projects work exactly as before.

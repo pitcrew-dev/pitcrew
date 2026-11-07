@@ -163,7 +163,7 @@ Agreed with the user on 2026-11-07. Each new agent runs only when the work is ri
 
 | Order | Piece | What it does | When it runs |
 |---|---|---|---|
-| 1 | **Security agent** (read-only) | The threat check before coding, then a security pass after. Works with `/security-review`. | Only in the Sensitive lane (logins, payments, personal data, uploads, migrations) and before going live |
+| 1 | **Security agent** (read-only). **Done in 2.2.0** as `pit:security-engineer`; its security pass replaces the PM's `/security-review` step | The threat check before coding, then a security pass after, and the launch check. | Only in the Sensitive lane (logins, payments, personal data, uploads, migrations) and before going live |
 | 2 | **DevOps agent** | Prepares CI, Docker, hosting config (PHP hosting and Node or Vercel), backups and server settings, against `launch-security.md`. Never deploys or handles credentials without the user's approval. | Only for setup and go-live stories |
 | 3 | Multi-stack phase 2 | Vue and Nuxt, SQLite guide, Drizzle guide, Biome | After the two agents |
 | Later | Architect agent | Survey and design for very large codebases | Only if real projects show the PM struggling |
