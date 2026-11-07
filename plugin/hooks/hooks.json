@@ -52,7 +52,8 @@
         "matcher": "Write|Edit",
         "hooks": [
           { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run\" scan_secrets", "timeout": 10 },
-          { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run\" format_php", "timeout": 120 }
+          { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run\" format_php", "timeout": 120 },
+          { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run\" format_js", "timeout": 120 }
         ]
       }
     ]

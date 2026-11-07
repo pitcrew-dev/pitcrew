@@ -329,6 +329,87 @@ class FormatPhpTest(unittest.TestCase):
         self.assertEqual(0, code)
 
 
+FAKE_PRETTIER = r"""
+const fs = require("fs");
+const tidy = (text) => text.replace(/ {2,}/g, " ");
+const args = process.argv.slice(2);
+if (args.includes("--stdin-filepath")) {
+  process.stdout.write(tidy(fs.readFileSync(0, "utf8")));
+} else if (args.includes("--write")) {
+  const file = args[args.indexOf("--write") + 1];
+  fs.writeFileSync(file, tidy(fs.readFileSync(file, "utf8")));
+}
+"""
+
+
+@unittest.skipUnless(shutil.which("node") and shutil.which("git"), "node or git not installed")
+class FormatJsTest(unittest.TestCase):
+    """Uses a stand-in for Prettier that collapses repeated spaces, so no download is needed."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        self.write("package.json", '{"name": "app"}\n')
+        self.write(".prettierrc", "{}\n")
+        self.write("node_modules/prettier/package.json", '{"bin": {"prettier": "bin/prettier.cjs"}}\n')
+        self.write("node_modules/prettier/bin/prettier.cjs", FAKE_PRETTIER)
+        for args in (["init", "-q"], ["config", "user.email", "t@example.com"], ["config", "user.name", "T"]):
+            subprocess.run(["git"] + args, cwd=self.root, check=True)
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def write(self, relative, content):
+        path = os.path.join(self.root, relative)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(content)
+        return path
+
+    def read(self, relative):
+        with open(os.path.join(self.root, relative), encoding="utf-8") as handle:
+            return handle.read()
+
+    def commit(self, relative):
+        subprocess.run(["git", "add", relative], cwd=self.root, check=True)
+        subprocess.run(["git", "commit", "-q", "-m", "x"], cwd=self.root, check=True)
+
+    def format(self, relative):
+        path = os.path.join(self.root, relative)
+        return run_hook("format_js.py", {"tool_name": "Write", "tool_input": {"file_path": path}})
+
+    def test_formats_a_new_file(self):
+        self.write("app/page.tsx", "export  default  function Page() {}\n")
+        self.assertEqual((0, "", ""), self.format("app/page.tsx"))
+        self.assertEqual("export default function Page() {}\n", self.read("app/page.tsx"))
+
+    def test_formats_a_file_that_was_already_clean(self):
+        self.write("lib/a.ts", "export const a = 1;\n")
+        self.commit("lib/a.ts")
+        self.write("lib/a.ts", "export const a = 1;\nexport  const b = 2;\n")
+        self.format("lib/a.ts")
+        self.assertEqual("export const a = 1;\nexport const b = 2;\n", self.read("lib/a.ts"))
+
+    def test_leaves_an_old_unformatted_file_alone(self):
+        self.write("lib/old.js", "var  legacy = true;\n")
+        self.commit("lib/old.js")
+        self.write("lib/old.js", "var  legacy = true;\nvar  added = 1;\n")
+        self.format("lib/old.js")
+        self.assertEqual("var  legacy = true;\nvar  added = 1;\n", self.read("lib/old.js"))
+
+    def test_does_nothing_without_prettier_config(self):
+        os.remove(os.path.join(self.root, ".prettierrc"))
+        self.write("app/page.tsx", "export  default 1;\n")
+        self.assertEqual((0, "", ""), self.format("app/page.tsx"))
+        self.assertEqual("export  default 1;\n", self.read("app/page.tsx"))
+
+    def test_ignores_other_files_and_dependencies(self):
+        for relative in ("README.md", "app/Thing.php", "node_modules/x/index.js", "package-lock.json"):
+            with self.subTest(relative=relative):
+                self.write(relative, "a  b\n")
+                self.assertEqual(0, self.format(relative)[0])
+                self.assertEqual("a  b\n", self.read(relative))
+
+
 class LoadAgreementTest(unittest.TestCase):
     def setUp(self):
         self.config = tempfile.mkdtemp()  # a clean Claude config folder, so this machine's own install can't leak in
