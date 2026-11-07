@@ -150,7 +150,7 @@ WordPress has its own coding standards, and they **contradict PSR-12 deliberatel
 
 ## Profile E — Other framework
 
-No company defaults apply beyond the security floor and the no-drive-by rule.
+No company defaults apply beyond the security floor and the no-drive-by rule. **Check `stacks/index.md` first:** React, Next.js, Prisma, PostgreSQL and MySQL have crew guides there.
 
 1. The survey is deeper than usual: identify the framework's own conventions and its documented project layout.
 2. Follow the framework's official standards as rung 5, beneath the project's actual conventions.

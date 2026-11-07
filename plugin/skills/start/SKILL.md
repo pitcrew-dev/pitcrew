@@ -81,25 +81,36 @@ Do this **only** when the user asks for a look or a redesign, or says they care 
    - write the palette and fonts into a **Look and feel** section of `conventions.md`, as design tokens
    - have the next frontend task turn them into the project's variables (for example `abstracts/_variables.scss`)
 
-## Step 3c — Stack: offer choices, never assume
+## Step 3c — Stack: recommended, or the user chooses
 
 For a **new** project only. In brownfield the stack is whatever the survey found; don't offer to change it.
 
-**Ask at most one question: what kind of site is it** (the first row). It counts within the 3–5 interview questions. Ask the others **only if the user brings up the stack**; otherwise use the recommended option for each and say so in the plan. Ask with the `AskUserQuestion` tool, **recommended option first**, each option described by what it means for them, not by jargon. Without the tool, show a short numbered list. Skip any question the user already answered, or that the spec or hosting already decides.
+**Screen 1, everyone:** two questions on one `AskUserQuestion` screen, **recommended option first**, each option described by what it means for them, not by jargon. Without the tool, show a short numbered list. They count as one of the 3–5 interview questions. Skip any the user already answered, or that the spec or hosting already decides.
 
 | Question | Options (recommended first) |
 |---|---|
-| **What kind of site is it?** | Laravel app: logins, data, admin (Profile A) · WordPress site: mostly pages and posts they edit themselves (Profile D) · Plain PHP: a few simple pages, no framework (Profile C) |
-| **How interactive are the pages?** | Plain modern JavaScript: small touches, nothing extra to load · Alpine.js: many toggles, tabs and modals, written in the HTML · Livewire (Laravel only): live forms and tables with little JavaScript · jQuery: only if they rely on a jQuery plugin |
-| **How are styles written?** | Our own styles in SCSS, fully custom · Tailwind: fast, utility classes in the HTML · Bootstrap: ready-made components, looks familiar |
-| **Database** (Laravel only) | MySQL, which most hosts have · PostgreSQL · SQLite: one file, for small or internal tools |
+| **What kind of site is it?** | Laravel app: logins, data, admin (Profile A) · WordPress site: mostly pages and posts they edit themselves (Profile D) · Plain PHP: a few simple pages, no framework (Profile C) · Web app with React (Next.js): rich, app-like pages; more moving parts, and Node hosting instead of plain PHP hosting |
+| **How should we choose the tools?** | Recommended setup: we pick proven tools for you · Let me choose: you pick the main tools yourself |
+
+**Recommended setup:** no more stack questions. Use the first option of each row below, and list every choice in the plan ("I used SCSS and MySQL, the recommended setup. Say if you want something else.").
+
+**Let me choose:** one more screen with the rows for their kind of site (up to 4). It's their choice, so it doesn't count against the 3–5 limit.
+
+| Kind of site | Question | Options (recommended first) |
+|---|---|---|
+| Laravel, Plain PHP | **How interactive are the pages?** | Plain modern JavaScript: small touches, nothing extra to load · Alpine.js: many toggles, tabs and modals, written in the HTML · Livewire (Laravel only): live forms and tables with little JavaScript · jQuery: only if they rely on a jQuery plugin |
+| Laravel, Plain PHP | **How are styles written?** | Our own styles in SCSS, fully custom · Tailwind: fast, utility classes in the HTML · Bootstrap: ready-made components, looks familiar |
+| Laravel | **Database** | MySQL, which most hosts have · PostgreSQL · SQLite: one file, for small or internal tools |
+| Next.js | **How are styles written?** | Tailwind: fast, the Next.js default · CSS Modules: plain CSS kept per component · SCSS: our own styles, fully custom |
+| Next.js | **Database** (through Prisma) | PostgreSQL: the best fit for Next.js and most cloud hosts · MySQL |
+| Next.js | **Hosting** | Vercel: the simplest for Next.js, with a free tier · Their own Node server or VPS |
 
 - **Give each option one honest trade-off.** For example, Tailwind puts long class lists in the HTML, and Bootstrap sites look alike unless restyled.
-- **Vue, React or anything else** can come through "Other". Say plainly that this team works best with server-rendered pages, and log it in `decisions.md` under `## Risks` as a risk.
+- **Vue or anything else** can come through "Other". Say plainly that this team has no guide for it yet (`stacks/index.md`), and log it in `decisions.md` under `## Risks`.
 - **Whatever they don't know, use the recommended option** and say so.
-- **Record every answer:**
-  - in `decisions.md`, decided by the user
-  - in `conventions.md`, under a **Stack** section with the JS library and the folders where JS and CSS files live. From then on this outranks the defaults in `coding-standards.md`.
+- **Record every answer and every default used:**
+  - in `decisions.md`, with who decided (the user, or "recommended setup")
+  - in `conventions.md`, in the **Stack** block (`stacks/index.md` §2), with the guides that apply and the folders where JS and CSS files live. From then on this outranks the defaults in `coding-standards.md`.
 
 ## Step 4 — Decompose, then write the files
 
@@ -129,6 +140,8 @@ Also write `budget.md` (format in `${CLAUDE_PLUGIN_ROOT}/crew/standards/token-bu
 Every task record carries mode, profile, the path to `conventions.md`, scope in and out, dependencies, criteria, verification and lane. **Check in-scope paths against the real tree.** Verification steps must work within the blocked list (brief).
 
 **Greenfield, Profile A:** the first task scaffolds the toolchain in `stack-profiles.md` (Pint, Pest with architecture tests, Larastan, `composer audit`), plus the frontend stack chosen in Step 3c, and records the check command. Add `QaProbe*` to `.gitignore` so a missed QA probe file can never be committed. **In brownfield, ask before adding either.**
+
+**Greenfield, Next.js:** the first task scaffolds with `create-next-app` at a verified version (`coding-standards.md` §7.1), using the package manager the user has, plus Vitest with React Testing Library, Playwright, ESLint and Prettier, and `prisma init` for their database. It records the check command (lint, type check, tests, build), and adds `QaProbe*` to `.gitignore`. Read `stacks/nextjs.md` and `stacks/prisma.md` first.
 
 **Security risks to log in `decisions.md` under `## Risks` whenever they apply:**
 - the app fetches URLs (SSRF)
