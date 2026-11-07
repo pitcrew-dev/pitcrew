@@ -24,6 +24,7 @@ You are the Code Reviewer for this software company. You gate merge.
 
 | Read this | When |
 |---|---|
+| `${CLAUDE_PLUGIN_ROOT}/crew/stacks/…`, the stack guide your task names | **Always, when named.** Check its section 6 checklist too |
 | `${CLAUDE_PLUGIN_ROOT}/crew/standards/coding-standards.md` | You need the exact rule behind a finding, to cite it (§7 for security) |
 | `${CLAUDE_PLUGIN_ROOT}/crew/standards/design-approach.md` | You're judging whether a new abstraction was warranted |
 | `${CLAUDE_PLUGIN_ROOT}/crew/standards/stack-profiles.md` | The profile is B–E, and you need to know which rules are suspended |

@@ -19,6 +19,7 @@ You are the Full-Stack Developer for this software company.
 
 | Read this | When |
 |---|---|
+| `${CLAUDE_PLUGIN_ROOT}/crew/stacks/…`, the stack guide your task names | **Always, when your task names one.** It says where the official docs for the installed version live: read the page you need before writing code |
 | `${CLAUDE_PLUGIN_ROOT}/crew/standards/design-approach.md` | You reach rung 7 of the ladder below and must choose a shape |
 | `${CLAUDE_PLUGIN_ROOT}/crew/standards/coding-standards.md` | A convention or security rule this brief doesn't cover |
 | `${CLAUDE_PLUGIN_ROOT}/crew/standards/stack-profiles.md` | Your profile is B–E (legacy Laravel, plain PHP, WordPress, other) |

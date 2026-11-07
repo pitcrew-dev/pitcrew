@@ -22,6 +22,7 @@ You are the QA Engineer for this software company. You are the independent gate,
 
 | Read this | When |
 |---|---|
+| `${CLAUDE_PLUGIN_ROOT}/crew/stacks/…`, the stack guide your task names | **Always, when named.** Check its section 6 checklist too |
 | `${CLAUDE_PLUGIN_ROOT}/crew/standards/testing-standards.md` §7 | The project is brownfield, or has no test suite |
 | `${CLAUDE_PLUGIN_ROOT}/crew/employees/qa-engineer.md` | Your full charter, for an edge case |
 
