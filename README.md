@@ -24,6 +24,7 @@ You talk to a **Project Manager** in plain words. It plans the work, hands each 
 - [How the crew works](#how-the-crew-works)
 - [Install](#install)
 - [Use](#use)
+- [Your project board](#your-project-board)
 - [Quick or Careful](#quick-or-careful)
 - [Safety rules](#safety-rules)
 - [Try it on the example project](#try-it-on-the-example-project)
@@ -205,13 +206,67 @@ From any project folder, in Claude Code:
 | "where are we?" | `/pit:status` | One screen: progress per goal, money spent and left, what's next, and anything waiting on you. |
 | "write me an update" | `/pit:report` | A one-page report for a client or manager, saved in `.claude/project/reports/`. |
 
+---
+
+## Your project board
+
+Every project gets **its own board**. `/pit:start` creates it in your project folder as `.claude/project/plan.md`, and the Project Manager keeps it up to date after every step. It's a plain Markdown file, so you can read it anytime and commit it with your code.
+
+```mermaid
+flowchart LR
+    R["📝 Your request<br/>in your own words"] --> G
+    subgraph G ["🎯 Goals"]
+        G1["G1 · Customers book online<br/>done when: I book on my phone"]
+        G2["G2 · Staff see today's bookings"]
+    end
+    G1 --> P1["🧩 Piece S01<br/>booking page shows free times"]
+    G1 --> P2["🧩 Piece S02<br/>booking form saves a booking"]
+    G2 --> P3["🧩 Piece E02-S01<br/>today's bookings page"]
+    P2 --> T1["✅ Task T01 · save booking<br/>backend · In QA"]
+    P2 --> T2["⛔ Task T02 · confirmation email<br/>backend · Blocked"]
+```
+
+| Level | What it is | Example |
+|---|---|---|
+| 🎯 **Goal** | An outcome you care about, with a plain test for "done" | "Customers can book online without calling", done when "I book on my phone and it shows in the admin list" |
+| 🧩 **Piece** | Something you can see working, built in one `/pit:next` | "Booking form saves a booking", with its checks written as *Given / When / Then* |
+| ✅ **Task** | One job for one developer, with its lane, state and date | "Save booking", backend developer, Standard lane, *In QA* |
+
+**What the board looks like** (from the sample salon project):
+
+```markdown
+## Now
+- Where we are: piece S02 (booking form saves a booking) is in QA; its email task is blocked.
+- Next: S02-T02 once the owner gives the email sender address.
+- Waiting on the owner: the email address that confirmation emails are sent from.
+
+## Goals
+| ID | Outcome                                    | Done when                                  | Progress     |
+|----|--------------------------------------------|--------------------------------------------|--------------|
+| G1 | Customers can book an appointment online   | I book on my phone and it shows in admin   | 1 of 2 stories |
+| G2 | Staff see today's bookings at a glance     | I open the admin page and see today's list | 0 of 1 stories |
+
+### SHOP-E01-S02 Booking form saves a booking
+| Task             | What               | Role              | Lane     | State   | Note                         |
+|------------------|--------------------|-------------------|----------|---------|------------------------------|
+| SHOP-E01-S02-T01 | Save booking       | backend-developer | Standard | In QA   | Review PASS; QA next         |
+| SHOP-E01-S02-T02 | Confirmation email | backend-developer | Standard | Blocked | Needs the owner's email address |
+
+## Done
+- SHOP-E01-S01 Booking page shows free times (G1). Review PASS, QA PASS.
+```
+
+- **"Now" is always at the top:** where things stand, what's next, and what's waiting on you.
+- **Finished pieces shrink to one line** under *Done*, so the board stays short and cheap for the crew to read.
+- **`/pit:status`** turns the board into one screen, adding money spent and left. **`/pit:report`** turns it into an update you can send.
+
 ### The crew's shared memory
 
-Working files go in `<your-project>/.claude/project/`. Commit them: they carry the team's memory between sessions.
+The board sits with a few other working files in `<your-project>/.claude/project/`. Commit them: they carry the team's memory between sessions.
 
 | File | What it holds |
 |---|---|
-| `plan.md` | Where we are, your request, goals, the pieces with their tasks, and what's done |
+| `plan.md` | **The project board:** where we are, your request, goals, the pieces with their tasks, and what's done |
 | `decisions.md` | Choices and who made them, plus the risks |
 | `conventions.md` | The project's own rules and how to check it |
 | `lessons.md` | Mistakes not to repeat |
