@@ -1,75 +1,213 @@
-# agent-company
+<div align="center">
 
-A Claude Code framework that runs your project like a small, disciplined software company.
+# 🏁 PitCrew
 
-You talk to a **Project Manager** in plain language. It plans the work, hands each piece to a specialist agent, and checks every result before showing it to you: one QA run per piece in **Quick** mode (the default), or code review and QA on every task in **Careful** mode. Built for PHP work: modern and legacy Laravel, plain PHP, and WordPress.
+### An AI dev team inside Claude Code that works fast and checks everything.
 
-## Why use it
+You talk to a **Project Manager** in plain words. It plans the work, hands each task to a specialist developer, and has every result checked by **code review** and **QA** before you see it.
 
-- **Your existing code wins.** On an existing codebase it surveys first, then matches the project's own conventions, versions and structure. No "modernizing" your code as a side effect.
-- **Independent checks.** A reviewer asks *is this fit to merge?*; QA asks *does it do what was asked?* Neither can edit code, so neither can quietly paper over a problem. Quick mode runs QA once per piece; Careful mode runs both on every task.
-- **Ceremony matched to risk.** A typo costs nothing extra. Logins, payments, personal data and migrations get a security review and **your approval**.
-- **Safety that doesn't depend on the AI remembering.** Hooks keep agents out of `.env`, stop destructive commands, and scan every written file for secrets.
-- **You always know what it costs.** Every agent run is logged with its measured cost. Each piece of work has a budget: a warning at 80%, and at 100% it stops and asks you.
-- **Built to spend tokens carefully.** Short agent briefs, standards read only when needed, reviews of the diff instead of the whole story, and fix rounds that continue the same agent instead of starting over.
+[![Version](https://img.shields.io/badge/version-2.0.0-blue)](CHANGELOG.md)
+[![CI](https://github.com/kasshif01/vide_coding/actions/workflows/ci.yml/badge.svg)](https://github.com/kasshif01/vide_coding/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](#status-and-limits)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-orange)](https://code.claude.com)
 
-## Requirements
+`/pit:start` · `/pit:next` · `/pit:fix` · `/pit:status` · `/pit:report`
 
-- [Claude Code](https://code.claude.com)
-- Python 3.8+ (for the hooks; nothing else to install)
-- git
+</div>
+
+---
+
+## Contents
+
+- [Why PitCrew](#why-pitcrew)
+- [Meet the crew](#meet-the-crew)
+- [How the crew works](#how-the-crew-works)
+- [Install](#install)
+- [Use](#use)
+- [Quick or Careful](#quick-or-careful)
+- [Safety rules](#safety-rules)
+- [Try it on the example project](#try-it-on-the-example-project)
+- [Develop](#develop)
+- [Status and limits](#status-and-limits)
+
+---
+
+## Why PitCrew
+
+In Formula 1, a pit crew is a team of specialists: a crew chief gives the signal, each person does one job, and nothing leaves the pit until it has been checked. PitCrew runs your project the same way.
+
+| | |
+|---|---|
+| 🧭 **One person to talk to** | The Project Manager speaks plain language, asks a few questions, and turns your idea into a plan you can see working, piece by piece. |
+| 🏠 **Your existing code wins** | On an existing codebase it reads first, then follows the project's own conventions, versions and structure. No "modernising" your code as a side effect. |
+| 🔍 **Independent checks** | A reviewer asks *is this fit to merge?* QA asks *does it do what was asked?* Neither one writes the fix, so neither can quietly cover up a problem. |
+| ⚖️ **Effort matched to risk** | A typo costs nothing extra. Logins, payments, personal data and database changes always get the full checks, a security review and **your approval**. |
+| 🛡️ **Safety that doesn't rely on memory** | Hooks keep agents out of `.env`, stop destructive commands and scan every written file for secrets, in every project. |
+| 💰 **You always know the cost** | Every agent run is logged with its cost. Each piece of work has a budget: a warning at 80%, and at 100% it stops and asks you. |
+| ⚡ **Careful with tokens** | Short agent briefs, standards read only when needed, reviews of the diff instead of the whole story, and fix rounds that continue the same agent instead of starting over. |
+
+Built for PHP today: modern and legacy Laravel, plain PHP and WordPress. More stacks are on the [roadmap](#status-and-limits).
+
+---
+
+## Meet the crew
+
+```mermaid
+flowchart TD
+    YOU(["👤 You<br/>the driver: you decide"])
+    PM["🧭 Project Manager<br/>the crew chief: plans, assigns, reports"]
+
+    subgraph BUILD ["🛠️ Developers: build it"]
+        direction LR
+        BE["Backend<br/>logic · APIs · database"]
+        FS["Full-stack<br/>small complete slices"]
+        FE["Frontend<br/>pages · styles · scripts"]
+    end
+
+    subgraph CHECK ["✅ Quality gates: check it"]
+        direction LR
+        CR["🔍 Code Reviewer<br/>fit to merge?"]
+        QA["🧪 QA Engineer<br/>does what was asked?"]
+    end
+
+    HOOKS[["🛡️ Safety hooks<br/>guard every step"]]
+
+    YOU <-->|"plain words"| PM
+    PM -->|"one task,<br/>full brief"| BUILD
+    BUILD -->|"code + tests"| CHECK
+    CHECK -->|"pass"| PM
+    CHECK -.->|"fail: back to the same developer"| BUILD
+    HOOKS -.- BUILD
+```
+
+| Role | What it does | Writes the code? |
+|---|---|---|
+| 🧭 **Project Manager** | The main Claude session. Talks to you, asks questions, plans the work, picks the right developer, checks results and reports in plain words. Never writes production code itself. | No |
+| 🛠️ **Backend Developer** | Business logic, APIs, database, jobs and integrations | Yes |
+| 🎨 **Frontend Developer** | Templates, styles and the behaviour in the browser | Yes |
+| 🧩 **Full-stack Developer** | A small complete slice, from server to page. The default in Quick mode. | Yes |
+| 🔍 **Code Reviewer** | Reads the change against the project's conventions and the security rules. Decides if it is fit to merge. | No |
+| 🧪 **QA Engineer** | Checks every promise in the task and tries to break it. Decides if it is delivered. | No (only throwaway test probes) |
+
+Every developer writes tests it has **seen fail first**, then makes them pass. If something is unclear, it stops and asks the Project Manager instead of guessing.
+
+---
+
+## How the crew works
+
+### From idea to working software
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor You
+    participant PM as 🧭 Project Manager
+    participant Dev as 🛠️ Developer
+    participant QA as ✅ Review & QA
+
+    You->>PM: /pit:start "a booking site for my salon"
+    PM->>You: 3 to 5 questions, each with a default
+    You->>PM: answers
+    PM->>You: the plan: goals, pieces, budget
+    Note over You,PM: ⏸ stops for your OK
+
+    You->>PM: "go"
+    loop each task in the piece
+        PM->>Dev: one task with everything it needs
+        Dev->>PM: code + tests
+    end
+    PM->>QA: check the piece
+    alt a check fails
+        QA-->>Dev: back to the same developer
+        Dev-->>QA: fixed
+    end
+    QA->>PM: pass
+    PM->>You: what you can now see and do, and what it cost
+    Note over You,PM: ⏸ stops again
+```
+
+### Effort matched to risk
+
+The Project Manager puts every task in a **lane**. The riskier the work, the more checks it gets.
+
+```mermaid
+flowchart LR
+    T["📋 New task"] --> L{"How risky?"}
+    L -->|"Direct<br/>typo · colour · config"| A["PM does it<br/>0 agents"]
+    L -->|"Light<br/>small fix, no security"| B["1 developer<br/>PM checks the diff"]
+    L -->|"Standard<br/>the default"| C["Developer per task<br/>+ QA"]
+    L -->|"Sensitive<br/>login · payment · data · go-live"| D["Developer → Review → QA<br/>+ security review<br/>+ your approval"]
+
+    style A fill:#e8f5e9,stroke:#43a047,color:#1b5e20
+    style B fill:#e3f2fd,stroke:#1e88e5,color:#0d47a1
+    style C fill:#fff8e1,stroke:#f9a825,color:#6d4c00
+    style D fill:#ffebee,stroke:#e53935,color:#b71c1c
+```
+
+**Sensitive work is never downgraded.** A failed check goes back to the **same** developer, with its context intact. Three failures on one task, twice the estimate, or a budget reached is a hard stop: the Project Manager brings it to you with a recommendation.
+
+---
 
 ## Install
+
+**You need:** [Claude Code](https://code.claude.com), Python 3.8+ (for the hooks, nothing else to install) and git.
 
 In Claude Code:
 
 ```
 /plugin marketplace add kasshif01/vide_coding
-/plugin install company@agent-company
+/plugin install pit@pitcrew
 ```
 
 Then restart Claude Code. To try it without installing, from a clone: `claude --plugin-dir ./plugin`.
 
-The plugin adds 5 agents (`company:backend-developer`, `company:frontend-developer`, `company:full-stack-developer`, `company:code-reviewer`, `company:qa-engineer`), the `/company:start`, `/company:next`, `/company:fix`, `/company:status` and `/company:report` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
+It adds 5 agents (`pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`), the 5 `/pit:` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
+
+<details>
+<summary><b>Upgrading from Agent Company (1.x)</b></summary>
+
+PitCrew is the new name of Agent Company. The commands changed from `/company:` to `/pit:`. Remove the old plugin first, so the hooks don't run twice:
+
+```
+/plugin uninstall company@agent-company
+/plugin marketplace remove agent-company
+/plugin marketplace add kasshif01/vide_coding
+/plugin install pit@pitcrew
+```
+
+Your project files in `.claude/project/` keep working as they are.
+
+If you still have version 0.2.x installed, the first session tells you, and shows the one command that removes it.
+</details>
 
 ### Your first ten minutes
 
 1. **Install** (above). Claude Code asks for two budgets: per piece of work ($12 is a good start) and per project (0 for no limit). You can change both later in `/config`.
 2. **Open your project folder** in Claude Code, empty or with existing code.
-3. **Say what you want**, e.g. `/company:start I want a website for my salon where customers can book online`.
-4. **Answer one round of 3 to 5 questions.** Every question has a default; skip what you don't know. For existing code, it reads the code first and asks less.
+3. **Say what you want**, for example `/pit:start I want a website for my salon where customers can book online`.
+4. **Answer one round of 3 to 5 questions.** Every question has a default, so skip what you don't know. For existing code it reads the code first and asks less.
 5. **Read the plan:** your goals, the pieces in order, what it assumed, what it left out, the budget, and what it needs from you. Ask for design options if you want to pick a look.
 6. **Say "go"** and it builds the first piece.
 
 In our test (a new salon booking site), steps 3 to 5 took about 4½ minutes of AI time and cost about $1.65.
 
-If you had version 0.2.x installed, the first session tells you, and shows the one command that removes it.
-
-### Safety rules it adds (they apply in every project)
-
-A plugin cannot ship permission rules, so these are enforced by hooks.
-
-| Kind | Rules |
-|---|---|
-| **Denied** | Reading or writing `.env` files (not `.env.example`); `migrate:fresh`, `migrate:reset`, `db:wipe`; force-push |
-| **Asks you first** | Every `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, PowerShell `Remove-Item` |
-| **Hooks** | Block writes to `vendor/`, `node_modules/`, build output, lock files, WordPress core, `wp-config.php` and private keys; stop irreversible Bash and PowerShell commands; flag secrets in written files; format PHP with the project's own Pint when that can't reformat old code |
-
-A search over a whole folder can still match lines inside `.env`; only a path that points straight at a `.env` file is blocked.
+---
 
 ## Use
 
-From any project directory, in Claude Code:
+From any project folder, in Claude Code:
 
-| You say | What happens |
-|---|---|
-| "I want to build a booking site for my salon" or "take over this codebase" | `/company:start`: a short plain-language interview, a survey of any existing code, then a plan in pieces you can see working. **It stops for your approval.** |
-| "go" / "next" | `/company:next`: builds one piece (checks depend on the mode, below), then shows you the result and what it cost, and **stops**. |
-| "it's broken" / "fix this error" | `/company:fix`: one problem, one developer. It writes a test that fails, fixes it, shows it passing, and **stops**. |
-| "where are we?" | `/company:status`: one screen with progress per goal, money spent and left, what's next, and anything waiting on you. |
-| "write me an update" | `/company:report`: a one-page report you can send to a client or manager, saved in `.claude/project/reports/`. |
+| You say | Command | What happens |
+|---|---|---|
+| "I want to build a booking site" or "take over this codebase" | `/pit:start` | A short plain-language interview, a survey of any existing code, then a plan in pieces you can see working. **Stops for your approval.** |
+| "go" / "next" | `/pit:next` | Builds one piece with the right checks, shows you the result and what it cost, and **stops**. |
+| "it's broken" / "fix this error" | `/pit:fix` | One problem, one developer. It writes a test that fails, fixes it, shows it passing, and **stops**. |
+| "where are we?" | `/pit:status` | One screen: progress per goal, money spent and left, what's next, and anything waiting on you. |
+| "write me an update" | `/pit:report` | A one-page report for a client or manager, saved in `.claude/project/reports/`. |
 
-Its working files go in `<your-project>/.claude/project/`. Commit them. They are the team's shared memory between sessions.
+### The crew's shared memory
+
+Working files go in `<your-project>/.claude/project/`. Commit them: they carry the team's memory between sessions.
 
 | File | What it holds |
 |---|---|
@@ -82,33 +220,40 @@ Its working files go in `<your-project>/.claude/project/`. Commit them. They are
 
 **Undo:** every task is its own commit, so you can say "undo that" or use Claude Code's `/rewind`.
 
-### Quick or Careful
+---
 
-| | Quick (default) | Careful |
+## Quick or Careful
+
+| | ⚡ Quick (default) | 🔬 Careful |
 |---|---|---|
 | Each task | One developer; the PM checks the diff and tests | Developer, then code review, then QA |
 | End of a piece | One QA run for the whole piece | Already done per task |
-| Logins, payments, personal data, database changes, going live | Always the careful checks, plus your approval | Same |
+| Logins, payments, personal data, database changes, going live | Always the full checks, plus your approval | Same |
 | Rough cost per piece | About $7 (an estimate, not yet measured) | About $17 (pilot average) |
 
-Turn Careful on in the plugin settings, or per project with a `Mode:` line in `budget.md`.
+Turn Careful on in the plugin settings (`careful_mode`), or per project with a `Mode:` line in `budget.md`.
 
-## How a piece of work flows
+---
 
-This is the Careful flow. In Quick, steps 3 and 4 become one QA run after the piece's last task.
+## Safety rules
 
-1. The PM checks the task is fully specified, picks the lane, and records the starting commit.
-2. One developer agent builds it, with tests it has **seen fail first**. It can stop and ask the PM for missing context instead of guessing.
-3. The code reviewer reviews the diff against the project's conventions and the security floor.
-4. QA verifies every acceptance criterion and tries to break it.
-5. Sensitive work always gets the full flow, `/security-review` and your approval.
-6. The PM commits, updates the project files, reports in plain language, and stops.
+A plugin cannot ship permission rules, so PitCrew enforces these with hooks, in every project:
 
-A failed check goes back to the **same** developer, with its context intact. Three failures on one task is a hard stop, and the PM brings it to you with a recommendation.
+| Kind | Rules |
+|---|---|
+| ⛔ **Denied** | Reading or writing `.env` files (not `.env.example`); `migrate:fresh`, `migrate:reset`, `db:wipe`; force-push |
+| ✋ **Asks you first** | Every `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, PowerShell `Remove-Item` |
+| 🛡️ **Guarded** | Blocks writes to `vendor/`, `node_modules/`, build output, lock files, WordPress core, `wp-config.php` and private keys; stops irreversible Bash and PowerShell commands; flags secrets in written files; formats PHP with the project's own Pint when that can't reformat old code |
+
+A search over a whole folder can still match lines inside `.env`. Only a path that points straight at a `.env` file is blocked.
+
+---
 
 ## Try it on the example project
 
-`plugin/evals/fixtures/salon/` is a half-built salon booking site with its project files filled in. Copy it somewhere, open the copy in Claude Code with the plugin loaded, and try `/company:status` or `/company:report`.
+`plugin/evals/fixtures/salon/` is a half-built salon booking site with its project files filled in. Copy it somewhere, open the copy in Claude Code with the plugin loaded, and try `/pit:status` or `/pit:report`.
+
+---
 
 ## Develop
 
@@ -124,11 +269,20 @@ CI (`.github/workflows/ci.yml`) runs the tests on Windows, macOS and Linux and c
 
 See `CLAUDE.md` for the layout and the rules for changing the framework, and `CHANGELOG.md` for what changed.
 
+---
+
 ## Status and limits
 
-- **Version 1.0.0**. Piloted on one real Laravel project; the findings are in `report/`.
-- Six of eleven roles are written. There is no dedicated security, architecture or devops agent yet: the PM covers them, or asks you.
-- Permission rules and hooks are a **floor, not a gate**. A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.
-- Tested by hand on Windows (Git Bash and PowerShell). CI runs the tests on macOS and Linux too.
-- Costs are **API-equivalent**: what the work would cost at Anthropic's pay-per-use prices. On a subscription you don't pay this per token; it shows where the effort went.
+- **Version 2.0.0.** Piloted on one real Laravel project; the findings are in `report/`.
+- **Stacks:** PHP today (Laravel, plain PHP, WordPress). Frontend frameworks, databases and other languages are planned.
+- **Roles:** six of eleven are written. There is no dedicated security, architecture or devops agent yet: the PM covers them, or asks you.
+- **Safety is a floor, not a gate.** A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.
+- **Tested** by hand on Windows (Git Bash and PowerShell). CI runs the tests on macOS and Linux too.
+- **Costs are API-equivalent:** what the work would cost at Anthropic's pay-per-use prices. On a subscription you don't pay this per token; it shows where the effort went.
 - **License:** MIT.
+
+<div align="center">
+
+**🏁 PitCrew: you drive, the crew builds.**
+
+</div>
