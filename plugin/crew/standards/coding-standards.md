@@ -109,7 +109,7 @@ Non-negotiable, and checked at review regardless of what the task asked for.
 - Mass assignment is guarded: `$fillable` declared explicitly, never `$guarded = []` on a model reachable from user input.
 - Uploads validate MIME type and size, are stored outside the webroot, and are served through a route that authorizes.
 - Redirects to user-supplied URLs are validated against an allowlist.
-- Any change touching authentication, authorization, payment, PII, file upload or migrations is a **Sensitive** task. It gets the threat check (§7.6), Claude Code's `/security-review`, and the user's approval before merge. There is no `security-engineer` role yet; this is never simply skipped.
+- Any change touching authentication, authorization, payment, PII, file upload or migrations is a **Sensitive** task. It gets the threat check (§7.6) and the security pass from `security-engineer`, and the user's approval before merge. This is never simply skipped.
 
 ### 7.1 Dependencies — verify existence before installing
 
@@ -174,7 +174,7 @@ The plugin adds two deterministic layers that no agent can forget or skip:
 
 ### 7.6 Threat check — every Sensitive task, before implementation
 
-The PM writes five short answers into the task record; review checks the code against them:
+`security-engineer` answers five short questions from the code, once per story, and the PM writes the answers into the task record; review and the security pass check the code against them:
 
 1. **Who can reach this?** Which roles, and anonymous visitors?
 2. **What could they read or change that isn't theirs?**

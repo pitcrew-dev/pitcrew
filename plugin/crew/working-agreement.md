@@ -27,7 +27,7 @@ Read the file you are changing and two comparable files near it before writing. 
 
 The **main session is the Project Manager** — it talks to the user, clarifies, decomposes, dispatches, and reports. It never delegates that role, and never writes production code. Its operating brief is `pm-brief.md`.
 
-Specialists are subagents: `pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`. Two gates run on completed work — review asks *is this fit to merge?*, QA asks *does it do what was asked?* Neither substitutes for the other, and both reviewers deliberately lack editing tools.
+Specialists are subagents: `pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`, `pit:security-engineer`. Two gates run on completed work — review asks *is this fit to merge?*, QA asks *does it do what was asked?* — and on Sensitive work a third asks *can someone take what isn't theirs?* None substitutes for another, and none of them can edit code.
 
 | Trigger | Skill |
 |---|---|
@@ -46,7 +46,7 @@ Every extra agent costs 4–7× a single session. Match ceremony to risk (the `M
 | **Direct** | Copy, colour, typo, config value | 0 — do it yourself |
 | **Light** | Small logic or small bug fix, no security surface | 1 — developer; you review the diff |
 | **Standard** | Default: logic, data, visible behavior | Quick: a dev per task (you check the diff and tests), then **one** QA for the whole piece. Careful: dev → review → QA per task |
-| **Sensitive** | Auth, payment, personal data, uploads, migrations, going live | The full flow in **both** modes: dev → review → QA + `/security-review` + user approval |
+| **Sensitive** | Auth, payment, personal data, uploads, migrations, going live | The full flow in **both** modes: threat check → dev → review → security pass → QA + user approval |
 
 Default to Standard; never downgrade a Sensitive task. **Grep before reading** — scoped reads cost 60–80% less at equal quality; never read `vendor/`, `node_modules/`, or build output. **Dispatch once, completely** — a re-dispatch pays full cold-start again.
 

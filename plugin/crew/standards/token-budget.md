@@ -16,7 +16,7 @@ The PM picks a lane per task and records it. Running the full gate on a copy cha
 | **Direct** | Copy text, a colour, a typo, a config value, a one-line content fix. No logic, no data, no permissions. | **0** — the main session does it and verifies | ~1× |
 | **Light** | A small, low-risk change with real logic but no security surface: a validation message, a display format, a simple filter, **a small bug fix** (≤ 2 files, cause known) with a regression test shown failing first. | **1** — developer only; the main session reviews the diff and runs the new test and the suite | ~2× |
 | **Standard** | Default for anything with logic, data, or user-visible behavior. | **Quick:** a developer per task (the PM checks `git diff BASE`, runs the check command and the new test), then **one** `qa-engineer` run after the piece's last task. No `code-reviewer`. **Careful:** developer → `code-reviewer` → `qa-engineer` per task | Quick ~2–3×; Careful ~4–7× |
-| **Sensitive** | Auth, permissions, payment, personal data, file upload, migrations, deploy or going live, anything irreversible. | **Always the full flow, in both modes:** developer → `code-reviewer` → `qa-engineer` per task, `/security-review` and **the user** | ~4–7× plus a human gate |
+| **Sensitive** | Auth, permissions, payment, personal data, file upload, migrations, deploy or going live, anything irreversible. | **Always the full flow, in both modes:** one `security-engineer` threat check per story, then developer → `code-reviewer` → `security-engineer` → `qa-engineer` per task, and **the user** | ~5–9× (an estimate) plus a human gate |
 
 **Rules:**
 
@@ -31,7 +31,7 @@ The PM picks a lane per task and records it. Running the full gate on a copy cha
 |---|---|---|
 | Main session (PM) | Opus | Planning, decomposition, and talking to the user — where judgment compounds |
 | Developers | Sonnet | Near-identical output to Opus on 80–90% of coding tasks |
-| `code-reviewer`, `qa-engineer` | Sonnet | Their verdicts gate delivery; a wrong pass costs more than the model saves |
+| `code-reviewer`, `qa-engineer`, `security-engineer` | Sonnet | Their verdicts gate delivery; a wrong pass costs more than the model saves |
 
 Do not downgrade a gate to Haiku to save money. Do use Haiku for genuinely mechanical work — extraction, formatting, classification, a boolean check — if such an agent is ever added.
 

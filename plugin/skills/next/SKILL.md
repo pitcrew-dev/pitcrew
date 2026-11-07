@@ -28,9 +28,13 @@ Build **one story**, then stop. The user reviews after every story.
 | **Direct** | Copy, colour, typo, config value | You do it and verify it |
 | **Light** | Small logic, no security surface, **including a small bug fix** (≤ 2 files, cause known) | Developer; you review `git diff BASE`, run the new test and the check command. A bug fix needs a regression test the developer showed **failing first**, or it isn't Light |
 | **Standard** | Default | **Quick:** a developer per task. After each task you check `git diff BASE`, run the check command and the new test. After the piece's **last** task, **one** `pit:qa-engineer` run checks the whole piece (Step 4). No code-reviewer. **Careful:** developer → `pit:code-reviewer` → `pit:qa-engineer`, per task |
-| **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, deploy or going live, anything irreversible | **Always the full flow, in both modes:** developer → `pit:code-reviewer` → `pit:qa-engineer` per task, + `/security-review` + **the user's approval** |
+| **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, deploy or going live, anything irreversible | **Always the full flow, in both modes:** threat check (Step 2b) → developer → `pit:code-reviewer` → `pit:security-engineer` → `pit:qa-engineer` per task, + **the user's approval** |
 
-Record the lane and the reason in the task record. Default to Standard; never downgrade Sensitive. Sensitive tasks carry the threat-check answers (`coding-standards.md` §7.6).
+Record the lane and the reason in the task record. Default to Standard; never downgrade Sensitive.
+
+## Step 2b — Threat check (stories with a Sensitive task)
+
+Once per story, before its first Sensitive task is built, dispatch `pit:security-engineer` with **job: threat check**, the story and its Sensitive tasks, their scope, `conventions.md`, and the stack guide. Save its report to `reports/<story-id>-threat.md`, put the five answers in each Sensitive task's record, and **add its new checks to the story's Given/When/Then list** so the developer builds them and QA tests them. If a check changes what the user asked for (for example, who may see something), ask the user first.
 
 ## Step 3 — Build each task, one at a time
 
@@ -63,16 +67,17 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 - The end-of-piece QA covers the piece's Standard tasks. A Sensitive task inside the piece has already had its own full gates and is not re-tested, though all of the piece's Given/When/Then checks are still verified.
 - On `VERDICT: FAIL`, send the finding to the developer of the task it is in (same agent, rework rules below), then re-run QA.
 
-**Careful, and every Sensitive task in either mode:** the two gates below, per task. Two independent questions, in this order. Neither replaces the other.
+**Careful, and every Sensitive task in either mode:** the gates below, per task. Independent questions, in this order. None replaces another.
 
 Every QA or review prompt carries the **setup facts**, so agents test instead of hunting: PHP path, check command, test database, and how to run a quick script. Copy them from `conventions.md`. It also names the task's **stack guide**, whose checklist (section 6) they check too.
 
 - **4a. Code review:** dispatch `pit:code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, the setup facts, and the developer's report. *Is this fit to merge?*
-- **4b. QA:** only after review passes. Dispatch `pit:qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.
+- **4b. Security pass, Sensitive only:** after review passes, dispatch `pit:security-engineer` with **job: security pass**, BASE, the threat-check answers, the developer's and reviewer's reports, `conventions.md`, the setup facts and the stack guide. *Can someone take what isn't theirs?* Its FAIL is reworked like any other gate. A deploy or go-live story also gets **job: launch check** after its last task, with the staging URLs the user named; boxes it marks *unverified* go to the user.
+- **4c. QA:** only after review (and, for Sensitive, the security pass) passes. Dispatch `pit:qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.
   - **Focused:** ≤ 2 files, ~50 changed lines, no new route, screen or table, not Sensitive. Adversarial testing is capped at 3 cases.
   - **Full:** everything else, and always Sensitive.
   - Rework keeps the depth.
-- **4c. Sensitive only:** run `/security-review` on the change, then **stop and get the user's approval** before it's merged.
+- **4d. Sensitive only:** **stop and get the user's approval** before it's merged, telling them in plain words what the security pass checked.
 
 **On `VERDICT: FAIL`:**
 

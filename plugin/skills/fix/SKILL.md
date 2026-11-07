@@ -32,7 +32,7 @@ Reproduce it or read the error. **Grep before reading**; open only the files inv
 
 | Touches | Lane |
 |---|---|
-| Login or permissions, payment, personal data, uploads, database schema or migrations, deploy | **Sensitive.** Tell the user in one line, then run the full flow from `/pit:next` Steps 3–4 for this one task: review, QA, `/security-review` and **their approval** |
+| Login or permissions, payment, personal data, uploads, database schema or migrations, deploy | **Sensitive.** Tell the user in one line, then run the full flow from `/pit:next` Steps 2b–4 for this one task: threat check, review, security pass, QA and **their approval** |
 | Anything else | **Light** |
 
 ## Step 6 — Light: one developer
