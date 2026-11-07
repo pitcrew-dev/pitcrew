@@ -195,11 +195,82 @@ def check_wp(tokens):
     return None
 
 
+def tool_name(token):
+    """`./node_modules/.bin/prisma.cmd` or `prisma@7` -> `prisma`."""
+    name = token.lower().replace("\\", "/").rsplit("/", 1)[-1].split("@", 1)[0]
+    for suffix in (".cmd", ".exe", ".ps1"):
+        if name.endswith(suffix):
+            return name[:-len(suffix)]
+    return name
+
+
+def find_tool(tokens, name):
+    """The words after `name` in `npx prisma …`, `pnpm exec prisma …` and the like, or None."""
+    for i, token in enumerate(tokens):
+        if tool_name(token) == name:
+            return [t.lower() for t in tokens[i + 1:]]
+    return None
+
+
+def check_prisma(tokens):
+    rest = find_tool(tokens, "prisma")
+    if rest is None:
+        return None
+    words = [t for t in rest if not t.startswith("-")]
+    if words[:2] == ["migrate", "reset"]:
+        return DENY, ("prisma migrate reset drops the database and deletes its data. If a reset is "
+                      "really needed, the user runs it themselves.")
+    if words[:2] == ["db", "push"] and ("--force-reset" in rest or "--accept-data-loss" in rest):
+        return DENY, ("This db push can delete data. Make a migration instead (prisma migrate dev), "
+                      "or let the user run it themselves.")
+    if words[:2] == ["migrate", "deploy"]:
+        return ASK, "prisma migrate deploy changes a real database. The user approves it first."
+    return None
+
+
+def check_drizzle(tokens):
+    rest = find_tool(tokens, "drizzle-kit")
+    if not rest:
+        return None
+    if rest[0] == "drop":
+        return DENY, "drizzle-kit drop deletes migrations. The user decides that, not an agent."
+    if rest[0] == "push":
+        return ASK, ("drizzle-kit push changes the database without a migration and can drop "
+                     "columns. The user approves it first.")
+    return None
+
+
+PACKAGE_MANAGERS = {"npm", "pnpm", "yarn", "bun"}
+DANGEROUS_SCRIPT = re.compile(r"reset|drop|wipe|fresh|nuke", re.I)
+
+
+def check_db_tools(tokens):
+    name = tool_name(tokens[0])
+    lowered = [t.lower() for t in tokens[1:]]
+    if name == "dropdb" or (name == "mysqladmin" and "drop" in lowered):
+        return DENY, "This deletes a whole database. Never run by an agent: ask the user."
+    if name in PACKAGE_MANAGERS:
+        args = [t for t in tokens[1:] if not t.startswith("-")]
+        if args and args[0].lower() in ("run", "run-script"):
+            args = args[1:]
+        if args and DANGEROUS_SCRIPT.search(args[0]):
+            return ASK, ("The script '%s' sounds like it resets or deletes data, and a script hides "
+                         "the real command. The user approves it first." % args[0])
+    return None
+
+
+PRISMA_CONSENT = re.compile(r"PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION['\"]?\s*[=,]", re.I)
+
+
 def evaluate(command, cwd=None):
     found = []
+    if PRISMA_CONSENT.search(command):
+        found.append((DENY, "Only the user may give Prisma's consent for a dangerous action. An agent "
+                            "never sets PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION: ask the user."))
     stripped = strip_data(command)
     for tokens in segments(stripped):
-        for check in (check_delete, check_remove_item, check_artisan, check_wp):
+        for check in (check_delete, check_remove_item, check_artisan, check_wp, check_prisma,
+                      check_drizzle, check_db_tools):
             verdict = check(tokens)
             if verdict:
                 found.append(verdict)

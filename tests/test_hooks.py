@@ -136,6 +136,52 @@ class GuardBashTest(unittest.TestCase):
             "php artisan migrate --force",
         ])
 
+    def test_guards_javascript_database_tools(self):
+        self.assertVerdicts("deny", [
+            "npx prisma migrate reset",
+            "npx prisma migrate reset --force",
+            "pnpm exec prisma migrate reset --skip-seed",
+            "./node_modules/.bin/prisma migrate reset",
+            "npx prisma@7 migrate reset",
+            "npx prisma db push --force-reset",
+            "yarn prisma db push --accept-data-loss",
+            "npx drizzle-kit drop",
+            "dropdb app_production",
+            "mysqladmin -u root drop app",
+            'psql -c "DROP DATABASE app"',
+        ])
+        self.assertVerdicts("ask", [
+            "npx prisma migrate deploy",
+            "npx drizzle-kit push",
+            "npm run db:reset",
+            "pnpm db:reset",
+            "yarn run migrate:fresh",
+            "bun run drop-tables",
+            'psql -c "TRUNCATE TABLE bookings"',
+        ])
+        self.assertVerdicts("allow", [
+            "npx prisma migrate dev --name add_bookings",
+            "npx prisma generate",
+            "npx prisma db push",
+            "npx drizzle-kit generate",
+            "npm run build",
+            "pnpm test",
+            "npm install",
+            'git commit -m "docs: why prisma migrate reset is blocked"',
+        ])
+        self.assertVerdicts("deny", ["npx prisma migrate reset --force"], tool="PowerShell")
+
+    def test_an_agent_never_gives_prismas_consent(self):
+        self.assertVerdicts("deny", [
+            'PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION="yes" npx prisma migrate reset',
+            'export PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION="I agree"',
+            "env PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=ok npx prisma db push",
+        ])
+        self.assertVerdicts("deny", [
+            '$env:PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION = "yes"',
+            "[Environment]::SetEnvironmentVariable('PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION', 'yes')",
+        ], tool="PowerShell")
+
     @unittest.skipUnless(shutil.which("git"), "git not installed")
     def test_bare_push_on_main_asks(self):
         repo = tempfile.mkdtemp()
@@ -202,6 +248,7 @@ class GuardPathsTest(unittest.TestCase):
             "vendor/laravel/framework/x.php", "composer.lock", "package-lock.json", "public/js/app.min.js",
             "wp-includes/load.php", ".git/config", "C:\\Users\\me\\.ssh\\id_rsa", "public/build/app.css",
             "C:\\p\\.claude\\project\\activity.md", "/srv/app/.claude/project/.activity-state.json",
+            ".next/server/app/page.js", "C:\\p\\.next\\cache\\x.json", ".turbo/cache/a", ".vercel/output/config.json",
         ]:
             with self.subTest(path=path):
                 self.assertEqual("deny", self.verdict(path))
@@ -210,6 +257,7 @@ class GuardPathsTest(unittest.TestCase):
         for path in [
             ".env.example", "C:\\p\\app\\Models\\User.php", "resources/js/app.js", "config/services.php",
             "wp-content/themes/child/functions.php", "keyboard.php", ".claude/project/status.md",
+            "app/page.tsx", "next.config.ts", "src/components/Button.tsx", ".vercel/project.json",
         ]:
             with self.subTest(path=path):
                 self.assertEqual("allow", self.verdict(path))

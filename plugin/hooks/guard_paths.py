@@ -28,6 +28,9 @@ DENY = [
      "node_modules/ is installed by npm. Never hand-edit it. Fix the source or the dependency."),
     (r"(^|/)public/(build|hot)(/|$)",
      "public/build/ is compiled output. If the built CSS or JS is wrong, fix the source instead."),
+    (r"(^|/)(\.next|\.turbo|\.vercel/output)/",
+     "This folder is build output (Next.js, Turborepo or Vercel). Fix the source; the next build "
+     "replaces it."),
     (r"(^|/)\.env((\.|:)[^/]*)?$",
      ".env files hold secrets and are never written by an agent. Add the key to .env.example "
      "and tell the user which value to set."),
