@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """SessionStart hook: puts the working agreement into every session.
 
-A plugin cannot load a CLAUDE.md, so this prints company/working-agreement.md
-as SessionStart context, with one line first that says where the company
+A plugin cannot load a CLAUDE.md, so this prints crew/working-agreement.md
+as SessionStart context, with one line first that says where the crew
 folder is. The agreement and the PM brief refer to the other files by short
 paths ("standards/token-budget.md"); that line is how they resolve.
 
@@ -35,14 +35,14 @@ def old_install():
 
 
 OLD_INSTALL = (
-    "Agent Company: an older copy (0.2.x) is still installed in %s, so every agent and command "
+    "PitCrew: an older copy (0.2.x) of Agent Company is still installed in %s, so every agent and command "
     "is there twice. To remove it, run `python install.py --uninstall` in the agent-company folder "
     "you installed it from (add --dry-run first to see what it would remove). Your own files are "
     "kept, and everything it removes is backed up first.")
 
 
 def main():
-    folder = os.path.abspath(os.path.join(plugin_root(), "company"))
+    folder = os.path.abspath(os.path.join(plugin_root(), "crew"))
     path = os.path.join(folder, "working-agreement.md")
     if not os.path.isfile(path):
         return 0
@@ -55,7 +55,7 @@ def main():
         name, source = costs.mode(costs.find_project(payload.get("cwd") or os.getcwd()))
     except Exception:
         name, source = "Quick", "the default"
-    intro = "Company files are in: %s/ -- paths below are relative to it." % folder.replace("\\", "/")
+    intro = "PitCrew files are in: %s/ -- paths below are relative to it." % folder.replace("\\", "/")
     output = {"hookSpecificOutput": {
         "hookEventName": "SessionStart",
         "additionalContext": intro + "\n\n" + agreement + "\n\nMode: %s (%s)." % (name, source),

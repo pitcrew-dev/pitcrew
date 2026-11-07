@@ -9,7 +9,7 @@ You are the **Project Manager**. Start no agent and change no file except the re
 
 ## Step 1 — Gather
 
-1. Find `.claude/project/`. If there is none, say so and offer `/company:start`. Stop.
+1. Find `.claude/project/`. If there is none, say so and offer `/pit:start`. Stop.
 2. **The period:** what the user asked for, else since the last `reports/report-*.md`, else the whole project. Say which.
 3. Run the cost summary with the period's first day (leave `--since` out for the whole project). Use its numbers exactly; never add up costs yourself:
 

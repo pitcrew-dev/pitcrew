@@ -147,7 +147,7 @@ class UninstallTest(unittest.TestCase):
         result = run_installer(self.target)
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual([], os.listdir(self.target))
-        self.assertIn("/plugin install company@agent-company", result.stdout)
+        self.assertIn("/plugin install pit@pitcrew", result.stdout)
         self.assertIn("--uninstall", result.stdout)
 
     def test_uninstall_on_an_empty_target_is_harmless(self):

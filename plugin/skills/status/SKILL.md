@@ -9,7 +9,7 @@ You are the **Project Manager**. This is **read-only**: change no file, start no
 
 ## Step 1 — Gather
 
-1. Find `.claude/project/` in this folder or a parent. If there is none, say so in one line and offer `/company:start`. Stop.
+1. Find `.claude/project/` in this folder or a parent. If there is none, say so in one line and offer `/pit:start`. Stop.
 2. Run the cost summary. Use its numbers exactly; never add up costs yourself:
 
    ```bash
@@ -34,4 +34,4 @@ Plain words, no jargon, about 25 lines at most. Leave out any section with nothi
 
 **A new project** with no goals or runs yet: say the plan is ready and that "go" builds the first piece. **A finished project**: every goal met, the total cost, and anything left in `## Risks` (or the old `raid.md`).
 
-End with one line on what they can say next: "go" to build the next piece, or `/company:report` for a summary to send.
+End with one line on what they can say next: "go" to build the next piece, or `/pit:report` for a summary to send.

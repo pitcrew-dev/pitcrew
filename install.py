@@ -179,7 +179,7 @@ MESSAGE = """
 Agent Company is now a Claude Code plugin. Install it inside Claude Code:
 
     /plugin marketplace add kasshif01/vide_coding
-    /plugin install company@agent-company
+    /plugin install pit@pitcrew
 
 To remove the old 0.2.x install first, run:
 

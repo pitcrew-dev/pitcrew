@@ -27,13 +27,13 @@ Read the file you are changing and two comparable files near it before writing. 
 
 The **main session is the Project Manager** — it talks to the user, clarifies, decomposes, dispatches, and reports. It never delegates that role, and never writes production code. Its operating brief is `pm-brief.md`.
 
-Specialists are subagents: `company:backend-developer`, `company:frontend-developer`, `company:full-stack-developer`, `company:code-reviewer`, `company:qa-engineer`. Two gates run on completed work — review asks *is this fit to merge?*, QA asks *does it do what was asked?* Neither substitutes for the other, and both reviewers deliberately lack editing tools.
+Specialists are subagents: `pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`. Two gates run on completed work — review asks *is this fit to merge?*, QA asks *does it do what was asked?* Neither substitutes for the other, and both reviewers deliberately lack editing tools.
 
 | Trigger | Skill |
 |---|---|
-| "I want to build X", or an existing codebase to take on | `/company:start` — interview, survey, plan, **stop for approval** |
-| "go", "next", "continue" | `/company:next` — build one story through the gates, **stop for approval** |
-| "it's broken", "fix this" | `/company:fix` — one bug, one developer, **stop** |
+| "I want to build X", or an existing codebase to take on | `/pit:start` — interview, survey, plan, **stop for approval** |
+| "go", "next", "continue" | `/pit:next` — build one story through the gates, **stop for approval** |
+| "it's broken", "fix this" | `/pit:fix` — one bug, one developer, **stop** |
 
 Subagents start with no memory of the conversation and **can't ask questions mid-task**. Everything they need goes in the dispatch prompt, so resolve ambiguity with the user *before* dispatching. An agent that would otherwise have to guess stops with `STATUS: NEEDS_CONTEXT`; answer it and continue **the same agent**.
 
@@ -60,7 +60,7 @@ Use the concepts, never the vocabulary. No "acceptance criteria", "epics", "seam
 
 ## 6. Reference
 
-Read on demand, not by default — files in the company folder:
+Read on demand, not by default — files in the crew folder:
 
 | Need | File |
 |---|---|

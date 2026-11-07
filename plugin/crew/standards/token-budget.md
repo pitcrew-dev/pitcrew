@@ -88,13 +88,13 @@ Costs are API-equivalent dollars, measured per agent run in `activity.md`. The d
 | `Mode: quick` or `careful` (optional; overrides the plugin setting for this project) | `Mode: careful` |
 | A **Top-ups** table, one row per approval | `\| 2026-10-24 \| SHOP-E01-S02 \| $10 \| user \|` (use `project` instead of a story ID for the project cap) |
 
-A typical piece is about $7 in Quick mode (an estimate) and about $17 in Careful mode (the pilot's average, the PM included). At `/company:start`, suggest a project cap of stories × $7 (Quick) or × $17 (Careful), rounded up.
+A typical piece is about $7 in Quick mode (an estimate) and about $17 in Careful mode (the pilot's average, the PM included). At `/pit:start`, suggest a project cap of stories × $7 (Quick) or × $17 (Careful), rounded up.
 
 ## 6. Session hygiene
 
 - **One story per session where practical.** `/clear` between stories: long sessions accumulate history that is re-sent on every turn, and attention degrades as the window fills ("context rot").
 - **`/compact` at a natural boundary**, not mid-task.
-- **Keep the project files lean**, because `/company:next` reads them every time. Finished stories collapse to one line in `plan.md`; task notes are one line; its **Now** section is rewritten, not appended; agent reports stay under ~40 lines. On the first pilot, the backlog alone had grown to ~10k tokens.
+- **Keep the project files lean**, because `/pit:next` reads them every time. Finished stories collapse to one line in `plan.md`; task notes are one line; its **Now** section is rewritten, not appended; agent reports stay under ~40 lines. On the first pilot, the backlog alone had grown to ~10k tokens.
 - **`/cost` to measure.** Take a baseline before optimizing anything — without one you cannot tell whether a change helped.
 - **Keep `CLAUDE.md` stable.** It sits in the cached prefix; editing it mid-session invalidates the cache and every subsequent turn pays full price.
 

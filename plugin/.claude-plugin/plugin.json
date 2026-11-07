@@ -1,11 +1,23 @@
 {
-  "name": "company",
-  "displayName": "Agent Company",
-  "version": "1.0.0",
-  "description": "Runs a PHP project like a small software company: a project manager plus developer, code-review and QA agents, with safety hooks. Quick mode keeps it cheap.",
-  "author": { "name": "Muhammad Kashif" },
+  "name": "pit",
+  "displayName": "PitCrew",
+  "version": "2.0.0",
+  "description": "PitCrew: an AI dev team inside Claude Code. A project manager plans the work, developers build it, code review and QA check it, and safety hooks guard it. Built for PHP today (Laravel, plain PHP, WordPress). Quick mode keeps it cheap.",
+  "author": {
+    "name": "Muhammad Kashif"
+  },
   "license": "MIT",
-  "keywords": ["php", "laravel", "wordpress", "agents", "workflow"],
+  "keywords": [
+    "pitcrew",
+    "agents",
+    "dev-team",
+    "project-manager",
+    "qa",
+    "code-review",
+    "php",
+    "laravel",
+    "wordpress"
+  ],
   "userConfig": {
     "story_budget": {
       "type": "number",

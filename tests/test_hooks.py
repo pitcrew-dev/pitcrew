@@ -313,8 +313,8 @@ class LoadAgreementTest(unittest.TestCase):
     def test_a_failing_mode_lookup_still_loads_the_agreement(self):
         root = tempfile.mkdtemp()
         try:
-            os.makedirs(os.path.join(root, "company"))
-            with open(os.path.join(root, "company", "working-agreement.md"), "w", encoding="utf-8") as handle:
+            os.makedirs(os.path.join(root, "crew"))
+            with open(os.path.join(root, "crew", "working-agreement.md"), "w", encoding="utf-8") as handle:
                 handle.write("# Working agreement\n\nThink before coding.\n")
             env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_PLUGIN_OPTION_")}
             env.update(CLAUDE_PLUGIN_ROOT=root, CLAUDE_CONFIG_DIR=self.config)
@@ -328,18 +328,18 @@ class LoadAgreementTest(unittest.TestCase):
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
-    def test_injects_the_agreement_and_the_company_folder(self):
+    def test_injects_the_agreement_and_the_crew_folder(self):
         root = tempfile.mkdtemp()
         try:
-            os.makedirs(os.path.join(root, "company"))
-            with open(os.path.join(root, "company", "working-agreement.md"), "w", encoding="utf-8") as handle:
+            os.makedirs(os.path.join(root, "crew"))
+            with open(os.path.join(root, "crew", "working-agreement.md"), "w", encoding="utf-8") as handle:
                 handle.write("# Working agreement\n\nThink before coding.\n")
             code, out, err = self.run_load(root)
             self.assertEqual((0, ""), (code, err))
             data = json.loads(out)["hookSpecificOutput"]
             self.assertEqual("SessionStart", data["hookEventName"])
             self.assertIn("Think before coding.", data["additionalContext"])
-            self.assertIn(os.path.join(root, "company").replace("\\", "/"), data["additionalContext"])
+            self.assertIn(os.path.join(root, "crew").replace("\\", "/"), data["additionalContext"])
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
@@ -347,8 +347,8 @@ class LoadAgreementTest(unittest.TestCase):
         """The 'Mode:' line the hook adds, for a temp project with the given budget.md."""
         root, project = tempfile.mkdtemp(), tempfile.mkdtemp()
         try:
-            os.makedirs(os.path.join(root, "company"))
-            with open(os.path.join(root, "company", "working-agreement.md"), "w", encoding="utf-8") as handle:
+            os.makedirs(os.path.join(root, "crew"))
+            with open(os.path.join(root, "crew", "working-agreement.md"), "w", encoding="utf-8") as handle:
                 handle.write("Agreement.\n")
             if budget_text is not None:
                 os.makedirs(os.path.join(project, ".claude", "project"))
@@ -524,7 +524,7 @@ class LogActivityTest(unittest.TestCase):
         self.agent = os.path.join(self.root, "agent-a1.jsonl")
         write_lines(self.main, [assistant_line("p1", "2026-10-01T09:00:00Z", MILLION_IN)])
         with open(os.path.join(self.root, "agent-a1.meta.json"), "w", encoding="utf-8") as handle:
-            json.dump({"agentType": "company:qa-engineer"}, handle)
+            json.dump({"agentType": "pit:qa-engineer"}, handle)
         handback = [{"type": "tool_use", "name": "SubagentHandback",
                      "input": {"message": "All criteria met.\n\nVERDICT: PASS"}}]
         write_lines(self.agent, [
@@ -554,7 +554,7 @@ class LogActivityTest(unittest.TestCase):
         code, out, err = self.stop(cwd=os.path.join(self.root))
         self.assertEqual((0, "", ""), (code, out, err))
         [row] = self.rows()
-        self.assertEqual(["SHOP-E01-S02-T01", "company:qa-engineer", "PASS", "2.00", "4.00", "6.00"], row[1:])
+        self.assertEqual(["SHOP-E01-S02-T01", "pit:qa-engineer", "PASS", "2.00", "4.00", "6.00"], row[1:])
 
     def test_a_follow_up_counts_only_new_work_and_adds_to_the_story(self):
         os.makedirs(self.project)
@@ -569,7 +569,7 @@ class LogActivityTest(unittest.TestCase):
         self.stop()
         first, repeat, follow_up = self.rows()
         self.assertEqual(["0.00", "0.00", "6.00"], repeat[4:])
-        self.assertEqual(["SHOP-E01-S02-T02", "company:qa-engineer", "DONE_WITH_CONCERNS", "2.00", "4.00", "12.00"],
+        self.assertEqual(["SHOP-E01-S02-T02", "pit:qa-engineer", "DONE_WITH_CONCERNS", "2.00", "4.00", "12.00"],
                          follow_up[1:])
 
     def test_unknown_task_still_logs_the_cost(self):
@@ -582,8 +582,8 @@ class LogActivityTest(unittest.TestCase):
 
 
 ACTIVITY = ("| Time | Task | Agent | Result | Agent $ | PM $ | Story total $ |\n|---|---|---|---|---|---|---|\n"
-            "| 2026-10-01 09:00 | SHOP-E01-S02-T01 | company:backend-developer | DONE | 12.00 | 6.00 | 18.00 |\n"
-            "| 2026-10-01 09:30 | SHOP-E01-S02-T01 | company:code-reviewer | PASS | 1.00 | 1.00 | 20.00 |\n"
+            "| 2026-10-01 09:00 | SHOP-E01-S02-T01 | pit:backend-developer | DONE | 12.00 | 6.00 | 18.00 |\n"
+            "| 2026-10-01 09:30 | SHOP-E01-S02-T01 | pit:code-reviewer | PASS | 1.00 | 1.00 | 20.00 |\n"
             "| 2026-10-01 10:00 | - | general-purpose | - | 3.00 | 0.00 | - |\n")
 
 
@@ -703,7 +703,7 @@ class AgentStatusTest(unittest.TestCase):
             with open(os.path.join(root, ".claude", "project", "activity.md"), "w", encoding="utf-8") as handle:
                 handle.write(ACTIVITY)
             payload = {"cwd": root, "columns": 120, "tasks": [
-                {"id": "t1", "agentType": "company:qa-engineer", "description": "SHOP-E01-S02-T01 QA",
+                {"id": "t1", "agentType": "pit:qa-engineer", "description": "SHOP-E01-S02-T01 QA",
                  "tokenCount": 45600, "status": "running"},
                 {"id": "t2", "agentType": "Explore", "description": "Look around", "tokenCount": 10},
             ]}
@@ -842,14 +842,14 @@ class ManifestTest(unittest.TestCase):
         plugin = self.load("plugin", ".claude-plugin", "plugin.json")
         with open(os.path.join(self.ROOT, "VERSION"), encoding="utf-8") as handle:
             self.assertEqual(handle.read().strip(), plugin["version"])
-        self.assertEqual("company", plugin["name"])
+        self.assertEqual("pit", plugin["name"])
 
     def test_marketplace_lists_the_plugin(self):
         market = self.load(".claude-plugin", "marketplace.json")
-        self.assertEqual("agent-company", market["name"])
+        self.assertEqual("pitcrew", market["name"])
         self.assertTrue(market["owner"]["name"])
         entry = market["plugins"][0]
-        self.assertEqual("company", entry["name"])
+        self.assertEqual("pit", entry["name"])
         self.assertTrue(entry["source"].startswith("./"))
         self.assertTrue(os.path.isfile(os.path.join(self.ROOT, entry["source"], ".claude-plugin", "plugin.json")))
 

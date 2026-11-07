@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This repository is **agent-company**, a Claude Code framework that runs a project like a small software company: a Project Manager (the main session) plus developer, code-review and QA agents, for PHP work (Laravel, plain PHP, WordPress). It ships as a Claude Code plugin named `company` (marketplace `agent-company`) and is then used from any project.
+This repository is **PitCrew** (formerly agent-company), a Claude Code framework that runs a project like a small software company: a Project Manager (the main session) plus developer, code-review and QA agents, for PHP work (Laravel, plain PHP, WordPress). It ships as a Claude Code plugin named `pit` (marketplace `pitcrew`, so commands are `/pit:*`) and is then used from any project.
 
 ## How to answer the user
 
@@ -15,13 +15,13 @@ Always explain in **simple, short, clear words**, without being asked.
 | Path | What it is |
 |---|---|
 | `plugin/.claude-plugin/plugin.json` | Plugin manifest; `version` must equal `VERSION` |
-| `.claude-plugin/marketplace.json` | Marketplace manifest; install id `company@agent-company` |
-| `plugin/company/working-agreement.md` | Always-loaded rules, injected at session start by the `load_agreement` hook |
-| `plugin/company/pm-brief.md` | The main session's operating brief |
-| `plugin/company/employees/` | Full role charters, read on demand |
-| `plugin/company/standards/` | Standards; `engagement-modes.md` governs the rest |
-| `plugin/agents/`, `plugin/skills/` | 5 subagents (`company:*`); `/company:start`, `/company:next`, `/company:fix`, `/company:status`, `/company:report` |
-| `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), the safety, formatting, activity-log and budget hooks (Python), `costs.py` (shared cost and budget reading), `cost_summary.py` (run by `/company:status` and `/company:report`) and `agent_status.py` (the agent status line) |
+| `.claude-plugin/marketplace.json` | Marketplace manifest; install id `pit@pitcrew` |
+| `plugin/crew/working-agreement.md` | Always-loaded rules, injected at session start by the `load_agreement` hook |
+| `plugin/crew/pm-brief.md` | The main session's operating brief |
+| `plugin/crew/employees/` | Full role charters, read on demand |
+| `plugin/crew/standards/` | Standards; `engagement-modes.md` governs the rest |
+| `plugin/agents/`, `plugin/skills/` | 5 subagents (`pit:*`); `/pit:start`, `/pit:next`, `/pit:fix`, `/pit:status`, `/pit:report` |
+| `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), the safety, formatting, activity-log and budget hooks (Python), `costs.py` (shared cost and budget reading), `cost_summary.py` (run by `/pit:status` and `/pit:report`) and `agent_status.py` (the agent status line) |
 | `plugin/settings.json` | Turns on the agent status line |
 | `plugin/evals/` | Plugin evals (`claude plugin eval`), and `fixtures/salon/`, the sample project they and the README use |
 | `.github/workflows/ci.yml` | Tests on Windows, macOS and Linux and the plugin check on every push; the paid evals on demand |

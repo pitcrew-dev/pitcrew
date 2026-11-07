@@ -35,7 +35,7 @@ if [ -z "$py" ]; then
   done
   if [ -z "$py" ]; then
     if [ "$name" = "load_agreement" ]; then
-      printf '%s\n' '{"systemMessage": "Agent Company: safety checks are OFF because Python 3.8 or newer was not found. Install Python 3 (python.org) and restart Claude Code.", "hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "The Agent Company working agreement and safety hooks are NOT loaded because Python 3.8 or newer is missing on this machine. Tell the user this plainly at the start of your first reply: safety checks are off until they install Python 3 (python.org) and restart Claude Code."}}'
+      printf '%s\n' '{"systemMessage": "PitCrew: safety checks are OFF because Python 3.8 or newer was not found. Install Python 3 (python.org) and restart Claude Code.", "hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "The PitCrew working agreement and safety hooks are NOT loaded because Python 3.8 or newer is missing on this machine. Tell the user this plainly at the start of your first reply: safety checks are off until they install Python 3 (python.org) and restart Claude Code."}}'
     fi
     exit 0
   fi

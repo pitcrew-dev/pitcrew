@@ -5,15 +5,15 @@ description: Fix one broken thing. Finds the cause, has one developer write a te
 
 # Fix — One Problem, One Developer, Stop
 
-You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/company/pm-brief.md` once per session. Respect "Never plan what the framework blocks".
+You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/crew/pm-brief.md` once per session. Respect "Never plan what the framework blocks".
 
 ## Step 1 — Write it down, check the size
 
-Write the user's words down **verbatim**. If it is really a **new feature**, or **several problems**, say so in one line and offer `/company:start` or adding it to the plan. Then stop.
+Write the user's words down **verbatim**. If it is really a **new feature**, or **several problems**, say so in one line and offer `/pit:start` or adding it to the plan. Then stop.
 
 ## Step 2 — Safety net
 
-No git repo: follow `/company:start` Step 4b (don't restate it here). Then record **BASE** with `git rev-parse HEAD`.
+No git repo: follow `/pit:start` Step 4b (don't restate it here). Then record **BASE** with `git rev-parse HEAD`.
 
 ## Step 3 — Give it an ID
 
@@ -32,12 +32,12 @@ Reproduce it or read the error. **Grep before reading**; open only the files inv
 
 | Touches | Lane |
 |---|---|
-| Login or permissions, payment, personal data, uploads, database schema or migrations, deploy | **Sensitive.** Tell the user in one line, then run the full flow from `/company:next` Steps 3–4 for this one task: review, QA, `/security-review` and **their approval** |
+| Login or permissions, payment, personal data, uploads, database schema or migrations, deploy | **Sensitive.** Tell the user in one line, then run the full flow from `/pit:next` Steps 3–4 for this one task: review, QA, `/security-review` and **their approval** |
 | Anything else | **Light** |
 
 ## Step 6 — Light: one developer
 
-Dispatch **one** agent, `company:full-stack-developer` by default, with:
+Dispatch **one** agent, `pit:full-stack-developer` by default, with:
 
 - the problem, verbatim
 - the cause you found, and the scope (files in, files out)

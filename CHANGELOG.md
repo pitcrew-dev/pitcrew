@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0 - 2026-11-07
+
+Agent Company is now **PitCrew**.
+
+### Changed
+- **New name and commands.** The plugin is `pit` in the `pitcrew` marketplace. Commands are `/pit:start`, `/pit:next`, `/pit:fix`, `/pit:status` and `/pit:report`; agents are `pit:backend-developer` and so on. Install with `/plugin install pit@pitcrew`.
+- **The company folder is now `crew/`** inside the plugin (`working-agreement.md`, `pm-brief.md`, `employees/`, `standards/`).
+- **A new README** with the team and the flow drawn as diagrams.
+
+### Upgrading
+- Remove the old plugin first, so the hooks don't run twice: `/plugin uninstall company@agent-company`, then `/plugin marketplace remove agent-company`, then add the marketplace again and `/plugin install pit@pitcrew`.
+- Project files in `.claude/project/` keep working as they are.
+
 ## 1.0.0 - 2026-10-28
 
 The free version: the same safety, much less AI work per piece.

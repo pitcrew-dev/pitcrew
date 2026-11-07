@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cost summary for /company:status and /company:report.
+"""Cost summary for /pit:status and /pit:report.
 
 Not a hook: the PM runs it through the launcher, so the numbers it reports
 are added up by code, not by the model:

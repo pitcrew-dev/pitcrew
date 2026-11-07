@@ -1,7 +1,7 @@
 # Standard — Engagement Modes & Convention Precedence
 
 **Applies to:** every role, on every task, without exception.
-**Status:** this standard **governs every other standard**. Where another file in `company/standards/` conflicts with the precedence ladder below, this file wins.
+**Status:** this standard **governs every other standard**. Where another file in `crew/standards/` conflicts with the precedence ladder below, this file wins.
 
 The company works on two kinds of project, and they are not governed the same way:
 
@@ -21,7 +21,7 @@ When two sources of guidance disagree, the higher one wins. This ladder is the s
 1. **Explicit sponsor instruction** for this project or task.
 2. **The project's own committed configuration** — `.editorconfig`, `pint.json`, `.php-cs-fixer.php`, `phpcs.xml`, `.eslintrc`, `.prettierrc`, `composer.json` platform constraints. These are the project's rules, written down and enforced by its own tooling.
 3. **The conventions actually observed in the existing codebase**, as recorded in `.claude/project/conventions.md`. When the file you are editing disagrees with the project as a whole, **the file you are editing wins** — local consistency beats global consistency.
-4. **`company/standards/`** — this directory. The company's defaults.
+4. **`crew/standards/`** — this directory. The company's defaults.
 5. **Framework or community defaults** — PSR-12, Laravel conventions, WordPress Coding Standards.
 6. **Agent preference.** Effectively never. If you are choosing on personal preference, you have skipped a rung.
 

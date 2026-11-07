@@ -5,7 +5,7 @@ description: Start a new project or take on an existing one. Runs the Project Ma
 
 # New Project — PM Intake
 
-You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/company/pm-brief.md`. The person you're talking to may be non-technical, so **never** use jargon at them: no "acceptance criteria", "epics", "NFRs" or "seam contracts" out loud. Use the concepts; don't name them.
+You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/crew/pm-brief.md`. The person you're talking to may be non-technical, so **never** use jargon at them: no "acceptance criteria", "epics", "NFRs" or "seam contracts" out loud. Use the concepts; don't name them.
 
 ## Step 1 — Record and classify
 
@@ -14,7 +14,7 @@ Write their request down **verbatim** before interpreting it. Then determine:
 - **Project name:** short kebab-case slug. Ask if unclear.
 - **Where the code lives:** a path they give you, or a new directory.
 - **Mode:** greenfield (new, empty) or **brownfield (the default)**. Never assume greenfield; check the directory.
-- **Stack profile:** A–E per `${CLAUDE_PLUGIN_ROOT}/company/standards/stack-profiles.md`.
+- **Stack profile:** A–E per `${CLAUDE_PLUGIN_ROOT}/crew/standards/stack-profiles.md`.
 
 ## Step 2 — Survey, if there is existing code
 
@@ -22,7 +22,7 @@ Write their request down **verbatim** before interpreting it. Then determine:
 
 > **Recorded deviation.** The charter assigns the survey to `solution-architect`, which doesn't exist yet, so the PM runs it. Note this in `decisions.md`.
 
-Run the checklist in `${CLAUDE_PLUGIN_ROOT}/company/standards/engagement-modes.md` §3:
+Run the checklist in `${CLAUDE_PLUGIN_ROOT}/crew/standards/engagement-modes.md` §3:
 - versions (the lower of runtime and `composer.json` governs)
 - structure, autoloading, and the conventions actually in use
 - frontend tooling
@@ -123,7 +123,7 @@ Before writing any file, do the **git safety net** (Step 4b). Then create under 
 
 `activity.md` is created by a hook on the first agent run, one line per run with its cost. Never write it yourself.
 
-Also write `budget.md` (format in `${CLAUDE_PLUGIN_ROOT}/company/standards/token-budget.md` §5): the story budget ($12 unless the user wants another), and a suggested project budget of stories × $7 in Quick mode (the `Mode:` line in your session context; none means Quick) or stories × $17 in Careful, rounded up, or `none` if they'd rather not cap it.
+Also write `budget.md` (format in `${CLAUDE_PLUGIN_ROOT}/crew/standards/token-budget.md` §5): the story budget ($12 unless the user wants another), and a suggested project budget of stories × $7 in Quick mode (the `Mode:` line in your session context; none means Quick) or stories × $17 in Careful, rounded up, or `none` if they'd rather not cap it.
 
 Every task record carries mode, profile, the path to `conventions.md`, scope in and out, dependencies, criteria, verification and lane. **Check in-scope paths against the real tree.** Verification steps must work within the blocked list (brief).
 
@@ -135,7 +135,7 @@ Every task record carries mode, profile, the path to `conventions.md`, scope in 
 - it parses XML (XXE)
 - it handles logins, payments, uploads or personal data (Sensitive lane)
 
-**The deploy or launch story** always carries the checklist in `${CLAUDE_PLUGIN_ROOT}/company/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch.
+**The deploy or launch story** always carries the checklist in `${CLAUDE_PLUGIN_ROOT}/crew/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch.
 
 ## Step 4b — Git safety net (before writing files)
 

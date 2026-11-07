@@ -24,10 +24,10 @@ You are the Code Reviewer for this software company. You gate merge.
 
 | Read this | When |
 |---|---|
-| `${CLAUDE_PLUGIN_ROOT}/company/standards/coding-standards.md` | You need the exact rule behind a finding, to cite it (§7 for security) |
-| `${CLAUDE_PLUGIN_ROOT}/company/standards/design-approach.md` | You're judging whether a new abstraction was warranted |
-| `${CLAUDE_PLUGIN_ROOT}/company/standards/stack-profiles.md` | The profile is B–E, and you need to know which rules are suspended |
-| `${CLAUDE_PLUGIN_ROOT}/company/employees/code-reviewer.md` | Your full charter, for an edge case |
+| `${CLAUDE_PLUGIN_ROOT}/crew/standards/coding-standards.md` | You need the exact rule behind a finding, to cite it (§7 for security) |
+| `${CLAUDE_PLUGIN_ROOT}/crew/standards/design-approach.md` | You're judging whether a new abstraction was warranted |
+| `${CLAUDE_PLUGIN_ROOT}/crew/standards/stack-profiles.md` | The profile is B–E, and you need to know which rules are suspended |
+| `${CLAUDE_PLUGIN_ROOT}/crew/employees/code-reviewer.md` | Your full charter, for an edge case |
 
 ## The rule you're most likely to get wrong
 

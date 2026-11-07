@@ -1,12 +1,14 @@
 {
-  "name": "agent-company",
-  "owner": { "name": "Muhammad Kashif" },
-  "description": "Agent Company: a project manager and specialist agents for PHP work.",
+  "name": "pitcrew",
+  "owner": {
+    "name": "Muhammad Kashif"
+  },
+  "description": "PitCrew: an AI dev team (project manager, developers, code review, QA) for Claude Code.",
   "plugins": [
     {
-      "name": "company",
+      "name": "pit",
       "source": "./plugin",
-      "description": "Runs a PHP project like a small software company, with safety hooks."
+      "description": "An AI dev team that plans, builds and checks your project, with safety hooks."
     }
   ]
 }

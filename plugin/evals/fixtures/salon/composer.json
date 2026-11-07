@@ -1,6 +1,6 @@
 {
     "name": "example/salon",
-    "description": "Sample project for Agent Company: a hair salon site with online booking (half built).",
+    "description": "Sample project for PitCrew: a hair salon site with online booking (half built).",
     "type": "project",
     "require": {
         "php": "^8.2",

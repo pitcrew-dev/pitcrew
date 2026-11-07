@@ -5,7 +5,7 @@ description: Build the next story in the project — assigns each of its tasks t
 
 # Next Story — Assign, Build, Verify, Stop
 
-You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/company/pm-brief.md` once per session. Open the full charter only for an edge case.
+You are the **Project Manager**. Read `${CLAUDE_PLUGIN_ROOT}/crew/pm-brief.md` once per session. Open the full charter only for an edge case.
 
 Build **one story**, then stop. The user reviews after every story.
 
@@ -15,7 +15,7 @@ Build **one story**, then stop. The user reviews after every story.
 
 1. Read `.claude/project/plan.md` (the live pieces only; `## Done` is one line each). Take the highest-priority story whose dependencies are all Done.
    - **An old project** (no `plan.md`, but `board.md`, `goals.md` or `backlog.md`): work with the old files for now. **Once**, in plain words, offer to merge them into one `plan.md` plus `decisions.md` (fewer files, cheaper to read each time), and do it **only after the user says yes**: build `plan.md` (Now, request, goals, live pieces with their tasks, done one-liners) from `goals.md`, `requirements.md`, `backlog.md`, `backlog-done.md`, `board.md`, `traceability.md` and `status.md`, and add the risks from `raid.md` to `decisions.md` under `## Risks`. Never delete the old files; say they can be removed. If the user says no, don't ask again.
-   - **No goals** (a project started before goals existed): propose 2–5 goals built from the stories, using the format in `/company:start` Step 4, and show which story serves which goal. **Stop for the user's OK**, then write them into `plan.md` (or the old `goals.md`), add `goal:` to every story, and carry on.
+   - **No goals** (a project started before goals existed): propose 2–5 goals built from the stories, using the format in `/pit:start` Step 4, and show which story serves which goal. **Stop for the user's OK**, then write them into `plan.md` (or the old `goals.md`), add `goal:` to every story, and carry on.
    - **The story has no goal:** ask the user which goal it serves, or whether it should be dropped. Don't build it until they answer.
 2. **Check Definition of Ready** (brief). If it fails, fix the specification, or ask the user the one question that unblocks it.
 3. **Check the facts are current.** If `conventions.md` disagrees with the repository (versions, layout, commands), fix it first. Agents trust it blindly.
@@ -27,8 +27,8 @@ Build **one story**, then stop. The user reviews after every story.
 |---|---|---|
 | **Direct** | Copy, colour, typo, config value | You do it and verify it |
 | **Light** | Small logic, no security surface, **including a small bug fix** (≤ 2 files, cause known) | Developer; you review `git diff BASE`, run the new test and the check command. A bug fix needs a regression test the developer showed **failing first**, or it isn't Light |
-| **Standard** | Default | **Quick:** a developer per task. After each task you check `git diff BASE`, run the check command and the new test. After the piece's **last** task, **one** `company:qa-engineer` run checks the whole piece (Step 4). No code-reviewer. **Careful:** developer → `company:code-reviewer` → `company:qa-engineer`, per task |
-| **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, deploy or going live, anything irreversible | **Always the full flow, in both modes:** developer → `company:code-reviewer` → `company:qa-engineer` per task, + `/security-review` + **the user's approval** |
+| **Standard** | Default | **Quick:** a developer per task. After each task you check `git diff BASE`, run the check command and the new test. After the piece's **last** task, **one** `pit:qa-engineer` run checks the whole piece (Step 4). No code-reviewer. **Careful:** developer → `pit:code-reviewer` → `pit:qa-engineer`, per task |
+| **Sensitive** | Auth, permissions, payment, personal data, uploads, migrations, deploy or going live, anything irreversible | **Always the full flow, in both modes:** developer → `pit:code-reviewer` → `pit:qa-engineer` per task, + `/security-review` + **the user's approval** |
 
 Record the lane and the reason in the task record. Default to Standard; never downgrade Sensitive. Sensitive tasks carry the threat-check answers (`coding-standards.md` §7.6).
 
@@ -41,11 +41,11 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 
    | Scope | Agent |
    |---|---|
-   | Business logic, APIs, database, jobs, integrations | `company:backend-developer` |
-   | Templates, styles, client-side behavior | `company:frontend-developer` |
-   | A small complete slice, or a codebase with no server/template split | `company:full-stack-developer` |
+   | Business logic, APIs, database, jobs, integrations | `pit:backend-developer` |
+   | Templates, styles, client-side behavior | `pit:frontend-developer` |
+   | A small complete slice, or a codebase with no server/template split | `pit:full-stack-developer` |
 
-   **In Quick, use `company:full-stack-developer` by default.** Split backend and frontend only for a big piece (a task over ~200 lines, or one that needs a seam contract) or in Careful.
+   **In Quick, use `pit:full-stack-developer` by default.** Split backend and frontend only for a big piece (a task over ~200 lines, or one that needs a seam contract) or in Careful.
 
    The prompt carries everything in the brief's dispatch list: task, why, mode, profile, `conventions.md`, scope in and out, criteria, seam contract, what dependencies produced, the `lessons.md` lines that apply, verification, BASE. **Keep the agent ID** from the result.
 3. **Act on the status line:**
@@ -59,7 +59,7 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 **Quick, Standard tasks:**
 
 - **After each task:** you run `git diff BASE`, the check command and the new test. Anything wrong goes back to the same developer (rework below). Then commit (Step 5).
-- **After the piece's last task:** dispatch **one** `company:qa-engineer` with all of the piece's Given/When/Then checks, BASE (the commit before the piece's **first** task), the developers' reports, `conventions.md` and its test baseline, the setup facts, and the depth: **Full** if the piece adds a route, screen or table, else **Focused**. No code-reviewer.
+- **After the piece's last task:** dispatch **one** `pit:qa-engineer` with all of the piece's Given/When/Then checks, BASE (the commit before the piece's **first** task), the developers' reports, `conventions.md` and its test baseline, the setup facts, and the depth: **Full** if the piece adds a route, screen or table, else **Focused**. No code-reviewer.
 - The end-of-piece QA covers the piece's Standard tasks. A Sensitive task inside the piece has already had its own full gates and is not re-tested, though all of the piece's Given/When/Then checks are still verified.
 - On `VERDICT: FAIL`, send the finding to the developer of the task it is in (same agent, rework rules below), then re-run QA.
 
@@ -67,8 +67,8 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 
 Every QA or review prompt carries the **setup facts**, so agents test instead of hunting: PHP path, check command, test database, and how to run a quick script. Copy them from `conventions.md`.
 
-- **4a. Code review:** dispatch `company:code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, the setup facts, and the developer's report. *Is this fit to merge?*
-- **4b. QA:** only after review passes. Dispatch `company:qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.
+- **4a. Code review:** dispatch `pit:code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, the setup facts, and the developer's report. *Is this fit to merge?*
+- **4b. QA:** only after review passes. Dispatch `pit:qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.
   - **Focused:** ≤ 2 files, ~50 changed lines, no new route, screen or table, not Sensitive. Adversarial testing is capped at 3 cases.
   - **Full:** everything else, and always Sensitive.
   - Rework keeps the depth.
