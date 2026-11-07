@@ -42,6 +42,7 @@ Dispatch **one** agent, `pit:full-stack-developer` by default, with:
 - the problem, verbatim
 - the cause you found, and the scope (files in, files out)
 - the setup facts, the ID and BASE
+- the stack guide for the files involved, if the Stack block in `conventions.md` lists one
 - the rule: **write a test that reproduces the bug, show it failing, fix it, show it passing, run the check command**
 
 Then you check `git diff BASE`, run the new test and the check command. If anything is wrong, send it back to the **same** developer with `SendMessage`. Three strikes: stop and ask the user. When it's right, commit in the project's style (`conventions.md`), with the ID in the message.

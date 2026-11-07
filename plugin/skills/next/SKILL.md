@@ -45,9 +45,9 @@ In dependency order. **Never two developers at once**, even on "independent" pat
    | Templates, styles, client-side behavior | `pit:frontend-developer` |
    | A small complete slice, or a codebase with no server/template split | `pit:full-stack-developer` |
 
-   **In Quick, use `pit:full-stack-developer` by default.** Split backend and frontend only for a big piece (a task over ~200 lines, or one that needs a seam contract) or in Careful.
+   **In Quick, use `pit:full-stack-developer` by default.** Split backend and frontend only for a big piece (a task over ~200 lines, or one that needs a seam contract) or in Careful. **Next.js:** full-stack in both modes, unless a big task splits along the folder map in `stacks/nextjs.md` §2.
 
-   The prompt carries everything in the brief's dispatch list: task, why, mode, profile, `conventions.md`, scope in and out, criteria, seam contract, what dependencies produced, the `lessons.md` lines that apply, verification, BASE. **Keep the agent ID** from the result.
+   The prompt carries everything in the brief's dispatch list: task, why, mode, profile, `conventions.md`, the stack guide and official docs path, scope in and out, criteria, seam contract, what dependencies produced, the `lessons.md` lines that apply, verification, BASE. **Keep the agent ID** from the result.
 3. **Act on the status line:**
    - `DONE` / `DONE_WITH_CONCERNS` → the checks in Step 4 (pass any concerns on to the reviewer, or to QA in Quick).
    - `NEEDS_CONTEXT` → answer it from the project files, or ask the user if it's their call. Then **continue the same agent** with `SendMessage` (its work is still in its context). Don't start a new one.
@@ -65,7 +65,7 @@ In dependency order. **Never two developers at once**, even on "independent" pat
 
 **Careful, and every Sensitive task in either mode:** the two gates below, per task. Two independent questions, in this order. Neither replaces the other.
 
-Every QA or review prompt carries the **setup facts**, so agents test instead of hunting: PHP path, check command, test database, and how to run a quick script. Copy them from `conventions.md`.
+Every QA or review prompt carries the **setup facts**, so agents test instead of hunting: PHP path, check command, test database, and how to run a quick script. Copy them from `conventions.md`. It also names the task's **stack guide**, whose checklist (section 6) they check too.
 
 - **4a. Code review:** dispatch `pit:code-reviewer` with BASE, `git diff BASE --stat`, the declared scope in and out, mode, profile, `conventions.md`, the setup facts, and the developer's report. *Is this fit to merge?*
 - **4b. QA:** only after review passes. Dispatch `pit:qa-engineer` with the acceptance criteria, BASE, the developer's report, `conventions.md` and its test baseline, the setup facts, and the **depth**. *Does it do what was asked?* One QA at a time.

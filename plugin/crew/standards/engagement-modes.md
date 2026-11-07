@@ -59,11 +59,12 @@ The survey is a task in its own right — a Spike, assigned to `solution-archite
 - [ ] PHP version — from `php -v` and the `composer.json` `platform`/`require` constraint. **They can differ; the lower one governs.**
 - [ ] Database engine and version; whether it is MySQL, MariaDB, or something else
 - [ ] Web server and how the app is served (Apache/Nginx/built-in, docroot, rewrite rules)
-- [ ] Node version and whether a JS build step exists at all
+- [ ] Node version, the package manager (from the lock file), and whether a JS build step exists at all
 
 **Project type**
 
-- [ ] Framework and exact version (`composer.json`, `composer.lock`, `artisan --version`, WordPress `version.php`), or "plain PHP / no framework"
+- [ ] Framework and exact version (`composer.json`, `composer.lock`, `artisan --version`, WordPress `version.php`, or `package.json` with its lock file), or "plain PHP / no framework"
+- [ ] **The stack guides:** match each stack (JS framework, ORM, database) to a guide with `stacks/index.md`, and write the **Stack** block in `conventions.md`
 - [ ] Is the framework version still supported, and is upgrading in scope? (Usually not — do not assume it is.)
 - [ ] Dependency management: Composer, npm, vendored libraries committed to the repo, or manual downloads
 

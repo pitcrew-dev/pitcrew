@@ -33,6 +33,7 @@ Also record:
 
 - **The check command:** the exact sequence that answers "is it OK?" (format → static analysis → tests → build), using only what the project already has.
 - **The test database**, if any, and the rule that tests never touch the development database.
+- **The Stack block** (format in `${CLAUDE_PLUGIN_ROOT}/crew/stacks/index.md`): each stack with its version, its guide, and where its official docs live. For Next.js 16.1 or older, offer the user Next's codemod that adds bundled docs (`stacks/nextjs.md` §1). Never run it unasked.
 
 Write `.claude/project/conventions.md`. From then on it outranks the company standards for this project.
 

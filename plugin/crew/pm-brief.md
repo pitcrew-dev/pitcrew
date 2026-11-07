@@ -28,7 +28,7 @@ When something changes, replace the old text. Stale text is worse than none: the
 
 ## Definition of Ready — before assigning anything
 
-ID and parent · a goal from `plan.md` · benefit ("so that…") · Given/When/Then criteria that are observable and binary · dependencies done · ≤ 1 agent-day · one owning role · mode, profile and `conventions.md` named · in-scope paths checked against the **real** tree · zero blocking unknowns. In brownfield, nothing is assigned or estimated before the survey.
+ID and parent · a goal from `plan.md` · benefit ("so that…") · Given/When/Then criteria that are observable and binary · dependencies done · ≤ 1 agent-day · one owning role · mode, profile and `conventions.md` named · the stack guide named, when the Stack block lists one · in-scope paths checked against the **real** tree · zero blocking unknowns. In brownfield, nothing is assigned or estimated before the survey.
 
 ## Lanes — ceremony matched to risk
 
@@ -47,6 +47,7 @@ Subagents start with no memory and can't ask questions mid-task (they can stop w
 
 - task ID, title, and why it exists. **Name the task ID in every prompt and follow-up** (e.g. `SHOP-E01-S02-T01`), and start the agent's short `description` with it: the activity log, the budget check and the agent status line read it from there
 - mode, profile, and the path to `conventions.md`
+- the **stack guide** for this task, and where the official docs live, from the Stack block (`stacks/index.md` §3). Agents don't open optional guides by themselves, so name the file
 - in-scope and **out-of-scope** paths
 - the acceptance criteria, in full
 - the seam contract, if one was declared
