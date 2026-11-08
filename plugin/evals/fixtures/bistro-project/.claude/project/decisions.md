@@ -2,7 +2,7 @@
 
 | ID | Decision | Why | Decided by |
 |---|---|---|---|
-| DEC1 | Next.js, Tailwind, PostgreSQL through Prisma, hosted on Vercel | Recommended setup | User |
+| DEC1 | Next.js with CSS Modules, PostgreSQL through Prisma, hosted on Vercel | Recommended setup | User |
 
 ## Risks
 

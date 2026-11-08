@@ -74,7 +74,7 @@ jobs:
             --model claude-sonnet-5-5 \
             --judge-model claude-haiku-5-5 \
             --no-publish \
-            --max-cost-usd 15
+            --max-cost-usd 20
       - uses: actions/upload-artifact@v4
         if: always()
         with:
