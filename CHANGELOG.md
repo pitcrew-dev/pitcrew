@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.3.0 - 2026-11-08
+
+A devops engineer joins the crew. It prepares; you deploy.
+
+### Added
+- **`pit:devops-engineer`**, for setup and go-live stories only. It writes the automatic checks on every push (CI), Docker, hosting and deploy files, backup scripts and `.env.example`, matched to your server's versions, and ends with a short plain-words list of what you set and run: each secret and where it goes, each command in order, the deploy and the way back. **It never deploys, never connects to a live server, and never sees a password or key.**
+- **Deploy guard:** every deploy or live-server command now asks you first: `vercel --prod` (and any Vercel command that isn't local), `netlify deploy`, `fly deploy`, `railway up`, `wrangler deploy`, `firebase deploy`, `docker push` and `docker login`, `ssh`, `scp`, `rsync` to a server, `terraform apply`, `kubectl apply`, `helm upgrade`, the `aws`, `gcloud`, `az` and `doctl` CLIs, `gh secret set`, `gh release create`, Deployer and Envoy. `terraform destroy` is blocked.
+- An eval for a setup story (it needs a shell, so it runs in CI), and a `.gitignore` in the sample Next.js project.
+
+### Changed
+- Go-live stories: the devops engineer prepares, the security engineer checks the launch list, and you approve and run the deploy.
+- The paid eval run in CI may now spend up to $20, for the extra cases.
+
 ## 2.2.0 - 2026-11-08
 
 A security engineer joins the crew, for risky work only.

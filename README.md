@@ -6,7 +6,7 @@
 
 You talk to a **Project Manager** in plain words. It plans the work, hands each task to a specialist developer, and has every result checked by **code review** and **QA** before you see it.
 
-[![Version](https://img.shields.io/badge/version-2.2.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.3.0-blue)](CHANGELOG.md)
 [![CI](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml/badge.svg)](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](#status-and-limits)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-orange)](https://code.claude.com)
@@ -64,6 +64,7 @@ flowchart TD
         BE["Backend<br/>logic · APIs · database"]
         FS["Full-stack<br/>small complete slices"]
         FE["Frontend<br/>pages · styles · scripts"]
+        DO["⚙️ DevOps<br/>CI · hosting · backups"]
     end
 
     subgraph CHECK ["✅ Quality gates: check it"]
@@ -89,6 +90,7 @@ flowchart TD
 | 🛠️ **Backend Developer** | Business logic, APIs, database, jobs and integrations | Yes |
 | 🎨 **Frontend Developer** | Templates, styles and the behaviour in the browser | Yes |
 | 🧩 **Full-stack Developer** | A small complete slice, from server to page. The default in Quick mode. | Yes |
+| ⚙️ **DevOps Engineer** | Only for setup and going live. Prepares the automatic checks on every push, Docker, hosting and deploy files, backups and `.env.example`, then gives you a short list of what to set and run. **Never deploys** and never sees your passwords or keys. | Setup files only |
 | 🔍 **Code Reviewer** | Reads the change against the project's conventions and the security rules. Decides if it is fit to merge. | No |
 | 🧪 **QA Engineer** | Checks every promise in the task and tries to break it. Decides if it is delivered. | No (only throwaway test probes) |
 | 🔐 **Security Engineer** | Only for logins, payments, personal data, uploads, database changes and going live. Before building, it reads the code and turns five safety questions into checks the developer must meet. After building, it looks for ways someone could take what isn't theirs. Before launch, it works through the launch checklist on your staging site. | No |
@@ -165,7 +167,7 @@ In Claude Code:
 
 Then restart Claude Code. To try it without installing, from a clone: `claude --plugin-dir ./plugin`.
 
-It adds 6 agents (`pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`, `pit:security-engineer`), the 5 `/pit:` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
+It adds 7 agents (`pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:devops-engineer`, `pit:code-reviewer`, `pit:qa-engineer`, `pit:security-engineer`), the 5 `/pit:` commands, the safety hooks, and an activity log with costs and budgets. It does not touch your `~/.claude/settings.json` or `CLAUDE.md`.
 
 <details>
 <summary><b>Upgrading from Agent Company (1.x)</b></summary>
@@ -320,8 +322,8 @@ A plugin cannot ship permission rules, so PitCrew enforces these with hooks, in 
 
 | Kind | Rules |
 |---|---|
-| ⛔ **Denied** | Reading or writing `.env` files (not `.env.example`); `migrate:fresh`, `migrate:reset`, `db:wipe`; `prisma migrate reset` and data-loss `prisma db push`; `drizzle-kit drop`; `DROP DATABASE`, `dropdb`; an agent setting Prisma's consent variable; force-push |
-| ✋ **Asks you first** | Every `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, `prisma migrate deploy`, `drizzle-kit push`, `DROP TABLE` or `TRUNCATE`, npm scripts named like `reset`, `drop` or `wipe`, PowerShell `Remove-Item` |
+| ⛔ **Denied** | Reading or writing `.env` files (not `.env.example`); `migrate:fresh`, `migrate:reset`, `db:wipe`; `prisma migrate reset` and data-loss `prisma db push`; `drizzle-kit drop`; `DROP DATABASE`, `dropdb`; an agent setting Prisma's consent variable; `terraform destroy`; force-push |
+| ✋ **Asks you first** | Every `git push`, `git reset --hard`, `git branch -D`, `migrate --force`, `prisma migrate deploy`, `drizzle-kit push`, `DROP TABLE` or `TRUNCATE`, npm scripts named like `reset`, `drop` or `wipe`, PowerShell `Remove-Item`; **every deploy or live-server command**: `vercel --prod`, `netlify deploy`, `fly deploy`, `docker push`, `ssh`, `scp`, `rsync` to a server, `terraform apply`, `kubectl apply`, cloud CLIs (`aws`, `gcloud`, `az`), `gh secret set` |
 | 🛡️ **Guarded** | Blocks writes to `vendor/`, `node_modules/`, build output (including `.next/`), lock files, WordPress core, `wp-config.php` and private keys; stops irreversible Bash and PowerShell commands; flags secrets in written files; formats PHP with the project's own Pint, and JavaScript and TypeScript with its own Prettier, when that can't reformat old code |
 
 A search over a whole folder can still match lines inside `.env`. Only a path that points straight at a `.env` file is blocked.
@@ -344,7 +346,7 @@ claude plugin validate ./plugin --strict  # the plugin files
 cd plugin && claude plugin eval . --scaffold --trust-plugin --runs 1 --ablation none   # the evals (paid)
 ```
 
-The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, the fix command, the notice about an old install, and the stacks: detecting Next.js on an existing project, naming the guide on dispatch, and the recommended or custom setup for a new Next.js app; and a Sensitive story going to the security engineer for a threat check first. They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
+The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, the fix command, the notice about an old install, and the stacks: detecting Next.js on an existing project, naming the guide on dispatch, and the recommended or custom setup for a new Next.js app; a Sensitive story going to the security engineer for a threat check first; and a setup story going to the devops engineer with nothing deployed (this one needs a shell, so it runs in CI). They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
 
 CI (`.github/workflows/ci.yml`) runs the tests on Windows, macOS and Linux and checks the plugin on every push. The evals run when started by hand, with an `ANTHROPIC_API_KEY` secret.
 
@@ -354,9 +356,9 @@ See `CLAUDE.md` for the layout and the rules for changing the framework, and `CH
 
 ## Status and limits
 
-- **Version 2.2.0.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support (2.1) and the security engineer (2.2) are checked by evals, not yet by a real pilot.
-- **Stacks:** PHP (Laravel, plain PHP, WordPress), React and Next.js, and PostgreSQL or MySQL through Prisma. **Next on the roadmap:** a devops agent, used only for setup and going live; then Vue and Nuxt, SQLite, Drizzle and Biome.
-- **Roles:** seven of eleven are written. There is no dedicated architecture or devops agent yet: the PM covers them, or asks you.
+- **Version 2.3.0.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support (2.1) the security engineer (2.2) and the devops engineer (2.3) are checked by evals, not yet by a real pilot.
+- **Stacks:** PHP (Laravel, plain PHP, WordPress), React and Next.js, and PostgreSQL or MySQL through Prisma. **Next on the roadmap:** Vue and Nuxt, SQLite, Drizzle and Biome.
+- **Roles:** eight of eleven are written. There is no dedicated architect, designer or business analyst agent yet: the PM covers them, or asks you.
 - **Safety is a floor, not a gate.** A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.
 - **Tested** by hand on Windows (Git Bash and PowerShell). CI runs the tests on macOS and Linux too.
 - **Costs are API-equivalent:** what the work would cost at Anthropic's pay-per-use prices. On a subscription you don't pay this per token; it shows where the effort went.
