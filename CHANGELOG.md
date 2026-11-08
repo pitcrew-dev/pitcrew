@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.3 - 2026-11-09
+
+### Changed
+- **A smaller install.** The evals and their sample projects moved out of the plugin to `evals/` at the top of the repo, so they no longer ship with the plugin. To run them, copy `evals/` into `plugin/` (CI does this for you).
+- **A demo GIF** at the top of the README.
+
 ## 2.3.2 - 2026-11-08
 
 ### Fixed
