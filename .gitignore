@@ -47,11 +47,7 @@ wp-config.php
 /tests/Browser/console/
 
 # IDE and editor state
-/.idea/workspace.xml
-/.idea/shelf/
-/.idea/httpRequests/
-/.idea/dataSources/
-/.idea/dataSources.local.xml
+/.idea/
 /.vscode/
 *.swp
 *.swo
