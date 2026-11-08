@@ -13,6 +13,10 @@ You talk to a **Project Manager** in plain words. It plans the work, hands each 
 
 `/pit:start` · `/pit:next` · `/pit:fix` · `/pit:status` · `/pit:report`
 
+<img src="docs/demo.gif" alt="PitCrew's project manager asks a few questions about a hair salon booking site, then shows the goals, the pieces in order and the budget" width="760">
+
+<sub>Text from a real <code>/pit:start</code> run, shortened: a few questions with defaults, then the plan.</sub>
+
 </div>
 
 ---
