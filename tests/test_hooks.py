@@ -171,6 +171,61 @@ class GuardBashTest(unittest.TestCase):
         ])
         self.assertVerdicts("deny", ["npx prisma migrate reset --force"], tool="PowerShell")
 
+    def test_deploys_and_live_servers_need_the_user(self):
+        self.assertVerdicts("deny", [
+            "terraform destroy",
+            "terraform apply -destroy -auto-approve",
+            "tofu destroy",
+        ])
+        self.assertVerdicts("ask", [
+            "vercel",
+            "vercel --prod",
+            "npx vercel deploy --prod",
+            "pnpm dlx vercel@latest deploy",
+            "vercel env pull",
+            "netlify deploy --prod",
+            "fly deploy",
+            "flyctl secrets set KEY=value",
+            "railway up",
+            "heroku config:set APP_KEY=x",
+            "npx wrangler deploy",
+            "firebase deploy",
+            "aws s3 sync ./out s3://bucket",
+            "gcloud run deploy",
+            "terraform apply",
+            "kubectl apply -f deploy.yaml",
+            "helm upgrade app ./chart",
+            "docker push ghcr.io/me/app:1.0",
+            "docker login ghcr.io",
+            "ssh deploy@example.com",
+            "scp dump.sql deploy@example.com:/tmp",
+            "rsync -az ./public/ deploy@example.com:/var/www/app",
+            "gh secret set DATABASE_URL",
+            "gh release create v1.0.0",
+            "vendor/bin/dep deploy production",
+            "envoy run deploy",
+        ])
+        self.assertVerdicts("allow", [
+            "vercel dev",
+            "npx vercel build",
+            "vercel --version",
+            "netlify build",
+            "fly logs",
+            "aws --version",
+            "terraform plan",
+            "terraform validate",
+            "kubectl get pods",
+            "helm template app ./chart",
+            "docker build -t app .",
+            "docker compose up -d",
+            "rsync -a ./src/ ./backup/",
+            "rsync -a C:/site/ D:/backup/",
+            "gh pr view 12",
+            "grep -rn ssh config/",
+            'git commit -m "ci: deploy with vercel --prod"',
+        ])
+        self.assertVerdicts("ask", ["vercel --prod", "ssh deploy@example.com"], tool="PowerShell")
+
     def test_an_agent_never_gives_prismas_consent(self):
         self.assertVerdicts("deny", [
             'PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION="yes" npx prisma migrate reset',

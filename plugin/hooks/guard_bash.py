@@ -259,6 +259,84 @@ def check_db_tools(tokens):
     return None
 
 
+RUNNERS = {"npx", "bunx", "pnpx"}
+RUNNER_SUBCOMMANDS = {"exec", "dlx", "x"}  # pnpm exec, pnpm dlx, bun x, yarn dlx
+
+
+def leading_tool(tokens):
+    """The tool a command really runs, past `npx`, `pnpm exec` and the like: (name, rest words)."""
+    i = 0
+    if tool_name(tokens[0]) in RUNNERS:
+        i = 1
+    elif tool_name(tokens[0]) in PACKAGE_MANAGERS and len(tokens) > 1 and tokens[1].lower() in RUNNER_SUBCOMMANDS:
+        i = 2
+    while i < len(tokens) and tokens[i].startswith("-"):  # npx -y vercel
+        i += 1
+    if i >= len(tokens):
+        return None, []
+    return tool_name(tokens[i]), [t.lower() for t in tokens[i + 1:]]
+
+
+def subcommand(rest):
+    words = [t for t in rest if not t.startswith("-")]
+    return words[0] if words else ""
+
+
+# Hosting CLIs: the listed subcommands only read; anything else may publish, deploy or change settings.
+HOSTING_READ_ONLY = {
+    "vercel": {"dev", "build", "whoami", "ls", "list", "inspect", "logs", "help", "link"},
+    "netlify": {"dev", "build", "status", "logs", "help", "link", "open"},
+    "fly": {"logs", "status", "version", "help", "doctor"},
+    "flyctl": {"logs", "status", "version", "help", "doctor"},
+    "railway": {"logs", "status", "whoami", "help", "link"},
+    "heroku": {"logs", "ps", "help", "apps:info"},
+    "wrangler": {"dev", "whoami", "help", "tail"},
+    "firebase": {"emulators:start", "serve", "help", "projects:list"},
+}
+CLOUD_CLIS = {"aws", "gcloud", "az", "doctl"}
+KUBECTL_CHANGES = {"apply", "create", "delete", "replace", "patch", "scale", "rollout", "set", "edit", "drain"}
+HELM_CHANGES = {"install", "upgrade", "uninstall", "rollback", "delete"}
+REMOTE_PATH = re.compile(r"^(?:[\w.-]+@)?[\w.-]{2,}:")  # user@host:path, host:path (not C:\)
+DEPLOY_ASK = "This deploys, publishes or changes a live server or account. The user approves it first."
+
+
+def check_deploy(tokens):
+    name, rest = leading_tool(tokens)
+    if not name:
+        return None
+    sub = subcommand(rest)
+    help_only = not rest or rest[0] in ("--version", "-v", "version", "--help", "-h", "help")
+    if name in HOSTING_READ_ONLY:
+        if sub in HOSTING_READ_ONLY[name] and "--prod" not in rest:
+            return None
+        if name in ("vercel", "netlify") and help_only and rest:
+            return None
+        return ASK, DEPLOY_ASK
+    if name in CLOUD_CLIS:
+        return None if help_only else (ASK, "This talks to your cloud account. The user approves it first.")
+    if name in ("terraform", "tofu"):
+        if sub == "destroy" or (sub == "apply" and "-destroy" in rest):
+            return DENY, "This destroys real infrastructure. Never run by an agent: the user runs it."
+        if sub in ("apply", "import", "state", "taint"):
+            return ASK, DEPLOY_ASK
+    if name == "kubectl" and sub in KUBECTL_CHANGES:
+        return ASK, DEPLOY_ASK
+    if name == "helm" and sub in HELM_CHANGES:
+        return ASK, DEPLOY_ASK
+    if name == "docker" and sub in ("push", "login"):
+        return ASK, "This publishes an image or signs in to a registry. The user approves it first."
+    if name in ("ssh", "scp", "sftp"):
+        return ASK, "This connects to a server. The user approves it first."
+    if name == "rsync" and any(REMOTE_PATH.match(t) for t in tokens[1:]):
+        return ASK, "This copies files to or from a server. The user approves it first."
+    if name == "gh" and rest[:2] in (["secret", "set"], ["secret", "delete"], ["variable", "set"],
+                                      ["release", "create"], ["workflow", "run"]):
+        return ASK, "This changes the GitHub repository's secrets, releases or workflows. The user approves it first."
+    if (name == "dep" and sub in ("deploy", "rollback")) or (name == "envoy" and sub == "run"):
+        return ASK, DEPLOY_ASK
+    return None
+
+
 PRISMA_CONSENT = re.compile(r"PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION['\"]?\s*[=,]", re.I)
 
 
@@ -270,7 +348,7 @@ def evaluate(command, cwd=None):
     stripped = strip_data(command)
     for tokens in segments(stripped):
         for check in (check_delete, check_remove_item, check_artisan, check_wp, check_prisma,
-                      check_drizzle, check_db_tools):
+                      check_drizzle, check_db_tools, check_deploy):
             verdict = check(tokens)
             if verdict:
                 found.append(verdict)
