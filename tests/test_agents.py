@@ -33,6 +33,13 @@ class AgentFilesTest(unittest.TestCase):
         qa_tools = [t.strip() for t in frontmatter("qa-engineer")["tools"].split(",")]
         self.assertNotIn("Edit", qa_tools)
 
+    def test_the_working_agreement_names_every_agent(self):
+        agreement = os.path.join(os.path.dirname(AGENTS), "crew", "working-agreement.md")
+        with open(agreement, encoding="utf-8") as handle:
+            text = handle.read()
+        for file in os.listdir(AGENTS):
+            self.assertIn("`pit:%s`" % file[:-3], text, file)
+
     def test_the_security_engineer_ends_with_a_line_the_activity_log_reads(self):
         with open(os.path.join(AGENTS, "security-engineer.md"), encoding="utf-8") as handle:
             text = handle.read()
