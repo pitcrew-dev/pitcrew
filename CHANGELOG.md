@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.2 - 2026-11-08
+
+### Fixed
+- **The devops engineer's settings were ignored.** A colon in its description broke the file's header, so Claude Code dropped its tool list, model and turn limit. Fixed, and a test now checks every agent and skill header.
+
 ## 2.3.1 - 2026-11-08
 
 Ready for Anthropic's plugin directory.
