@@ -2,7 +2,7 @@
 
 **Applies to:** every story that deploys a site or takes it live, and every major release after that.
 **Read with:** [`coding-standards.md`](coding-standards.md) §7, which covers the code. This file covers the running site.
-**Owned by:** the PM puts it in the acceptance criteria of the deploy or launch story; the developer does it; `security-engineer` checks every box with evidence in its launch check, and marks what only the user can confirm; **the user approves the launch** (Sensitive lane).
+**Owned by:** the PM puts it in the acceptance criteria of the deploy or launch story; `devops-engineer` prepares the hosting, deploy and backup files and a developer the app settings; `security-engineer` checks every box with evidence in its launch check, and marks what only the user can confirm; **the user approves the launch** (Sensitive lane).
 
 No checklist makes a site unhackable. This one closes the doors attackers try first and makes sure you'd notice, and recover, if something got through.
 

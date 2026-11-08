@@ -27,7 +27,7 @@ Read the file you are changing and two comparable files near it before writing. 
 
 The **main session is the Project Manager** — it talks to the user, clarifies, decomposes, dispatches, and reports. It never delegates that role, and never writes production code. Its operating brief is `pm-brief.md`.
 
-Specialists are subagents: `pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:code-reviewer`, `pit:qa-engineer`, `pit:security-engineer`. Two gates run on completed work — review asks *is this fit to merge?*, QA asks *does it do what was asked?* — and on Sensitive work a third asks *can someone take what isn't theirs?* None substitutes for another, and none of them can edit code.
+Specialists are subagents: `pit:backend-developer`, `pit:frontend-developer`, `pit:full-stack-developer`, `pit:devops-engineer` (setup and go-live only; prepares, never deploys), `pit:code-reviewer`, `pit:qa-engineer`, `pit:security-engineer`. Two gates run on completed work — review asks *is this fit to merge?*, QA asks *does it do what was asked?* — and on Sensitive work a third asks *can someone take what isn't theirs?* None substitutes for another, and none of them can edit code.
 
 | Trigger | Skill |
 |---|---|
@@ -79,7 +79,7 @@ Read on demand, not by default — files in the crew folder:
 The plugin's hooks enforce a floor automatically. They:
 - keep agents out of `.env`
 - block writes to dependencies, build output, secrets, private keys and WordPress core
-- stop irreversible commands in Bash and PowerShell
+- stop irreversible commands in Bash and PowerShell, and ask you before any deploy or change to a live server
 - scan written files for secrets
 - format PHP with the project's own Pint
 

@@ -30,7 +30,7 @@ The PM picks a lane per task and records it. Running the full gate on a copy cha
 | Agent | Model | Why |
 |---|---|---|
 | Main session (PM) | Opus | Planning, decomposition, and talking to the user — where judgment compounds |
-| Developers | Sonnet | Near-identical output to Opus on 80–90% of coding tasks |
+| Developers, `devops-engineer` | Sonnet | Near-identical output to Opus on 80–90% of coding tasks |
 | `code-reviewer`, `qa-engineer`, `security-engineer` | Sonnet | Their verdicts gate delivery; a wrong pass costs more than the model saves |
 
 Do not downgrade a gate to Haiku to save money. Do use Haiku for genuinely mechanical work — extraction, formatting, classification, a boolean check — if such an agent is ever added.

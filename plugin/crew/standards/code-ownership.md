@@ -39,7 +39,7 @@ Blade gives no tooling-enforced boundary between server and client work. This ma
 | `tests/Unit/**`, `tests/Feature/**` | `backend-developer` | Written with the code under test, not after. |
 | `tests/Browser/**` | `qa-engineer` | Frontend dev consulted on selectors. |
 | `composer.json` | `backend-developer` | Adding a dependency requires `security-engineer` sign-off. |
-| `.github/**`, `Dockerfile`, deploy config | `devops-engineer` | |
+| `.github/**`, `Dockerfile`, `.dockerignore`, `docker-compose*.yml`, hosting config (`vercel.json`, `netlify.toml`, `fly.toml`, `Procfile`), deploy and backup scripts, `.env.example` | `devops-engineer` | Never deploys; the user approves and runs every deploy. |
 | `public/build/**`, `vendor/**`, `node_modules/**` | *nobody* | Generated. Never edited, never committed. |
 
 Anything not listed is unowned. **Encountering an unowned path is a blocker, not a judgment call** — raise it to the PM, who assigns ownership and records the decision.

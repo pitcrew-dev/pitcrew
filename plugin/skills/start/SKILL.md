@@ -149,7 +149,7 @@ Every task record carries mode, profile, the path to `conventions.md`, scope in 
 - it parses XML (XXE)
 - it handles logins, payments, uploads or personal data (Sensitive lane)
 
-**The deploy or launch story** always carries the checklist in `${CLAUDE_PLUGIN_ROOT}/crew/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch.
+**The deploy or launch story** always carries the checklist in `${CLAUDE_PLUGIN_ROOT}/crew/standards/launch-security.md` in its acceptance. That covers the server settings, an attack-style scan of staging, backups, and security updates after launch. Its tasks go to `pit:devops-engineer` (hosting, deploy and backup files) and, where app settings must change, a developer; the plan says plainly that **the user sets the secrets and approves the deploy**. A project that has no automatic tests on each push yet can get a small early setup story for CI, also `pit:devops-engineer`, if the user wants it.
 
 ## Step 4b — Git safety net (before writing files)
 

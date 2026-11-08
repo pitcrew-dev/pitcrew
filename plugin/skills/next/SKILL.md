@@ -48,8 +48,9 @@ In dependency order. **Never two developers at once**, even on "independent" pat
    | Business logic, APIs, database, jobs, integrations | `pit:backend-developer` |
    | Templates, styles, client-side behavior | `pit:frontend-developer` |
    | A small complete slice, or a codebase with no server/template split | `pit:full-stack-developer` |
+   | CI, Docker, hosting and deploy config, backups, `.env.example` (setup and go-live stories only) | `pit:devops-engineer` |
 
-   **In Quick, use `pit:full-stack-developer` by default.** Split backend and frontend only for a big piece (a task over ~200 lines, or one that needs a seam contract) or in Careful. **Next.js:** full-stack in both modes, unless a big task splits along the folder map in `stacks/nextjs.md` §2.
+   **In Quick, use `pit:full-stack-developer` by default.** Split backend and frontend only for a big piece (a task over ~200 lines, or one that needs a seam contract) or in Careful. **Next.js:** full-stack in both modes, unless a big task splits along the folder map in `stacks/nextjs.md` §2. **Deploy or go-live:** `pit:devops-engineer` prepares the files and a list of what the user must set and run; nobody deploys until the user approves (Step 4d), and then the user runs the deploy, or approves each command when the hook asks.
 
    The prompt carries everything in the brief's dispatch list: task, why, mode, profile, `conventions.md`, the stack guide and official docs path, scope in and out, criteria, seam contract, what dependencies produced, the `lessons.md` lines that apply, verification, BASE. **Keep the agent ID** from the result.
 3. **Act on the status line:**
