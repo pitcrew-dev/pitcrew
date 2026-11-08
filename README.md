@@ -6,7 +6,7 @@
 
 You talk to a **Project Manager** in plain words. It plans the work, hands each task to a specialist developer, and has every result checked by **code review** and **QA** before you see it.
 
-[![Version](https://img.shields.io/badge/version-2.3.2-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.3.3-blue)](CHANGELOG.md)
 [![CI](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml/badge.svg)](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](#status-and-limits)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-orange)](https://code.claude.com)
@@ -336,9 +336,9 @@ A search over a whole folder can still match lines inside `.env`. Only a path th
 
 ## Try it on the example project
 
-`plugin/evals/fixtures/salon/` is a half-built salon booking site in Laravel, with its project files filled in. Copy it somewhere, open the copy in Claude Code with the plugin loaded, and try `/pit:status` or `/pit:report`.
+`evals/fixtures/salon/` is a half-built salon booking site in Laravel, with its project files filled in. Copy it somewhere, open the copy in Claude Code with the plugin loaded, and try `/pit:status` or `/pit:report`.
 
-`plugin/evals/fixtures/bistro/` is a half-built restaurant booking app in **Next.js, Prisma and PostgreSQL**. Copy it and try `/pit:start` to see the stack detection. Its PitCrew project files are in `bistro-project/`.
+`evals/fixtures/bistro/` is a half-built restaurant booking app in **Next.js, Prisma and PostgreSQL**. Copy it and try `/pit:start` to see the stack detection. Its PitCrew project files are in `bistro-project/`.
 
 ---
 
@@ -347,10 +347,10 @@ A search over a whole folder can still match lines inside `.env`. Only a path th
 ```bash
 python -m unittest discover -s tests -v   # the hooks, manifests and uninstaller
 claude plugin validate ./plugin --strict  # the plugin files
-cd plugin && claude plugin eval . --scaffold --trust-plugin --runs 1 --ablation none   # the evals (paid)
+cp -r evals plugin/ && cd plugin && claude plugin eval . --scaffold --trust-plugin --runs 1 --ablation none   # the evals (paid)
 ```
 
-The evals in `plugin/evals/` cover starting a project, a story stopped by its budget, status, the report, the fix command, the notice about an old install, and the stacks: detecting Next.js on an existing project, naming the guide on dispatch, and the recommended or custom setup for a new Next.js app; a Sensitive story going to the security engineer for a threat check first; and a setup story going to the devops engineer with nothing deployed (this one needs a shell, so it runs in CI). They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
+The evals in `evals/` (kept outside the plugin so they don't ship with it; copy them into `plugin/` to run) cover starting a project, a story stopped by its budget, status, the report, the fix command, the notice about an old install, and the stacks: detecting Next.js on an existing project, naming the guide on dispatch, and the recommended or custom setup for a new Next.js app; a Sensitive story going to the security engineer for a threat check first; and a setup story going to the devops engineer with nothing deployed (this one needs a shell, so it runs in CI). They are real model calls. On Windows, status and report can't run their cost script (shell commands need a sandbox Windows doesn't have), so run the full suite on Linux or macOS, or in CI.
 
 CI (`.github/workflows/ci.yml`) runs the tests on Windows, macOS and Linux and checks the plugin on every push. The evals run when started by hand, with an `ANTHROPIC_API_KEY` secret.
 
@@ -360,7 +360,7 @@ See `CLAUDE.md` for the layout and the rules for changing the framework, and `CH
 
 ## Status and limits
 
-- **Version 2.3.2.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support (2.1) the security engineer (2.2) and the devops engineer (2.3) are checked by evals, not yet by a real pilot.
+- **Version 2.3.3.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support (2.1) the security engineer (2.2) and the devops engineer (2.3) are checked by evals, not yet by a real pilot.
 - **Stacks:** PHP (Laravel, plain PHP, WordPress), React and Next.js, and PostgreSQL or MySQL through Prisma. **Next on the roadmap:** Vue and Nuxt, SQLite, Drizzle and Biome.
 - **Roles:** eight of eleven are written. There is no dedicated architect, designer or business analyst agent yet: the PM covers them, or asks you.
 - **Safety is a floor, not a gate.** A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.

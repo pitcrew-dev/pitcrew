@@ -65,6 +65,8 @@ jobs:
       - name: Run the evals
         working-directory: plugin
         run: |
+          # The evals live outside the plugin so they don't ship with it; copy them in to run.
+          cp -r ../evals evals
           claude plugin eval . \
             --trust-plugin \
             --scaffold \

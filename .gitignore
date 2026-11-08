@@ -62,5 +62,6 @@ Thumbs.db
 desktop.ini
 
 # Plugin eval output (claude plugin eval)
-/plugin/evals/results/
+/plugin/evals/
+/evals/results/
 /plugin/results.json

@@ -24,7 +24,7 @@ Always explain in **simple, short, clear words**, without being asked.
 | `plugin/agents/`, `plugin/skills/` | 7 subagents (`pit:*`); `/pit:start`, `/pit:next`, `/pit:fix`, `/pit:status`, `/pit:report` |
 | `plugin/hooks/` | `hooks.json`, the `run` launcher (finds Python), the safety, formatting, activity-log and budget hooks (Python), `costs.py` (shared cost and budget reading), `cost_summary.py` (run by `/pit:status` and `/pit:report`) and `agent_status.py` (the agent status line) |
 | `plugin/settings.json` | Turns on the agent status line |
-| `plugin/evals/` | Plugin evals (`claude plugin eval`), and `fixtures/salon/`, the sample project they and the README use |
+| `evals/` | Plugin evals (`claude plugin eval`) and the sample projects in `fixtures/`; kept outside the plugin so they don't ship, and copied into `plugin/` to run |
 | `.github/workflows/ci.yml` | Tests on Windows, macOS and Linux and the plugin check on every push; the paid evals on demand |
 | `install.py` (+ `install.sh`) | Removes an old 0.2.x install (`--uninstall`); kept for one release, not part of the plugin |
 | `tests/` | Tests for the hooks, the manifests, the agent files and the uninstaller |
