@@ -25,6 +25,20 @@ class AgentFilesTest(unittest.TestCase):
             self.assertEqual(name, meta["name"], file)
             self.assertTrue(meta.get("description"), file)
 
+    def test_frontmatter_values_are_valid_yaml(self):
+        # An unquoted value with ": " in it breaks the YAML, and Claude Code then silently drops
+        # every field (tools, model, maxTurns). It happened once, to the devops engineer.
+        skills = os.path.join(os.path.dirname(AGENTS), "skills")
+        files = [os.path.join(AGENTS, f) for f in os.listdir(AGENTS)]
+        files += [os.path.join(skills, d, "SKILL.md") for d in os.listdir(skills)]
+        for path in files:
+            with open(path, encoding="utf-8") as handle:
+                block = re.match(r"---\n(.*?)\n---\n", handle.read(), re.S).group(1)
+            for line in block.splitlines():
+                key, _, value = line.partition(": ")
+                quoted = value[:1] in ("'", '"')
+                self.assertFalse(": " in value and not quoted, "%s: %s" % (path, key))
+
     def test_gates_cannot_edit_code(self):
         for name in ("code-reviewer", "security-engineer"):
             tools = [t.strip() for t in frontmatter(name)["tools"].split(",")]

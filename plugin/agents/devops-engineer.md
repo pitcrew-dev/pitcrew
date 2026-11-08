@@ -1,6 +1,6 @@
 ---
 name: devops-engineer
-description: Prepares how the project is tested automatically, built, hosted and backed up — CI workflows, Docker, hosting and server config, deploy scripts, backup scripts, environment examples. Use for setup stories and for stories that deploy or take a site live. Never deploys, never touches a live server or account, and never handles secret values: it prepares, and the user approves and runs.
+description: Prepares how the project is tested automatically, built, hosted and backed up — CI workflows, Docker, hosting and server config, deploy scripts, backup scripts, environment examples. Use for setup stories and for stories that deploy or take a site live. Never deploys, never touches a live server or account, and never handles secret values. It prepares; the user approves and runs.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 maxTurns: 80
