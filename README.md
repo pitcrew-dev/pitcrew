@@ -6,7 +6,7 @@
 
 You talk to a **Project Manager** in plain words. It plans the work, hands each task to a specialist developer, and has every result checked by **code review** and **QA** before you see it.
 
-[![Version](https://img.shields.io/badge/version-2.3.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.3.1-blue)](CHANGELOG.md)
 [![CI](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml/badge.svg)](https://github.com/pitcrew-dev/pitcrew/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](#status-and-limits)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-orange)](https://code.claude.com)
@@ -356,7 +356,7 @@ See `CLAUDE.md` for the layout and the rules for changing the framework, and `CH
 
 ## Status and limits
 
-- **Version 2.3.0.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support (2.1) the security engineer (2.2) and the devops engineer (2.3) are checked by evals, not yet by a real pilot.
+- **Version 2.3.1.** Piloted on one real Laravel project; the findings are in `report/`. The React, Next.js and Prisma support (2.1) the security engineer (2.2) and the devops engineer (2.3) are checked by evals, not yet by a real pilot.
 - **Stacks:** PHP (Laravel, plain PHP, WordPress), React and Next.js, and PostgreSQL or MySQL through Prisma. **Next on the roadmap:** Vue and Nuxt, SQLite, Drizzle and Biome.
 - **Roles:** eight of eleven are written. There is no dedicated architect, designer or business analyst agent yet: the PM covers them, or asks you.
 - **Safety is a floor, not a gate.** A Bash permission rule isn't a hard security boundary (`git -C . push` is spelled differently from `git push`), which is why the hooks back them up.

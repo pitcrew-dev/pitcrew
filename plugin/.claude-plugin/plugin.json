@@ -1,11 +1,14 @@
 {
   "name": "pit",
   "displayName": "PitCrew",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "PitCrew: an AI dev team inside Claude Code. A project manager plans the work, developers build it, code review and QA check it, a security engineer guards risky work, a devops engineer prepares hosting without ever deploying, and safety hooks guard it. For PHP (Laravel, plain PHP, WordPress), React and Next.js, with PostgreSQL or MySQL through Prisma. Quick mode keeps it cheap.",
   "author": {
-    "name": "Muhammad Kashif"
+    "name": "Muhammad Kashif",
+    "url": "https://github.com/pitcrew-dev"
   },
+  "homepage": "https://github.com/pitcrew-dev/pitcrew",
+  "repository": "https://github.com/pitcrew-dev/pitcrew",
   "license": "MIT",
   "keywords": [
     "pitcrew",

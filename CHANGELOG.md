@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.1 - 2026-11-08
+
+Ready for Anthropic's plugin directory.
+
+### Added
+- A README inside the plugin folder that says what PitCrew runs on your machine (no network calls, local files only), as the directory's review asks.
+- An icon, and the homepage and repository links in `plugin.json`.
+
 ## 2.3.0 - 2026-11-08
 
 A devops engineer joins the crew. It prepares; you deploy.
